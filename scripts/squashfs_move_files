@@ -1,4 +1,4 @@
-# $Id: squashfs_move_files,v 1.6 2004/04/07 13:04:47 essu Exp $
+# $Id: squashfs_move_files,v 1.7 2004/04/15 12:45:35 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -64,7 +64,7 @@ cd $DBOX/cdkflash/root
 rm -rf hdd
 rm -rf mnt
 mkdir $DBOX/cdkflash/var/mnt
-mkdir $DBOX/cdkflash/var/mnt/movies
+mkdir $DBOX/cdkflash/var/mnt/movie
 
 cd $DBOX/cdkflash/root
 

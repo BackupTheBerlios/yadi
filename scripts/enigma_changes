@@ -1,4 +1,4 @@
-# $Id: enigma_changes,v 1.3 2004/04/07 13:04:47 essu Exp $
+# $Id: enigma_changes,v 1.4 2004/04/15 12:45:35 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -52,7 +52,7 @@ mkdir $DBOX/cdkflash/root/var/plugins
 mkdir $DBOX/cdkflash/root/var/tuxbox/plugins
 #fuer DVR
 mkdir $DBOX/cdkflash/root/hdd
-mkdir $DBOX/cdkflash/root/hdd/movies
+mkdir $DBOX/cdkflash/root/hdd/movie
 
 # Overflow loeschen
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/pictures/scan.mvi
@@ -61,8 +61,8 @@ rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox_inputdev.xml
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox2.xml
 
 # Tastaturbelegung aendern
-mkdir $DBOX/cdkflash/var/tuxbox/enigma/resources
-cp $CHANGE_DIR/Patches/enigma/rcdbox_inputdev.xml $DBOX/cdkflash/var/tuxbox/enigma/resources/
+mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma/resources
+cp $CHANGE_DIR/enigma/rcdbox_inputdev.xml $DBOX/cdkflash/root/var/tuxbox/config/enigma/resources/
 
 # Image-Infos kopieren, falls existent
 if test -e $VER.enigma
