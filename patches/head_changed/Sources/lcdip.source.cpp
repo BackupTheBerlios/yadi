@@ -446,54 +446,7 @@ int main()
 		}
 	}
 	RCClose();
-
-        
-
-        // Meldung ausgeben...
-        display.draw_string(0, 10, "               ");
-        display.draw_string(0, 22, "               ");
-        display.draw_string(0, 38, "               ");
-        display.draw_string(0, 55, "               ");
-        display.draw_string(0, 20, "Die Box startet");
-        display.draw_string(0, 32, "   jetzt neu   ");
-        display.draw_string(0, 55, " [OK = Reboot] ");
-        display.update();
-
-        curpos=0;
-	update=0;
-	done=0;
-	RCOpen();
-	while (!done)
-	{
-		if (!update)
-		{
-			int code;
-			switch (code=RCGet())
-			{
-			case KEY_LEFT:
-			case KEY_RIGHT:
-			case KEY_UP:
-			case KEY_0:
-			case KEY_1:
-			case KEY_2:
-			case KEY_3:
-			case KEY_4:
-			case KEY_5:
-			case KEY_6:
-			case KEY_7:
-			case KEY_8:
-			case KEY_9:
-			case KEY_DOWN:
-			case KEY_POWER:
-                                break;
-
-			case KEY_OK:
-				done=1;
-				break;
-			}
-		}
-	}
-	RCClose();
+	
 
 	// Datei schreiben
 	FILE* paFile=fopen("/etc/network/interfaces", "w"); 
@@ -530,10 +483,8 @@ int main()
 		display.update();
 	}
 */
-        display.draw_string(0, 20, "               ");
-        display.draw_string(0, 32, "               ");
-        display.draw_string(0, 55, "               ");
-	display.draw_string(0, 30, " Starte neu... ");
+        display.draw_string(0, 10, "               ");
+        display.draw_string(0, 22, "  IP gesetzt   ");
 	display.update();
 	return 0;
 }
