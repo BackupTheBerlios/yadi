@@ -1,5 +1,5 @@
 # Copyright (c) 2004 Steff Ulbrich, Dmitri Barski, Acoo Germany. All rights reserved.
-# $Id: README.txt,v 1.5 2004/10/07 12:27:10 essu Exp $
+# $Id: README.txt,v 1.6 2004/10/08 23:58:08 essu Exp $
 # Mail: acoo@berlios.de
 # Mail: essu@berlios.de
 # Mail: @berlios.de

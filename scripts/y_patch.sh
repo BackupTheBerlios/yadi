@@ -1,4 +1,4 @@
-# $Id: y_patch.sh,v 1.1 2004/10/07 12:27:10 essu Exp $
+# $Id: y_patch.sh,v 1.2 2004/10/08 23:58:08 essu Exp $
 # is part of yadi-script-pack
 #
 #
