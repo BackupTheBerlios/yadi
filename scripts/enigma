@@ -1,4 +1,4 @@
-# $Id: enigma,v 1.1 2004/03/29 20:28:19 essu Exp $
+# $Id: enigma,v 1.2 2004/04/01 22:15:00 alexh Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -112,7 +112,8 @@ cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 cp $DBOX/cdkroot/sbin/eraseall $DBOX/cdkflash/root/sbin
 
 # rcs kopieren
-patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
+#patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
+cp $CHANGE_DIR/Configs/rcS $DBOX/cdkflash/root/etc/init.d/rcS
 cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # Locales kopieren
