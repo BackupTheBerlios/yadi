@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.7 2004/04/02 22:31:28 essu Exp $
+# $Id: yadi,v 1.8 2004/04/03 22:32:49 dietmarw Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -32,7 +32,7 @@
 #MAIN
 
 
-VERSION="yadi v. $Revision: 1.7 $"
+VERSION="yadi v. $Revision: 1.8 $"
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
 for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image neutrino enigma neutrino_enigma squashfs_flfs squashfs_kernel squashfs_move_files squashfs_create_image
@@ -45,6 +45,12 @@ do
  fi
 done
 . $SCRIPTS/prepare
+
+# Logfile Anfang
+echo ""
+echo "Alle weiteren Ausgaben findet Ihr in der /$ROOT/$IMG_PRE.log Datei"
+{
+
 . $SCRIPTS/check 
 
 # Nur konfigurieren, falls kein Fehler aufgetreten ist
@@ -76,5 +82,7 @@ echo Images erstellt!
 echo Diese sollten sich jetzt in $IMAGES befinden.
 echo
 echo
+
+} > /$ROOT/$IMG_PRE.log
 
 exit;
