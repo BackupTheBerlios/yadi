@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# allin1 $Id: allin1.sh,v 1.11 2004/03/07 18:29:03 essu Exp $
+# allin1 $Id: allin1.sh,v 1.12 2004/03/08 15:40:47 acoo Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
@@ -36,9 +36,9 @@ RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig $Revision: 1.11 $ enthalten
+VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig $Revision: 1.12 $ enthalten
 # Pfad zu den geaenderten und sonstigen Dateien
-CHANGE_DIR=$RT/head_changed
+CHANGE_DIR=$RT
 CHANGE_ARC_DIR=$RT/change_arcs
 CHANGE_ARC=head_changed_A # Datei mit den Aenderungen (ohne .tar.gz)
 #
@@ -160,13 +160,13 @@ else
   #make .linuxdir
   make .deps/linuxdir
 
-  patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
+  patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/patches/dbox2-flash.c.diff
 
   # Neu: Aenderungen fuer 1xI schon im CVS
-  cp Patches/u-boot.1x-flash.dbox2.h ../boot/u-boot/include/configs/dbox2.h
+  cp patches/u-boot.1x-flash.dbox2.h ../boot/u-boot/include/configs/dbox2.h
 
   # Die Datei aus dem CVS fuer JFFS2-Only patchen
-  patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
+  patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/patches/dbox2.h.neu.diff
 fi
 }
 
@@ -206,8 +206,8 @@ cp $CVS/boot/u-boot/u-boot.stripped test
 mv flfs.img $DBOX/flfs/flfs1x.img
 
 # U-Boot fuer 2xI erzeugen
-cp $CVS/cdk/Patches/u-boot.2x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
-patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.2x.neu.diff
+cp $CVS/cdk/patches/u-boot.2x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
+patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/patches/dbox2.h.2x.neu.diff
 rm $CVS/boot/u-boot/u-boot.stripped
 cd $CVS/cdk
 rm .deps/u-boot
@@ -276,7 +276,7 @@ cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
 cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 
 # rcs kopieren
-patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/patches/rcS.diff
 # cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # MKLibs ausfuehren
@@ -309,7 +309,7 @@ cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boo
 
 # XMLs kopieren
 cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/share/tuxbox/
-patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
+patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/patches/cables.xml.diff
 
 # Interfaces loeschen
 rm $DBOX/cdkflash/root/etc/network/interfaces
@@ -412,7 +412,7 @@ cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
 cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 
 # rcs kopieren
-patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/patches/rcS.diff
 cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # Locales kopieren
@@ -458,7 +458,7 @@ cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boo
 
 # XMLs kopieren
 cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/share/tuxbox/
-patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
+patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/patches/cables.xml.diff
 
 # Interfaces loeschen
 rm $DBOX/cdkflash/root/etc/network/interfaces
