@@ -75,7 +75,7 @@
    <action name="pageup" key="left" flags="mr" />
   </actionmap>
 
-  <actionmap name="mainmenu" style="_new">
+  <actionmap name="mainmenu">
    <action name="close" key="home" flags="mr" />
    <action name="prev" key="left" flags="mr" />
    <action name="next" key="right" flags="mr" />
