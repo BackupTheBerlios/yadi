@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# getset v0.$Revision: 1.1 $
-$Id: getset,v 1.1 2004/03/06 12:57:39 essu Exp $
+# getset v0.$Revision: 1.2 $
+$Id: getset,v 1.2 2004/03/07 12:56:26 essu Exp $
 # Copyright (c) 2004 Steff Ulbrich, Germany. All rights reserved.
 # Author: Steff Ulbrich
 # Mail: essu@no-enigma.de
@@ -63,7 +63,7 @@ SAT1='Astra_19_2'; SAT2=''; SAT3=''; SAT4=''; ALLSATS='no';
 SORT1='Anbieter'; SORT2='Satellit'; SORT1=''; SORT3=''; SORT4=''; SORT5=''; SORT6='';
 
 # Weitere Optionen
-PAYTV='no'; PAYSIGN='no'; PRESORT='yes'; KEEP_MARKED='yes';
+PAYTV='no'; PAYSIGN='no'; PRESORT='yes'; KEEP_MARKED='no';
 NO_USERBOUQUETS='no'; NEWSORT_ONLY='no';
 
 # Programm Optionen
@@ -92,8 +92,9 @@ fi
 touch /tmp/getset.log
 date  >/tmp/getset.log
 MESG='\nStandardwerte setzen:'; tellme;
+
 #VersionID
-VERSION='$Id: getset,v 1.1 2004/03/06 12:57:39 essu Exp $'; FOUNDVERSION='';
+VERSION="v0.1.2-2004/03/06-12:57:39"; FOUNDVERSION='';
 MESG='getset VERSION: '$VERSION; tellme;
 }
 
@@ -149,7 +150,7 @@ MODEL_ID=`/bin/tuxinfo -m`
  MESG="Enigmaversion: $EVERSION";  tellme;
 fi
 
-if [ $VERSION = $FOUNDVERSION ]; then
+if [ $FOUNDVERSION = $VERSION ]; then
  MESG="Gefundene Version: $FOUNDVERSION - laufende Version: $VERSION";  tellme;
 else
  MESG="Gefundene Version: "$FOUNDVERSION" - \ndie Version: "$VERSION" wird jetzt installiert";  tellme;
@@ -160,25 +161,30 @@ fi
 ################################################################################
 # Lesen der cfg-Datei
 ################################################################################
-init()
+read_cfgfile()
 {
 echo "\nLesen der settings.cfg:"
+if [ $USE_CONFIG = "yes" ]; then
  #Ini-Datei laden
  if [ -e $CONFIGDIR/settings.cfg ]; then
-  . $CONFIGDIR/settings.cfg
+  cp $CONFIGDIR/settings.cfg /tmp/cfg.tmp
   MESG="Die Einstellungen aus "$CONFIGDIR"/settings.cfg\n werden statt der CONFIG-Bouquet-Einstellungen verwendet";  tellme;
  else
   MESG=$CONFIGDIR"/settings.cfg nicht gefunden,\nversuche Einstellungen aus CONFIG-Bouquets zu laden";  tellme;
   USE_CONFIG='no';
  fi
+else
+ MESG="USE_CONFIG: $USE_CONFIG"
+fi
 }
 
 ################################################################################
 #Konfiguration ueber Konfig-Bouquets
 ################################################################################
-auto_init()
+read_bouquets()
 {
 MESG="\nKonfiguration mit Konfig-Bouquets:"; tellme;
+if [ $USE_CONFIG = "no" ]; then
 echo "# CONFIGURATION Settings-Download - getset "$VERSION >/tmp/cfg.tmp
 echo "# by essu@no-enigma.de\n#" >>/tmp/cfg.tmp
 if [ $GUI = "e" ]; then
@@ -195,12 +201,17 @@ else
  $INSTALLDIR/getset.8
 fi
 if [ $SAVE_CONFIG = "yes" ];then
-  mv /tmp/cfg.tmp $CONFIGDIR/settings.cfg
+  cp tmp/cfg.tmp $CONFIGDIR/settings.cfg
   MESG="Settingsdatei wurde unter "$CONFIGDIR"/settings.cfg gespeichert"; tellme ;
   MESG="Sie koennen jetzt 'getedit -cu' aufrufen, um die Settingsdatei zu benutzen"; tellme ; announce;
   exit;
 fi
-
+else
+ MESG="USE_CONFIG: $USE_CONFIG"
+fi
+}
+config()
+{
 . /tmp/cfg.tmp
 MESG=`cat /tmp/cfg.tmp`; tellme;
 
@@ -525,7 +536,7 @@ if [ $RELOAD = "yes" ]; then
   pzapit -c
   MESG="Kanallisten wurden erfolgreich geladen";  tellme;
  else
-  RELOADFUNCTION='reloadSettings'
+  RELOADFUNCTION='reloadUserBouquets'
   if wget $QUIET $PROXY http://127.0.0.1/cgi-bin/$RELOADFUNCTION; then
   RESULT=`cat $RELOADFUNCTION`;
    for LINES in $RESULT; do
@@ -581,13 +592,19 @@ MESG="\Neustart:"
 install_getset()
 {
 MESG="Installation von getset unter - "$INSTALLGUI"\nInstallationsverzeichnis: "$INSTALLDIR;  tellme;
-
+if [ ! -e $PLUGINSDIR ]; then
+ mkdir $PLUGINSDIR
+fi
 mv $INSTALLDIR/getset.1 $PLUGINSDIR/getset.so
 chmod 500 $PLUGINSDIR/getset.so
 MESG=$PLUGINSDIR"/getset.so kopiert";  tellme;
 
 mv /var/plugins/getset.2 $PLUGINSDIR/getset.cfg
 MESG=$PLUGINSDIR"/getset.cfg kopiert";  tellme;
+
+if [ ! -e $SETTINGSDIR ]; then
+ mkdir $SETTINGSDIR
+fi
 
 # Für Enigma und Doppel-GUI
 if [ $INSTALLGUI != "n" ]; then
@@ -615,6 +632,7 @@ elif [ $INSTALLGUI = "n" ]; then
   rm $INSTALLDIR/getset.4
   rm $INSTALLDIR/getset.5
   rm $INSTALLDIR/getset.6
+  rm $INSTALLDIR/getset.6a
   rm $INSTALLDIR/getset.7
 fi
 # Für Neutrino und Doppel-GUI
@@ -652,7 +670,7 @@ if [ $INTERNET_UPDATE = "yes" ]; then
  if wget $QUIET $PROXY $UPARAM $UPDATEURI"/version" ; then
   MESG="Versionsnr. wird ueberprueft"; tellme;
  fi
- if [ -e /tmp/..actual_getset_version ]; then
+ if [ -e /tmp/.actual_getset_version ]; then
  . /tmp/.actual_getset_version
   if [ $UPDATEVERSION = $VERSION ]; then
    MESG="Die aktuelle Version ist bereits installiert";  tellme;
@@ -730,12 +748,9 @@ done
 
 set_standards
 check_system
-if [ $USE_CONFIG = "yes" ]; then
- init
-fi
-if [ $USE_CONFIG = "no" ]; then
- auto_init
-fi
+read_cfgfile
+read_bouquets
+config
 check_free
 keep_marked
 make_tmp_dir

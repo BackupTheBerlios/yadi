@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# getset v0.$Revision: 1.1 $
+# getset v0.$Revision: 1.2 $
 # Copyright (c) 2004 essu@no-enigma.de, Germany. All rights reserved.
 #
-# $Id: getset.7,v 1.1 2004/03/06 12:57:39 essu Exp $
+# $Id: getset.7,v 1.2 2004/03/07 12:56:26 essu Exp $
 # aktuelle Versionen gibtes hier
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/patches/getset/Attic/getset.7,v $
 #
@@ -66,8 +66,10 @@ echo $TYPE"-CONFIG wird gelesen"
    esac
    N=`expr $N + 1`
    case $TYPE in
-     SAT, SORT) echo $TYPE$N"="$DATA >>/tmp/cfg.tmp;;
-     CONFIG, EXPERT) echo $DATA"="$YES >>/tmp/cfg.tmp;;
+     SAT) echo $TYPE$N"="$DATA >>/tmp/cfg.tmp;;
+     SORT) echo $TYPE$N"="$DATA >>/tmp/cfg.tmp;;
+     CONFIG)  echo $DATA"="$YES >>/tmp/cfg.tmp;;
+     EXPERT) echo $DATA"="$YES >>/tmp/cfg.tmp;;
    esac
   fi
  done

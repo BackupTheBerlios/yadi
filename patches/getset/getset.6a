@@ -1,4 +1,4 @@
-#NAME CONFIG - Expertenoptionen / getset v0.$Revision: 1.1 $
+#NAME EXPERT - Weitere Optionen / getset v0.$Revision: 1.2 $
 #SERVICE: 1:64:11:0:0:0:0:0:0:0:
 #DESCRIPTION: RELOAD - Laden der Settings ohne Reboot(ab lucgas 15.02.2004)
 #SERVICE: 1:64:12:0:0:0:0:0:0:0:
