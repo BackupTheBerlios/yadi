@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.1 2004/03/29 20:28:19 essu Exp $
+# $Id: yadi,v 1.2 2004/03/31 19:10:17 dietmarw Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -31,7 +31,7 @@
 #
 #MAIN
 
-VERSION="yadi v. $Revision: 1.1 $"
+VERSION="yadi v. $Revision: 1.2 $"
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
 for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image neutrino enigma
@@ -43,6 +43,7 @@ do
   exit;
  fi
 done
+. $SCRIPTS/check
 . $SCRIPTS/prepare
 # Nur konfigurieren, falls kein Fehler aufgetreten ist
 if [ -e $ROOT/.mkheadall_error ];then
