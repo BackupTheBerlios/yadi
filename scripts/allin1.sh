@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# allin1 $Id: allin1.sh,v 1.14 2004/03/08 16:05:55 acoo Exp $
+# allin1 $Id: allin1.sh,v 1.15 2004/03/10 19:36:24 essu Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
@@ -36,11 +36,13 @@ RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig $Revision: 1.14 $ enthalten
+VERSION=" version$Revision: 1.15 $" 	# Zeilenlaenge: genau 15 Zeichen
 # Pfad zu den geaenderten und sonstigen Dateien
 CHANGE_DIR=$RT/patches/head_changed
 CHANGE_ARC_DIR=$RT/change_arcs
-CHANGE_ARC=head_changed_A # Datei mit den Aenderungen (ohne .tar.gz)
+CHANGE_ARC=head_changed # Datei mit den Aenderungen (ohne .tar.gz)
+# Pfad zu mklibs setzen
+export MKLIBS=$CVS/hostapps/mklibs/mklibs.py
 #
 # Nun braucht nichts mehr angepasst zu werden
 # ------------------------------------------------------
@@ -55,12 +57,15 @@ if [ $USE_CHANGE_ARC = "yes" ]; then
   exit 1;  # ohne Patches kein Image
  else
   # Aenderungsarchiv entpacken
-  cd $RT
+  if [ ! -d $RT/patches ]; then
+   mkdir $RT/patches
+  fi
+  cd $RT/patches
   cp $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz .
   gzip -d $CHANGE_ARC.tar.gz
   tar -xpf $CHANGE_ARC.tar
   rm $CHANGE_ARC.tar
-  CHANGE_DIR=$RT/$CHANGE_ARC 	# es ist vorausgesetzt, das Archiv enthaelt einen Ordner mit dem Archivnamen (ohne '.tar.gz')
+  CHANGE_DIR=$RT/patches/$CHANGE_ARC 	# es ist vorausgesetzt, das Archiv enthaelt einen Ordner mit dem Archivnamen (ohne '.tar.gz')
  fi
 fi
 echo "Die Aenderungs-Daten wie Patches etc. befinden sich in "$CHANGE_DIR
@@ -109,30 +114,21 @@ if [ $? = 0 ]; then
 fi
 }
 
-config()
+get_cvs()
 {
-# Pfad zu mklibs setzen
-export MKLIBS=$CVS/hostapps/mklibs/mklibs.py
-# Nur konfigurieren, falls kein Fehler aufgetreten ist
-if [ -e $RT/.mkheadall_error ];then
- echo
- echo "Beim letzten Durchgang ist ein Fehler aufgetreten"
- echo "Make-Vorgang wird an der letzten Position fortgesetzt"
- echo
-else
-  #  DBOX loeschen, falls es existiert, DBOX-Verzeichnis erzeugen
+  # DBOX loeschen, falls es existiert, DBOX-Verzeichnis erzeugen
   if [ -d $DBOX ]; then
     rm -rf $DBOX
   fi
   mkdir $DBOX
   cd $DBOX
 
-   if [ $RM_CVS = "yes" ]; then
-    # Archive verschieben
-    if test -d $CVS/cdk/Archive
-    then
-     mv $CVS/cdk/Archive $RT
-    fi
+  if [ $RM_CVS = "yes" ]; then
+   # Archive verschieben
+   if test -d $CVS/cdk/Archive
+   then
+    mv $CVS/cdk/Archive $RT
+   fi
    #Inhalt von CVS loeschen
    rm -rf $CVS
    mkdir $CVS
@@ -141,33 +137,38 @@ else
    cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 co .
    if test -d $RT/Archive
    then
-   if  ! test -d $RT/Archive
+   if ! test -d $RT/Archive
     then
      mkdir $CVS/cdk
     fi
     mv $RT/Archive mv $CVS/cdk
    fi
- else
-  cd $CVS
-  cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 up -dP
- fi
+  else
+   cd $CVS
+   cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 up -dP
+  fi
+}
+
+patch_cvs()
+{
+ # Patches kopieren
+ patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
+ # Neu: Aenderungen fuer 1xI schon im CVS
+ cp $CVS/cdk/Patches/u-boot.1x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
+ # Die Datei aus dem CVS fuer JFFS2-Only patchen
+ patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
+ # DVR in Enigma aktivieren
+ patch -N -p0 $CVS/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp $CHANGE_DIR/Patches/enigma_dvr.diff
+}
+
+configure()
+{
  cd $CVS/cdk/
-
-  ./autogen.sh
-  ./configure --prefix=$DBOX --with-cvsdir=$CVS --enable-maintainer-mode --with-targetruleset=flash
-
-  # Kernel-Verzeichnisse erstellen und Patches kopieren
-  #make .linuxdir
-  make .deps/linuxdir
-
-  patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
-
-  # Neu: Aenderungen fuer 1xI schon im CVS
-  cp $CVS/cdk/Patches/u-boot.1x-flash.dbox2.h ../boot/u-boot/include/configs/dbox2.h
-
-  # Die Datei aus dem CVS fuer JFFS2-Only patchen
-  patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
-fi
+ ./autogen.sh
+ ./configure --prefix=$DBOX --with-cvsdir=$CVS --enable-maintainer-mode --with-targetruleset=flash
+ # Kernel-Verzeichnisse erstellen
+ #make .linuxdir
+ make .deps/linuxdir
 }
 
 make_it()
@@ -269,16 +270,6 @@ then
   exit 1
 fi
 
-# Udpstreampes ins Flash aufnehmen
-cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
-
-# Top kopieren
-cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
-
-# rcs kopieren
-patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
-# cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
-
 # MKLibs ausfuehren
 make flash-lib
 if ! test -e $DBOX/cdkflash/.lib
@@ -294,6 +285,19 @@ then
   echo FEHLER: make flash-dvb-tools abgebrochen!!
   exit 1
 fi
+
+# Udpstreampes ins Flash aufnehmen
+cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
+
+# Top kopieren
+cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
+
+# eraseall ins Flash aufnehmen
+cp $DBOX/cdkroot/sbin/eraseall $DBOX/cdkflash/root/sbin
+
+# rcs kopieren
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
+# cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # Logos kopieren
 mkdir $DBOX/cdkflash/root/var/tuxbox/boot
@@ -346,7 +350,6 @@ cd $DBOX/cdkflash/root/sbin/
 
 #rm inetd
 #ln -s ../bin/busybox inetd
-
 ln -s ../bin/busybox ../bin/ps
 
 GUI="neutrino" # Der Zusammenbau der Images ist jetzt in cat_images
@@ -396,6 +399,32 @@ then
   exit 1
 fi
 
+# MKLibs ausfuehren
+make flash-lib
+if ! test -e $DBOX/cdkflash/.lib
+then
+  echo FEHLER: make flash-lib abgebrochen!!
+  exit 1
+fi
+
+# dvb-tools ins Flash aufnehmen
+cd $CVS/cdk
+make flash-dvb-tools
+if ! test -e $DBOX/cdkflash/.part_dvb_tools
+then
+  echo FEHLER: make flash-dvb-tools abgebrochen!!
+  exit 1
+fi
+
+# Sprachen installieren
+cp -r $CHANGE_DIR/enigma/lib/ $DBOX/cdkflash/root
+cd $CVS/apps/tuxbox/enigma/po/
+make install
+mkdir $DBOX/cdkflash/root/share/locale
+cp -r $DBOX/cdkroot/share/locale/de/ $DBOX/cdkflash/root/share/locale/
+cp -r $DBOX/cdkroot/share/locale/fr/ $DBOX/cdkflash/root/share/locale/
+cp $CHANGE_DIR/Configs/locales $DBOX/cdkflash/root/share/locale/
+
 # Strace kopieren
 cp $DBOX/cdkroot/bin/strace $DBOX/cdkflash/root/bin
 
@@ -411,6 +440,9 @@ cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
 # Top kopieren
 cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 
+# eraseall ins Flash aufnehmen
+cp $DBOX/cdkroot/sbin/eraseall $DBOX/cdkflash/root/sbin
+
 # rcs kopieren
 patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
 cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
@@ -419,34 +451,8 @@ cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
 #cp $DBOX/cdkroot/bin/locale $DBOX/cdkflash/root/bin/
 #cp $DBOX/cdkroot/bin/localedef $DBOX/cdkflash/root/bin/
 
-# MKLibs ausfuehren
-make flash-lib
-if ! test -e $DBOX/cdkflash/.lib
-then
-  echo FEHLER: make flash-lib abgebrochen!!
-  exit 1
-fi
-
 # genlocales kopieren
 #cp $CHANGE_DIR/enigma/genlocales $DBOX/cdkflash/root/bin
-
-# Sprachen installieren
-cp -r $CHANGE_DIR/enigma/lib/ $DBOX/cdkflash/root
-cd $CVS/apps/tuxbox/enigma/po/
-make install
-mkdir $DBOX/cdkflash/root/share/locale
-cp -r $DBOX/cdkroot/share/locale/de/ $DBOX/cdkflash/root/share/locale/
-cp -r $DBOX/cdkroot/share/locale/fr/ $DBOX/cdkflash/root/share/locale/
-cp $CHANGE_DIR/Configs/locales $DBOX/cdkflash/root/share/locale/
-
-# dvb-tools ins Flash aufnehmen
-cd $CVS/cdk
-make flash-dvb-tools
-if ! test -e $DBOX/cdkflash/.part_dvb_tools
-then
-  echo FEHLER: make flash-dvb-tools abgebrochen!!
-  exit 1
-fi
 
 # Logos kopieren
 mkdir $DBOX/cdkflash/root/var/tuxbox/boot
@@ -497,9 +503,12 @@ cd $DBOX/cdkflash/root/sbin/
 
 ln -s ../bin/busybox ../bin/ps
 
-# /var/tuxbox/config/enigma erstellen
+# fehlende Verzeichnisse erstellen
 mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma
-
+mkdir $DBOX/cdkflash/root/hdd
+mkdir $DBOX/cdkflash/root/hdd/movie
+mkdir $DBOX/cdkflash/root/var/plugins
+mkdir $DBOX/cdkflash/root/var/tuxbox/plugins
 GUI="enigma" # Der Zusammenbau der Images ist jetzt in cat_images
 }
 
@@ -530,10 +539,23 @@ fi
 echo
 echo
 }
+
 #MAIN
 prepare
-config
+# Nur konfigurieren, falls kein Fehler aufgetreten ist
+if [ -e $RT/.mkheadall_error ];then
+ echo
+ echo "Beim letzten Durchgang ist ein Fehler aufgetreten"
+ echo "Make-Vorgang wird an der letzten Position fortgesetzt"
+ echo
+else
+ get_cvs
+ patch_cvs
+ configure
+fi
+
 make_it
+
 flfs
 
 neutrino
