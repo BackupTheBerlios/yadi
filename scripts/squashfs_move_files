@@ -1,4 +1,4 @@
-# $Id: squashfs_move_files,v 1.7 2004/04/15 12:45:35 essu Exp $
+# $Id: squashfs_move_files,v 1.8 2004/04/15 14:56:18 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -96,7 +96,7 @@ done
 
  ln -sf /share/tuxbox/neutrino/icons/shutdown.raw scan.raw
  ln -sf /share/tuxbox/neutrino/icons/shutdown.raw radiomode.raw
- ln -sf /share/tuxbox/neutrino/icons/shutdown.raw scan.pal
- ln -sf /share/tuxbox/neutrino/icons/shutdown.raw radiomode.pal
+ ln -sf /share/tuxbox/neutrino/icons/shutdown.pal scan.pal
+ ln -sf /share/tuxbox/neutrino/icons/shutdown.pal radiomode.pal
 
 cp $CHANGE_DIR/Patches/fstab.squashfs $DBOX/cdkflash/root/etc/fstab
