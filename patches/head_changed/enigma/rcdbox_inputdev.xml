@@ -75,13 +75,12 @@
    <action name="pageup" key="left" flags="mr" />
   </actionmap>
 
-  <actionmap name="mainmenu">
-   <action name="close" key="d-box" flags="mr" />
-  </actionmap>
-
   <actionmap name="mainmenu" style="_new">
    <action name="close" key="home" flags="mr" />
+   <action name="prev" key="left" flags="mr" />
+   <action name="next" key="right" flags="mr" />
   </actionmap>
+
   <actionmap name="enigmaMain">
    <action name="showMainMenu" key="d-box" flags="m" />
    <action name="standby_press" key="power" flags="m" />

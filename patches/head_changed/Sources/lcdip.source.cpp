@@ -485,6 +485,8 @@ int main()
 */
         display.draw_string(0, 10, "               ");
         display.draw_string(0, 22, "  IP gesetzt   ");
+        display.draw_string(0, 38, "               ");
+        display.draw_string(0, 55, "               ");
 	display.update();
 	return 0;
 }

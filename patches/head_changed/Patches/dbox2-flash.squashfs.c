@@ -1,5 +1,5 @@
 /*
- * $Id: dbox2-flash.squashfs.c,v 1.1 2004/04/01 21:18:13 alexh Exp $
+ * $Id: dbox2-flash.squashfs.c,v 1.2 2004/04/19 17:26:50 essu Exp $
  *
  * D-Box 2 flash driver
  */
@@ -39,13 +39,13 @@ static struct mtd_partition partition_info[]= {
 	},
 	{
 	.name		= "root (squashfs)",	
-	.size		= 6400 * 1024, 
+	.size		= 5888 * 1024, 
 	.offset		= MTDPART_OFS_APPEND, 
 	.mask_flags	= 0
 	},
 	{
 	.name		= "var (jffs2)",
-	.size		= 896 * 1024, 
+	.size		= 1408 * 1024, 
 	.offset		= MTDPART_OFS_APPEND, 
 	.mask_flags	= 0
 	},
