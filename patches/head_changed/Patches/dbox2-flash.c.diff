@@ -1,0 +1,26 @@
+--- dbox2-flash.c	2004-01-13 19:38:29.000000000 +0000
++++ dbox2-flash.c.new	2003-10-29 15:30:01.000000000 +0000
+@@ -26,20 +26,14 @@
+ 	.mask_flags	= MTD_WRITEABLE
+ 	},
+ 	{
+-	.name		= "flfs (ppcboot)",
++	.name		= "flfs (u-boot)",
+ 	.size		= 128 * 1024, 
+ 	.offset		= MTDPART_OFS_APPEND, 
+ 	.mask_flags	= 0
+ 	},
+ 	{
+-	.name		= "root (cramfs)",	
+-	.size		= 7040 * 1024, 
+-	.offset		= MTDPART_OFS_APPEND, 
+-	.mask_flags	= 0
+-	},
+-	{
+-	.name		= "var (jffs2)",
+-	.size		= 896 * 1024, 
++	.name		= "root (jffs2)",	
++	.size		= 7936 * 1024, 
+ 	.offset		= MTDPART_OFS_APPEND, 
+ 	.mask_flags	= 0
+ 	},

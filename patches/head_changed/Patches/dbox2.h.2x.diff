@@ -1,0 +1,14 @@
+--- dbox2.h	2004-01-13 21:35:20.000000000 +0100
++++ dbox2.h.2x	2003-12-06 18:59:47.000000000 +0100
+@@ -58,10 +58,10 @@
+ #undef	CONFIG_BOOTARGS
+ 
+ #define	CONFIG_BOOTCOMMAND							\
++	"protect off 10040000 107fffff; "					\
+ 	"fsload; setenv bootargs root=/dev/mtdblock2 rw console=$(console); "	\
+ 	"bootm"
+ 
+-
+ #define	CONFIG_EXTRA_ENV_SETTINGS 						\
+ 	"console=ttyS0\0"
+ 
