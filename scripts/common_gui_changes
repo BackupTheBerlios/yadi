@@ -1,11 +1,11 @@
-# $Id: neutrino_enigma,v 1.2 2004/04/03 12:20:13 essu Exp $
+# $Id: common_gui_changes,v 1.1 2004/04/05 08:54:32 essu Exp $
 # is part of yadi-script-pack
 #
-# Copyright (c) 2004 AlexH Germany. All rights reserved.
+# Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
 # Mail: alexh@berlios.de
 #
 # aktuelle Versionen gibt es hier:
-# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/Attic/neutrino_enigma,v $
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/common_gui_changes,v $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -25,73 +25,8 @@
 #
 # -------------------------------------------------------
 #
+
 cd $CVS/cdk
-
-# Dateien in cdkflash loeschen
-rm -rf $DBOX/cdkflash/
-
-# Neutrino ins Flash aufnehmen
-make flash-neutrino
-if ! test -e $DBOX/cdkflash/.part_neutrino
-then
-  echo FEHLER: make flash-neutrino abgebrochen!!
-  exit 1
-fi
-
-# Enigma ins Flash aufnehmen
-cd $CVS/cdk
-make flash-enigma
-if ! test -e $DBOX/cdkflash/.part_enigma
-then
-  echo FEHLER: make flash-enigma abgebrochen!!
-  exit 1
-fi
-
-# LCDMenu erstellen
-make flash-lcdmenu
-cp $CHANGE_DIR/Configs/lcdmenu.conf $DBOX/cdkflash/root/var/tuxbox/config/
-
-# ftpd ins Flash aufnehmen
-make flash-ftpd
-if ! test -e $DBOX/cdkflash/.part_ftpd
-then
-  echo FEHLER: make flash-ftpd abgebrochen!!
-  exit 1
-fi
-
-# telnetd ins Flash aufnehmen
-make flash-telnetd
-if ! test -e $DBOX/cdkflash/.part_telnetd
-then
-  echo FEHLER: make flash-telnetd abgebrochen!!
-  exit 1
-fi
-
-# MKLibs ausfuehren
-make flash-lib
-if ! test -e $DBOX/cdkflash/.lib
-then
-  echo FEHLER: make flash-lib abgebrochen!!
-  exit 1
-fi
-
-# Sprachen fuer Enigma installieren
-cp -r $CHANGE_DIR/enigma/lib/ $DBOX/cdkflash/root
-cd $CVS/apps/tuxbox/enigma/po/
-make install
-mkdir $DBOX/cdkflash/root/share/locale
-cp -r $DBOX/cdkroot/share/locale/de/ $DBOX/cdkflash/root/share/locale/
-cp -r $DBOX/cdkroot/share/locale/fr/ $DBOX/cdkflash/root/share/locale/
-cp $CHANGE_DIR/Configs/locales $DBOX/cdkflash/root/share/locale/
-
-# Strace fuer Enigma kopieren
-cp $DBOX/cdkroot/bin/strace $DBOX/cdkflash/root/bin
-
-# Fonts fuer Enigma kopieren
-cp $DBOX/cdkroot/share/fonts/* $DBOX/cdkflash/root/share/fonts/
-
-# Scart.conf fuer Enigma kopieren
-cp $DBOX/cdkroot/var/tuxbox/config/scart.conf $DBOX/cdkflash/root/var/tuxbox/config/
 
 # Udpstreampes ins Flash aufnehmen
 cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
@@ -132,7 +67,6 @@ patch -N -p0 $DBOX/cdkflash/root/etc/init.d/start_neutrino $CHANGE_DIR/neutrino/
 chmod a+x $DBOX/cdkflash/root/etc/init.d/start_neutrino
 chmod a+x $DBOX/cdkflash/root/etc/init.d/start_enigma
 
-
 # Root-Home erstellen
 # mkdir $DBOX/cdkflash/root/root
 
@@ -144,11 +78,9 @@ cp $CHANGE_DIR/bin/lcdip $DBOX/cdkflash/root/bin/
 cp $CHANGE_DIR/bin/chkucodes $DBOX/cdkflash/root/sbin/
 
 # Image-Infos kopieren, falls existent
-if test -e $VER.neutrino
-then
-  cp $VER.neutrino $DBOX/cdkflash/root/.image_version
+if  [ -e $VE ]; then
+  cp $VE $DBOX/cdkflash/root/.version
 fi
-
 # Teletext auf blaue Taste legen
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.cfg $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.cfg
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.so $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.so
@@ -162,13 +94,3 @@ cd $DBOX/cdkflash/root/sbin/
 #rm inetd
 #ln -s ../bin/busybox inetd
 ln -s ../bin/busybox ../bin/ps
-
-# fehlende Verzeichnisse fuer Enigma erstellen
-mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma
-mkdir $DBOX/cdkflash/root/hdd
-mkdir $DBOX/cdkflash/root/hdd/movie
-mkdir $DBOX/cdkflash/root/var/plugins
-mkdir $DBOX/cdkflash/root/var/tuxbox/plugins
-
-
-GUI="all" # Der Zusammenbau der Images ist jetzt in cat_images

@@ -1,11 +1,11 @@
-# $Id: squashfs_create_image,v 1.2 2004/04/05 08:51:08 essu Exp $
+# $Id: neutrino_changes,v 1.1 2004/04/05 08:54:32 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
 # Mail: alexh@berlios.de
 #
 # aktuelle Versionen gibt es hier:
-# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/squashfs_create_image,v $
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/neutrino_changes,v $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -25,10 +25,16 @@
 #
 # -------------------------------------------------------
 #
-cd $DBOX/cdkflash
-fakeroot mkfs.jffs2 -b -e 131072 -p -o kernel.img -r kernel
-fakeroot mksquashfs root root.img -be
-fakeroot mkfs.jffs2 -b -e 131072 -p -o var.img -r var
-cp $CHANGE_DIR/Patches/flashmanage.squashfs.pl $CVS/hostapps/flash/flashmanage.pl
-fakeroot $CVS/hostapps/flash/flashmanage.pl -i $IMAGES/$IMG_PRE"squashfs_head_1x.img" -o build --part ppcboot=$DBOX/flfs/squashfs1x.img --part kernel=kernel.img --part root=root.img --part var=var.img
-fakeroot $CVS/hostapps/flash/flashmanage.pl -i $IMAGES/$IMG_PRE"squashfs_head_2x.img" -o build --part ppcboot=$DBOX/flfs/squashfs2x.img --part kernel=kernel.img --part root=root.img --part var=var.img
+
+cd $CVS/cdk
+
+# Image-Infos kopieren, falls existent
+if test -e $VER.neutrino
+then
+  cp $VER.neutrino $DBOX/cdkflash/root/.image_version
+fi
+if  [ -e $VE ]; then
+  cp $VE $DBOX/cdkflash/root/.version
+fi
+
+

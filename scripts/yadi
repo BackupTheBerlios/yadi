@@ -1,12 +1,12 @@
 #!/bin/sh
-# $Id: yadi,v 1.11 2004/04/03 23:01:39 dietmarw Exp $
+# $Id: yadi,v 1.12 2004/04/05 08:51:08 essu Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
 # Copyright (c) 2004 essu, acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
 # Mail: essu@berlios.de
-# 
+#
 #
 # aktuelle Versionen gibt es hier:
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/yadi,v $
@@ -32,26 +32,16 @@
 #MAIN
 
 
-VERSION="yadi v. $Revision: 1.11 $"
+VERSION="yadi v. $Revision: 1.12 $"
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
-for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image neutrino enigma neutrino_enigma squashfs_flfs squashfs_kernel squashfs_move_files squashfs_create_image
-do
- if [ -e $SCRIPTS/$FILE ]; then
-  continue;
- else
-  echo "$SCRIPTS/$FILE nicht gefunden"
-  exit;
- fi
-done
+
 . $SCRIPTS/prepare
 
 # Logfile Anfang
-echo ""
-echo "Alle weiteren Ausgaben findet Ihr in der $ROOT/$IMG_PRE.log Datei"
-{
-
-. $SCRIPTS/check 
+#echo ""
+#echo "Alle weiteren Ausgaben findet Ihr in der $ROOT/$IMG_PRE.log Datei"
+#{
 
 # Nur konfigurieren, falls kein Fehler aufgetreten ist
 if [ -e $ROOT/.mkheadall_error ];then
@@ -60,17 +50,37 @@ if [ -e $ROOT/.mkheadall_error ];then
  echo "Make-Vorgang wird an der letzten Position fortgesetzt"
  echo
 else
+ for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image build_gui enigma_changes neutrino_changes common_gui_changes squashfs_flfs squashfs_kernel squashfs_move_files squashfs_create_image
+ do
+  if [ -e $SCRIPTS/$FILE ]; then
+   continue;
+  else
+   echo "$SCRIPTS/$FILE nicht gefunden"
+   exit;
+  fi
+ done
+ . $SCRIPTS/check
  . $SCRIPTS/get_cvs
  . $SCRIPTS/configure
  . $SCRIPTS/patch_cvs
 fi
 . $SCRIPTS/make_it
 . $SCRIPTS/flfs
-. $SCRIPTS/neutrino
+GUI="neutrino"
+. $SCRIPTS/build_gui
+. $SCRIPTS/neutrino_changes
+. $SCRIPTS/common_gui_changes
 . $SCRIPTS/cat_image
-. $SCRIPTS/enigma
+GUI="enigma"
+. $SCRIPTS/build_gui
+. $SCRIPTS/enigma_changes
+. $SCRIPTS/common_gui_changes
 . $SCRIPTS/cat_image
-. $SCRIPTS/neutrino_enigma
+GUI="all"
+. $SCRIPTS/build_gui
+. $SCRIPTS/neutrino_changes
+. $SCRIPTS/enigma_changes
+. $SCRIPTS/common_gui_changes
 . $SCRIPTS/squashfs_flfs
 . $SCRIPTS/squashfs_kernel
 . $SCRIPTS/squashfs_move_files
@@ -83,6 +93,6 @@ echo Diese sollten sich jetzt in $IMAGES befinden.
 echo
 echo
 
-} > $ROOT/$IMG_PRE.log 2>&1
+#} > $ROOT/$IMG_PRE.log 2>&1
 
 exit;

@@ -1,0 +1,100 @@
+# $Id: build_gui,v 1.1 2004/04/05 08:54:32 essu Exp $
+# is part of yadi-script-pack
+#
+# Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
+# Mail: alexh@berlios.de
+# Mail: essu@berlios.de
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/build_gui,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+
+cd $CVS/cdk
+
+# Dateien in cdkflash loeschen
+rm -rf $DBOX/cdkflash/
+
+# Neutrino ins Flash aufnehmen
+if  [ ! $GUI="enigma" ]; then
+ make flash-neutrino
+ if ! test -e $DBOX/cdkflash/.part_neutrino
+ then
+   echo FEHLER: make flash-neutrino abgebrochen!!
+   exit 1
+ fi
+fi
+
+# Enigma ins Flash aufnehmen
+if  [ ! $GUI="neutrino" ]; then
+ make flash-enigma
+ if ! test -e $DBOX/cdkflash/.part_enigma
+ then
+  echo FEHLER: make flash-enigma abgebrochen!!
+  exit 1
+ fi
+fi
+
+# Plugins ins Flash aufnehmen
+make flash-plugins
+if ! test -e $DBOX/cdkflash/.part_plugins
+then
+  echo FEHLER: make flash-plugins abgebrochen!!
+  exit 1
+fi
+
+# dvb-tools ins Flash aufnehmen
+make flash-dvb-tools
+ if ! test -e $DBOX/cdkflash/.part_dvb_tools
+ then
+  echo FEHLER: make flash-dvb-tools abgebrochen!!
+  exit 1
+ fi
+#fi
+
+# LCDMenu erstellen
+make flash-lcdmenu
+cp $CHANGE_DIR/Configs/lcdmenu.conf $DBOX/cdkflash/root/var/tuxbox/config/
+
+# ftpd ins Flash aufnehmen
+make flash-ftpd
+if ! test -e $DBOX/cdkflash/.part_ftpd
+then
+  echo FEHLER: make flash-ftpd abgebrochen!!
+  exit 1
+fi
+
+# telnetd ins Flash aufnehmen
+make flash-telnetd
+if ! test -e $DBOX/cdkflash/.part_telnetd
+then
+  echo FEHLER: make flash-telnetd abgebrochen!!
+  exit 1
+fi
+
+# MKLibs ausfuehren
+make flash-lib
+if ! test -e $DBOX/cdkflash/.lib
+then
+  echo FEHLER: make flash-lib abgebrochen!!
+  exit 1
+fi
+
+

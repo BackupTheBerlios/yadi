@@ -1,0 +1,72 @@
+# $Id: enigma_changes,v 1.1 2004/04/05 08:54:32 essu Exp $
+# is part of yadi-script-pack
+#
+# Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
+# Mail: alexh@berlios.de
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/enigma_changes,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+
+cd $CVS/cdk
+
+# Sprachen fuer Enigma installieren
+cp -r $CHANGE_DIR/enigma/lib/ $DBOX/cdkflash/root
+cd $CVS/apps/tuxbox/enigma/po/
+make install
+mkdir $DBOX/cdkflash/root/share/locale
+cp -r $DBOX/cdkroot/share/locale/de/ $DBOX/cdkflash/root/share/locale/
+cp -r $DBOX/cdkroot/share/locale/fr/ $DBOX/cdkflash/root/share/locale/
+cp $CHANGE_DIR/Configs/locales $DBOX/cdkflash/root/share/locale/
+
+# Strace fuer Enigma kopieren (???)
+#cp $DBOX/cdkroot/bin/strace $DBOX/cdkflash/root/bin
+
+# Fonts fuer Enigma kopieren
+cp $DBOX/cdkroot/share/fonts/* $DBOX/cdkflash/root/share/fonts/
+
+# Scart.conf fuer Enigma kopieren
+cp $DBOX/cdkroot/var/tuxbox/config/scart.conf $DBOX/cdkflash/root/var/tuxbox/config/
+
+# fehlende Verzeichnisse fuer Enigma erstellen
+mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma
+mkdir $DBOX/cdkflash/root/var/plugins
+mkdir $DBOX/cdkflash/root/var/tuxbox/plugins
+#fuer DVR
+mkdir $DBOX/cdkflash/root/hdd
+mkdir $DBOX/cdkflash/root/hdd/movies
+
+# Overflow loeschen
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/pictures/scan.mvi
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/help.xml
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox_inputdev.xml
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox2.xml
+
+# Tastaturbelegung aendern
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdbox_inputdev.xml
+cp $CHANGE_DIR/Patches/enigma/rcdbox_inputdev.xml $DBOX/cdkflash/root/share/tuxbox/enigma/resources
+
+# Image-Infos kopieren, falls existent
+if test -e $VER.enigma
+then
+  cp $VER.neutrino $DBOX/cdkflash/root/.image_version
+fi
+

@@ -1,32 +1,75 @@
+# $Id: squashfs_move_files,v 1.3 2004/04/05 08:51:08 essu Exp $
+# is part of yadi-script-pack
+#
+# Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
+# Mail: alexh@berlios.de
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/squashfs_move_files,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+cd $CVS/cdk
+
 # Root und Var trennen
 mv $DBOX/cdkflash/root/var/ $DBOX/cdkflash/
 mkdir $DBOX/cdkflash/root/var/
+mkdir $DBOX/cdkflash/var/etc
 
-mkdir $DBOX/cdkflash/var/etc  
 cd $DBOX/cdkflash/root/etc/
 
-mv resolv.conf ../../var/etc/
+mv resolv.conf $DBOX/cdkflash/var/etc/
 ln -sf /var/etc/resolv.conf resolv.conf
 
-mv network/ ../../var/etc/
+mv network/ $DBOX/cdkflash/var/etc/
 ln -sf /var/etc/network/ network
 
-touch ../../var/etc/issue.net
+touch $DBOX/cdkflash/var/etc/issue.net
 ln -sf /var/etc/issue.net issue.net
 
-mv group ../../var/etc
+mv group $DBOX/cdkflash/var/etc
 ln -sf /var/etc/group group
- 
-mv hosts ../../var/etc
+
+mv hosts $DBOX/cdkflash/var/etc
 ln -sf /var/etc/hosts hosts
 
-mv passwd ../../var/etc
+mv passwd $DBOX/cdkflash/var/etc
 ln -sf /var/etc/passwd passwd
 
 mkdir $DBOX/cdkflash/var/bin
 mv $DBOX/cdkflash/root/bin/camd2 $DBOX/cdkflash/var/bin/
+
 cd $DBOX/cdkflash/root/bin
+
 ln -sf /var/bin/camd2 camd2
+
+#EnigmaDVR
+cd $DBOX/cdkflash/root
+rm -rf hdd
+rm -rf mnt
+mkdir $DBOX/cdkflash/var/mnt
+mkdir $DBOX/cdkflash/var/mnt/movies
+
+cd $DBOX/cdkflash/root
+
+ln -sf /var/mnt mnt
+ln -sf /var/mnt hdd
 
 cd $DBOX/cdkflash/var/
 ln -sf /tmp tmp
@@ -34,5 +77,22 @@ ln -sf log tmp
 ln -sf pid tmp
 ln -sf run tmp
 
-cp $CHANGE_DIR/Patches/fstab.squashfs $DBOX/cdkflash/root/etc/fstab
+#Platz sparen
+# einige Spiele entfernen
+for PLUGIN in solitair lemmings tuxcal sol pacman tank yahtzee mines snake outdoor
+do
+ if [ -e $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.so ]; then
+  rm $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.so
+  rm $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.cfg
+ fi
+done
+# Neutrino-Overflow loeschen
+ rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/scan.raw
+ rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/radiomode.raw
 
+ cd $DBOX/cdkflash/root/share/tuxbox/neutrino/icons
+
+ ln -sf /share/tuxbox/neutrino/icons/shutdown.raw scan.raw
+ ln -sf /share/tuxbox/neutrino/icons/shutdown.raw radiomode.raw
+
+cp $CHANGE_DIR/Patches/fstab.squashfs $DBOX/cdkflash/root/etc/fstab
