@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.3 2004/03/31 19:23:36 dietmarw Exp $
+# $Id: yadi,v 1.4 2004/04/01 22:22:49 alexh Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -32,10 +32,10 @@
 #MAIN
 
 
-VERSION="yadi v. $Revision: 1.3 $"
+VERSION="yadi v. $Revision: 1.4 $"
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
-for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image neutrino enigma
+for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image neutrino enigma neutrino_enigma squashfs_flfs squashfs_kernel squashfs_move_files squashfs_create_image
 do
  if [ -e $SCRIPTS/$FILE ]; then
   continue;
@@ -67,6 +67,12 @@ fi
 . $SCRIPTS/cat_image
 . $SCRIPTS/enigma
 . $SCRIPTS/cat_image
+. $SCRIPTS/neutrino_enigma
+. $SCRIPTS/squashfs_flfs
+. $SCRIPTS/squashfs_kernel
+. $SCRIPTS/squashfs_move_files
+. $SCRIPTS/squashfs_create_image
+
 echo
 echo
 echo Images erstellt!
