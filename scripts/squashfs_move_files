@@ -35,4 +35,4 @@ ln -sf pid tmp
 ln -sf run tmp
 
 cp $CHANGE_DIR/Patches/fstab.squashfs $DBOX/cdkflash/root/etc/fstab
-cp $CHANGE_DIR/Patches/rcS $DBOX/cdkflash/root/etc/init.d/rcS
+
