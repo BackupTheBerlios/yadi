@@ -1,4 +1,4 @@
-# $Id: squashfs_move_files,v 1.5 2004/04/05 23:22:32 essu Exp $
+# $Id: squashfs_move_files,v 1.6 2004/04/07 13:04:47 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -79,7 +79,7 @@ ln -sf run tmp
 
 #Platz sparen
 # einige Spiele entfernen
-for PLUGIN in solitair tank lemmings # sol pacman yahtzee mines snake outdoor tuxcal
+for PLUGIN in solitair tank # lemmings  sol pacman yahtzee mines snake outdoor tuxcal
 do
  if [ -e $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.so ]; then
   rm $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.so
@@ -89,10 +89,14 @@ done
 # Neutrino-Overflow loeschen
  rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/scan.raw
  rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/radiomode.raw
+ rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/scan.pal
+ rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/radiomode.pal
 
  cd $DBOX/cdkflash/root/share/tuxbox/neutrino/icons
 
  ln -sf /share/tuxbox/neutrino/icons/shutdown.raw scan.raw
  ln -sf /share/tuxbox/neutrino/icons/shutdown.raw radiomode.raw
+ ln -sf /share/tuxbox/neutrino/icons/shutdown.raw scan.pal
+ ln -sf /share/tuxbox/neutrino/icons/shutdown.raw radiomode.pal
 
 cp $CHANGE_DIR/Patches/fstab.squashfs $DBOX/cdkflash/root/etc/fstab

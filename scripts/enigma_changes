@@ -1,4 +1,4 @@
-# $Id: enigma_changes,v 1.2 2004/04/05 23:17:49 essu Exp $
+# $Id: enigma_changes,v 1.3 2004/04/07 13:04:47 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -61,12 +61,12 @@ rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox_inputdev.xml
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox2.xml
 
 # Tastaturbelegung aendern
-#rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdbox_inputdev.xml
-# cp $CHANGE_DIR/Patches/enigma/rcdbox_inputdev.xml $DBOX/cdkflash/root/share/tuxbox/enigma/resources
+mkdir $DBOX/cdkflash/var/tuxbox/enigma/resources
+cp $CHANGE_DIR/Patches/enigma/rcdbox_inputdev.xml $DBOX/cdkflash/var/tuxbox/enigma/resources/
 
 # Image-Infos kopieren, falls existent
 if test -e $VER.enigma
 then
-  cp $VER.neutrino $DBOX/cdkflash/root/.image_version
+  cp $VER.enigma $DBOX/cdkflash/root/.image_version
 fi
 
