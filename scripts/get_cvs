@@ -1,4 +1,4 @@
-# $Id: get_cvs,v 1.1 2004/03/29 20:28:19 essu Exp $
+# $Id: get_cvs,v 1.2 2004/04/03 22:42:27 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -34,13 +34,12 @@
     rm -rf $DBOX
   fi
   mkdir $DBOX
-  #cd $DBOX
-
+# Archive verschieben
+  if [ -d $CVS/cdk/Archive ]; then
+   mv $CVS/cdk/Archive $ARCHIVE
+  fi
   if [ $RM_CVS = "yes" ]; then
-   # Archive verschieben
-   if [ -d $CVS/cdk/Archive ]; then
-    mv $CVS/cdk/Archive $RT
-   fi
+
    #Inhalt von CVS loeschen
    rm -rf $CVS
    mkdir $CVS
@@ -64,5 +63,5 @@
   fi
   cd $CVS/cdk
   if [ ! -L Archive ];then
-   ln -s $RT/Archive Archive
+   ln -s $ARCHIVE Archive
   fi
