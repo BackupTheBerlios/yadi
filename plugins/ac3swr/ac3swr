@@ -1,0 +1,6 @@
+#!/bin/sh
+# $Id: ac3swr,v 1.1 2004/10/07 11:58:04 essu Exp $
+#
+/var/plugins/ac3swr.sh &
+exit;
+

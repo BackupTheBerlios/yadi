@@ -1,0 +1,63 @@
+
+<!-- CONFIG getset v0.$Revision: 1.1 $ -->
+
+ <Bouquet name="getsetSAT" hidden="0" locked="0">
+  <channel serviceID="ff01" name="Astra_19_2" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff00" name="- bis hier uebernehmen" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff02" name="Hotbird_13" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff03" name="Amos_1_4_0" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff04" name="Arab_26_0E" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff05" name="AstraEurob" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff06" name="Atlantic_B" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff07" name="EuropeStar" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff08" name="Eutel_2_F3" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff09" name="Eutel_W1_1" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff0a" name="Eutel_W3_7" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff0b" name="Eutel_W4_3" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff0c" name="Express_A1" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff0d" name="Hellas_2_3" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff0e" name="Hispa_30_0" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff0f" name="Intel_901_" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff10" name="Intel_903_" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff11" name="Kopernikus" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff12" name="Panam_1_45" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff13" name="Panam_6_43" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff14" name="Sirius_2_3" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff15" name="Telecom_2A" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff16" name="Telecom_2D" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff17" name="Telstar_11" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff18" name="Telstar_12" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff19" name="ThorIntel_" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff1a" name="TuerkEuras" tsid="ffff" onid="ffff" sat_position="0"/>
+ </Bouquet>
+ <Bouquet name="getsetSORT" hidden="0" locked="0">
+  <channel serviceID="ffb4" name="Sprache" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffb2" name="Satellit" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffb1" name="Anbieter" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffb7" name="FTA_PayTV" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffb6" name="Sendername" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff00" name="- bis hier uebernehmen" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffb5" name="TV_Radio" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffb3" name="Frequenz" tsid="ffff" onid="ffff" sat_position="0"/>
+ </Bouquet>
+ <Bouquet name="getsetCONFIG" hidden="0" locked="0">
+  <channel serviceID="ffc3" name="PRESORT" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc5" name="RELOAD" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffcb" name="LOG" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc6" name="SAVELOG" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc0" name="ANNOUNCEMENT" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ff00" name="- bis hier uebernehmen" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc1" name="PAYTV" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc2" name="PAYSIGN" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc9" name="REBOOT" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffca" name="HALTNOW" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffcd" name="DIALWAIT_10" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffce" name="DIALWAIT_30" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffcf" name="DIALWAIT_60" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc8" name="PROXY" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc4" name="REALYQUIET" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffc7" name="QUIET" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffcc" name="SETTING_FORMAT_Enigma" tsid="ffff" onid="ffff" sat_position="0"/>
+  <channel serviceID="ffa0" name="ALLSATS" tsid="ffff" onid="ffff" sat_position="0"/>
+ </Bouquet>
+</zapit>
