@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# allin1 $Id: allin1.sh,v 1.16 2004/03/25 19:22:21 alexh Exp $
+# allin1 $Id: allin1.sh,v 1.17 2004/03/26 10:40:22 essu Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
@@ -29,14 +29,14 @@
 # -------------------------------------------------------
 #
 # folgende Optionen einstellen:
-RM_CVS='yes' 			# yes | no  : altes CVS loeschen oder updaten
+RM_CVS='no' 			# yes | no  : altes CVS loeschen oder updaten
 USE_CHANGE_ARC='no'		# yes | no  : Patches aus Archiv oder Verzeichnis
 # Folgende Pfade und Dateinamen anpassen:
 RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" version$Revision: 1.16 $" 	# Zeilenlaenge: genau 15 Zeichen
+VERSION=" version$Revision: 1.17 $" 	# Zeilenlaenge: genau 15 Zeichen
 # Pfad zu den geaenderten und sonstigen Dateien
 CHANGE_DIR=$RT/patches/head_changed
 CHANGE_ARC_DIR=$RT/change_arcs
@@ -121,12 +121,11 @@ get_cvs()
     rm -rf $DBOX
   fi
   mkdir $DBOX
-  cd $DBOX
+  #cd $DBOX
 
   if [ $RM_CVS = "yes" ]; then
    # Archive verschieben
-   if test -d $CVS/cdk/Archive
-   then
+   if [ -d $CVS/cdk/Archive ]; then
     mv $CVS/cdk/Archive $RT
    fi
    #Inhalt von CVS loeschen
@@ -135,17 +134,18 @@ get_cvs()
    # CVS runterladen
    cd $CVS
    cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 co .
-   if test -d $RT/Archive
-   then
-   if ! test -d $RT/Archive
-    then
-     mkdir $CVS/cdk
-    fi
-    mv $RT/Archive mv $CVS/cdk
-   fi
   else
+   cd $CVS/cdk
+   make distclean
    cd $CVS
-   cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 up -dP
+   cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 up -dPA
+  fi
+  if [ ! -d $CVS/cdk ]; then
+    mkdir $CVS/cdk
+  fi
+  cd $CVS/cdk
+  if [ ! -L Archive ];then
+   ln -s $RT/Archive Archive
   fi
 }
 
