@@ -1,4 +1,4 @@
-# $Id: build_gui,v 1.1 2004/04/05 08:54:32 essu Exp $
+# $Id: build_gui,v 1.2 2004/04/05 22:06:30 alexh Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -33,7 +33,7 @@ cd $CVS/cdk
 rm -rf $DBOX/cdkflash/
 
 # Neutrino ins Flash aufnehmen
-if  [ ! $GUI="enigma" ]; then
+if  [ ! $GUI = "enigma" ]; then
  make flash-neutrino
  if ! test -e $DBOX/cdkflash/.part_neutrino
  then
@@ -43,7 +43,7 @@ if  [ ! $GUI="enigma" ]; then
 fi
 
 # Enigma ins Flash aufnehmen
-if  [ ! $GUI="neutrino" ]; then
+if  [ ! $GUI = "neutrino" ]; then
  make flash-enigma
  if ! test -e $DBOX/cdkflash/.part_enigma
  then
@@ -51,6 +51,8 @@ if  [ ! $GUI="neutrino" ]; then
   exit 1
  fi
 fi
+
+mkdir $DBOX/cdkflash/root/share/fonts/
 
 # Plugins ins Flash aufnehmen
 make flash-plugins
@@ -60,18 +62,11 @@ then
   exit 1
 fi
 
-# dvb-tools ins Flash aufnehmen
-make flash-dvb-tools
- if ! test -e $DBOX/cdkflash/.part_dvb_tools
- then
-  echo FEHLER: make flash-dvb-tools abgebrochen!!
-  exit 1
- fi
-#fi
-
 # LCDMenu erstellen
-make flash-lcdmenu
-cp $CHANGE_DIR/Configs/lcdmenu.conf $DBOX/cdkflash/root/var/tuxbox/config/
+if [ $GUI = "all" ]; then
+  make flash-lcdmenu
+  cp $CHANGE_DIR/Configs/lcdmenu.conf $DBOX/cdkflash/root/var/tuxbox/config/
+fi
 
 # ftpd ins Flash aufnehmen
 make flash-ftpd
@@ -96,5 +91,13 @@ then
   echo FEHLER: make flash-lib abgebrochen!!
   exit 1
 fi
+
+# dvb-tools ins Flash aufnehmen
+make flash-dvb-tools
+ if ! test -e $DBOX/cdkflash/.part_dvb_tools
+ then
+  echo FEHLER: make flash-dvb-tools abgebrochen!!
+  exit 1
+ fi
 
 
