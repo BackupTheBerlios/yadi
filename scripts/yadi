@@ -1,0 +1,70 @@
+#!/bin/sh
+# $Id: yadi,v 1.1 2004/03/29 20:28:19 essu Exp $
+#
+# based on allin1.sh,v 1.17 2004/03/26 10:40:22
+#
+# Copyright (c) 2004 essu, acoo Germany. All rights reserved.
+# Mail: acoo@berlios.de
+# Mail: essu@berlios.de
+# 
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/yadi,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+#MAIN
+
+VERSION="yadi v. $Revision: 1.1 $"
+. yadi.conf
+SCRIPTS=$ROOT/yadi-cvs/scripts
+for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image neutrino enigma
+do
+ if [ -e $SCRIPTS/$FILE ]; then
+  continue;
+ else
+  echo "$SCRIPTS/$FILE nicht gefunden"
+  exit;
+ fi
+done
+. $SCRIPTS/prepare
+# Nur konfigurieren, falls kein Fehler aufgetreten ist
+if [ -e $ROOT/.mkheadall_error ];then
+ echo
+ echo "Beim letzten Durchgang ist ein Fehler aufgetreten"
+ echo "Make-Vorgang wird an der letzten Position fortgesetzt"
+ echo
+else
+ . $SCRIPTS/get_cvs
+ . $SCRIPTS/configure
+ . $SCRIPTS/patch_cvs
+fi
+. $SCRIPTS/make_it
+. $SCRIPTS/flfs
+. $SCRIPTS/neutrino
+. $SCRIPTS/cat_image
+. $SCRIPTS/enigma
+. $SCRIPTS/cat_image
+echo
+echo
+echo Images erstellt!
+echo Diese sollten sich jetzt in $IMAGES befinden.
+echo
+echo
+exit;

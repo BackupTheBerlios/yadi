@@ -1,0 +1,55 @@
+# $Id: patch_cvs,v 1.1 2004/03/29 20:28:19 essu Exp $
+# is part of yadi-script-pack
+# based on allin1.sh,v 1.17 2004/03/26 10:40:22
+#
+# Copyright (c) 2004 essu, acoo Germany. All rights reserved.
+# Mail: acoo@berlios.de
+# Mail: essu@berlios.de
+# 
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/patch_cvs,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+#patch_cvs()
+
+ # Flash-Patch
+ patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
+ # Patch fuer u-boot 1.0.2
+ mv $CVS/boot/u-boot $CVS/boot/u-boot.old
+ if [ ! -d $ROOT/patches ]; then
+  mkdir $ROOT/patches
+ fi
+ cd $ROOT/patches
+ PATCH=uboot102
+ if [ ! -e $ROOT/patches/.$PATCH ]; then
+  cp $CHANGE_DIR/uboot/$PATCH.tar.gz $ROOT/patches
+  gunzip -d $ROOT/patches/$PATCH.tar.gz
+  tar -xvf $ROOT/patches/$PATCH.tar
+  touch $ROOT/patches/.$PATCH
+ fi
+ ln -s $ROOT/patches/u-boot-1.0.2 $CVS/boot/u-boot
+
+ # Patch fuer 1xI (im CVS)
+ cp $CVS/cdk/Patches/u-boot.1x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
+ # Die Datei aus dem CVS fuer JFFS2-Only patchen
+ patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
+ # DVR in Enigma aktivieren
+ # patch -N -p0 $CVS/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp $CHANGE_DIR/Patches/enigma_dvr.diff

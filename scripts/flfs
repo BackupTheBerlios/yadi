@@ -1,0 +1,64 @@
+# $Id: flfs,v 1.1 2004/03/29 20:28:19 essu Exp $
+# is part of yadi-script-pack
+# based on allin1.sh,v 1.17 2004/03/26 10:40:22
+#
+#
+# Copyright (c) 2004 essu, acoo Germany. All rights reserved.
+# Mail: acoo@berlios.de
+# Mail: essu@berlios.de
+# 
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/flfs,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+#flfs()
+# FLFS bauen
+#
+if [ ! -d $DBOX/flfs ]; then
+ mkdir $DBOX/flfs
+fi
+
+# FLFS 1XI mit u-boot erzeugen
+cd $CVS/hostapps/mkflfs/
+gcc -o mkflfs mkflfs.c minilzo.c
+cp $CVS/boot/u-boot/u-boot.stripped test
+./mkflfs 1x
+mv flfs.img $DBOX/flfs/flfs1x.img
+
+# U-Boot fuer 2xI erzeugen
+cp $CVS/cdk/Patches/u-boot.2x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
+patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.2x.neu.diff
+rm $CVS/boot/u-boot/u-boot.stripped
+cd $CVS/cdk
+rm .deps/u-boot
+make u-boot
+
+# FLFS fuer 2xI erzeugen
+cd $CVS/hostapps/mkflfs/
+rm test
+cp $CVS/boot/u-boot/u-boot.stripped test
+./mkflfs 2x
+mv flfs.img $DBOX/flfs/flfs2x.img
+echo
+echo
+echo flfs erstellt
+echo
+echo

@@ -1,0 +1,55 @@
+# $Id: cat_image,v 1.1 2004/03/29 20:28:19 essu Exp $
+# is part of yadi-script-pack
+# based on allin1.sh,v 1.17 2004/03/26 10:40:22
+#
+# Copyright (c) 2004 essu, acoo Germany. All rights reserved.
+# Mail: acoo@berlios.de
+# Mail: essu@berlios.de
+# 
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/cat_image,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+#cat_image()
+# Image zusammenbauen aus flfs und root-jffs2
+# ist jetzt fuer beide GUIs zusammengefasst um die (existierenden) Fehler besser eingrenzen zu koennen
+echo
+echo
+fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $IMAGES/$GUI.root-jffs2.tmp
+read -p "Druecken Sie [RETURN] um fortzusetzen (automagisch nach 10 s) -> " -t 10 #um Zeit f?r fakeroot zu gewinnen
+if [ ! -e $IMAGES/$GUI.root-jffs2.tmp ]; then
+ echo "$IMAGES/$GUI.root-jffs2.tmp nicht gefunden"
+else
+ if [ ! -e $DBOX/flfs/flfs1x.img ]; then
+  echo "$DBOX/flfs/flfs1x.img nicht gefunden"
+ else
+  cat $DBOX/flfs/flfs1x.img $IMAGES/$GUI.root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_1x.img"
+  echo $IMG_PRE$GUI"_head_1x.img erstellt"
+ fi
+ if [ ! -e $DBOX/flfs/flfs2x.img ]; then
+  echo "$DBOX/flfs/flfs2x.img nicht gefunden"
+ else
+  cat $DBOX/flfs/flfs2x.img $IMAGES/$GUI.root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_2x.img"
+  echo $IMG_PRE$GUI"_head_2x.img erstellt"
+ fi
+fi
+echo
+echo

@@ -1,0 +1,98 @@
+# $Id: prepare,v 1.1 2004/03/29 20:28:19 essu Exp $
+# is part of yadi-script-pack
+# based on allin1.sh,v 1.17 2004/03/26 10:40:22
+#
+# Copyright (c) 2004 essu, acoo Germany. All rights reserved.
+# Mail: acoo@berlios.de
+# Mail: essu@berlios.de
+# 
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/prepare,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+#
+# um kueftig verschiedene Aenderungsarchive verwenden zu koennen, die evtl. per download eingebunden werden
+cd $CHANGEDIR || USE_CHANGE_ARC='yes' # falls das Aenderungsverzeichnis fehlt
+if [ $USE_CHANGE_ARC = "yes" ]; then
+ if [ ! -e $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz ]; then
+  echo "Archiv $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz nicht gefunden"
+  exit 1;  # ohne Patches kein Image
+ else
+  # Aenderungsarchiv entpacken
+  if [ ! -d $ROOT/patches ]; then
+   mkdir $ROOT/patches
+  fi
+  cd $ROOT/patches
+  cp $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz .
+  gzip -d $CHANGE_ARC.tar.gz
+  tar -xpf $CHANGE_ARC.tar
+  rm $CHANGE_ARC.tar
+  CHANGE_DIR=$ROOT/patches/$CHANGE_ARC 	# es ist vorausgesetzt, das Archiv enthaelt einen Ordner mit dem Archivnamen (ohne '.tar.gz')
+ fi
+fi
+echo "Die Aenderungs-Daten wie Patches etc. befinden sich in "$CHANGE_DIR
+# Namensprefix mit Datum
+IMG_PRE=`date +%Y%m%d%H%M`
+IMG_PRE=$IMG_PRE"yadi_"
+if [ ! -e $IMAGES ]; then
+ mkdir $IMAGES
+fi
+
+# File mit Image-Infos (wird erstellt)
+# Aufbau:
+# Zwei Dateien (.image_version.neutrino und .image_version.enigma)
+# Zeilenlaenge: Jeweils genau 15 Zeichen + Return
+# 1. Zeile Ueberschrift (ein paar Pixel mehr Abstand zur neuen Zeile)
+# 2. Zeile Image-Datum
+# 3. Zeile Image-Version
+# 4. Zeile Image-Name
+# 5. Zeile beschreibt, was gestartet werden soll
+# (etwas groesserer Abstand zur Zeile davor)
+
+VER=$CHANGE_DIR/.image_version
+EN=$VER.enigma
+NE=$VER.neutrino
+VE=$CHANGE_DIR/.version
+# Image-Versionen schreiben
+echo " IMAGE-INFOS:  "  >$EN
+echo "Datum: $(date '+%d.%m.%y')" >>$EN
+echo "by $ME  " >>$EN
+echo "$VERSION" >>$EN
+echo "Starte Enigma " >>$EN
+
+echo " IMAGE-INFOS:  "  >$NE
+echo "Datum: $(date '+%d.%m.%y')" >>$NE
+echo "by $ME  " >>$NE
+echo "$VERSION" >>$NE
+echo "Starte Neutrino" >>$NE
+
+echo "version=$IMAGETYPE$VERSIONNR$(date '+%y%m%d%H%M')" >$VE
+echo "comment=yadi made by $ME" >>$VE
+
+echo "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+echo
+
+# Benutzer Moeglichkeit zum Aendern von Patches, Logos etc. geben
+read -p "Druecken Sie [RETURN] um noch Aenderungen in $CHANGE_DIR vorzunehmen -> " -t 10
+if [ $? = 0 ]; then
+ read -p "Druecken Sie [RETURN], wenn Sie die Aenderungen in $CHANGE_DIR abgeschlossen haben -> "
+ # hier koennte jetzt noch das Packen und Sichern des veraenderten Archivs kommen
+fi
