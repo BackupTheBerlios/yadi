@@ -1,4 +1,4 @@
-# $Id: prepare,v 1.1 2004/03/29 20:28:19 essu Exp $
+# $Id: prepare,v 1.2 2004/03/30 09:17:11 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -84,7 +84,7 @@ echo "by $ME  " >>$NE
 echo "$VERSION" >>$NE
 echo "Starte Neutrino" >>$NE
 
-echo "version=$IMAGETYPE$VERSIONNR$(date '+%y%m%d%H%M')" >$VE
+echo "version=$IMAGETYPE$VERSIONNR$(date '+%Y%m%d%H%M')" >$VE
 echo "comment=yadi made by $ME" >>$VE
 
 echo "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
