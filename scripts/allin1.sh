@@ -23,12 +23,12 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 675 Mass Ave, Cambridge MA 02139, USA.
 #
-# Mit diesem Programm k?nnen Images f?r DBox2 erstellt werden
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
 #
 # -------------------------------------------------------
 #
 # folgende Optionen einstellen:
-RM_CVS='yes' 			# yes | no  : altes CVS l?schen oder updaten
+RM_CVS='yes' 			# yes | no  : altes CVS loeschen oder updaten
 USE_CHANGE_ARC='no'		# yes | no  : Patches aus Archiv oder Verzeichnis
 # Folgende Pfade und Dateinamen anpassen:
 RT=$HOME/yadi
@@ -53,7 +53,7 @@ if [ $USE_CHANGE_ARC = "yes" ]; then
   echo "Archiv $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz nicht gefunden"
   exit 1;  # ohne Patches kein Image
  else
-  # ?nderungsarchiv entpacken
+  # Aenderungsarchiv entpacken
   cd $RT
   cp $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz .
   gzip -d $CHANGE_ARC.tar.gz
@@ -142,7 +142,7 @@ else
    then
    if  ! test -d $RT/Archive
     then
-     mkdir ?CVS/cdk
+     mkdir $CVS/cdk
     fi
     mv $RT/Archive mv $CVS/cdk
    fi
@@ -161,10 +161,10 @@ else
 
   patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
 
-  # Neu: Aenderungen f?r 1xI schon im CVS
+  # Neu: Aenderungen fuer 1xI schon im CVS
   cp Patches/u-boot.1x-flash.dbox2.h ../boot/u-boot/include/configs/dbox2.h
 
-  # Die Datei aus dem CVS f?r JFFS2-Only patchen
+  # Die Datei aus dem CVS fuer JFFS2-Only patchen
   patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
 fi
 }
@@ -204,7 +204,7 @@ cp $CVS/boot/u-boot/u-boot.stripped test
 ./mkflfs 1x
 mv flfs.img $DBOX/flfs/flfs1x.img
 
-# U-Boot f?r 2xI erzeugen
+# U-Boot fuer 2xI erzeugen
 cp $CVS/cdk/Patches/u-boot.2x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
 patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.2x.neu.diff
 rm $CVS/boot/u-boot/u-boot.stripped
@@ -212,7 +212,7 @@ cd $CVS/cdk
 rm .deps/u-boot
 make u-boot
 
-# FLFS f?r 2xI erzeugen
+# FLFS fuer 2xI erzeugen
 cd $CVS/hostapps/mkflfs/
 rm test
 cp $CVS/boot/u-boot/u-boot.stripped test
@@ -337,7 +337,7 @@ fi
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.cfg $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.cfg
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.so $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.so
 
-# Ein paar Dateien linken l?schen
+# Ein paar Dateien linken loeschen
 cd $DBOX/cdkflash/root/sbin/
 
 #rm telnetd
@@ -505,7 +505,7 @@ GUI="enigma" # Der Zusammenbau der Images ist jetzt in cat_images
 cat_image()
 {
 # Image zusammenbauen aus flfs und root-jffs2
-# ist jetzt f?r beide GUIs zusammengefasst um die (existierenden) Fehler besser eingrenzen zu koennen
+# ist jetzt fuer beide GUIs zusammengefasst um die (existierenden) Fehler besser eingrenzen zu koennen
 echo
 echo
 fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $DBOX/cdkflash/root-jffs2.tmp
@@ -530,14 +530,16 @@ echo
 }
 #MAIN
 prepare
-exit;
 config
 make_it
 flfs
+
 neutrino
 cat_image
+
 enigma
 cat_image
+
 echo
 echo
 echo Images erstellt!
