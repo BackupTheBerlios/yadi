@@ -1,7 +1,8 @@
 #!/bin/bash
 #
-# allin1
-# Copyright (c) 2004 Steff Ulbrich, Dmitri Barski, Acoo Germany. All rights reserved.
+# allin1 $REVISION$
+#
+# Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
 # Mail: essu@berlios.de
 # Mail: @berlios.de
@@ -22,25 +23,46 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 675 Mass Ave, Cambridge MA 02139, USA.
 #
-# Mit diesem Programm können Images für DBox2 erstellt werden
+# Mit diesem Programm k?nnen Images f?r DBox2 erstellt werden
 #
 # -------------------------------------------------------
+#
 # folgende Optionen einstellen:
-RM_CVS='yes' 			# yes | no  : altes CVS löschen oder updaten
-
+RM_CVS='yes' 			# yes | no  : altes CVS l?schen oder updaten
+USE_CHANGE_ARC='no'		# yes | no  : Patches aus Archiv oder Verzeichnis
 # Folgende Pfade und Dateinamen anpassen:
 RT=$HOME/yadi
-CVS=$RT/tuxbox-cvs	# Pfad zum CVS
-DBOX=$RT/dbox 		# Pfad zu dbox2
-CHFILES=$RT # Pfad zur Datei mit den Aenderungen (ohne .tar.gz)
-HEADCH=head_changed_001 	# Datei mit den Aenderungen (ohne .tar.gz)
+CVS=$RT/tuxbox-cvs		# Pfad zum CVS
+DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen
-
+VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig REVISION enthalten
+# Pfad zu den geaenderten und sonstigen Dateien
+CHANGE_DIR=$RT/head_changed
+CHANGE_ARC_DIR=$RT/change_arcs
+CHANGE_ARC=head_changed_A # Datei mit den Aenderungen (ohne .tar.gz)
+#
 # Nun braucht nichts mehr angepasst zu werden
 # ------------------------------------------------------
+#
 prepare()
 {
+# um kueftig verschiedene Aenderungsarchive verwenden zu koennen, die evtl. per download eingebunden werden
+cd $CHANGEDIR || USE_CHANGE_ARC='yes' # falls das Aenderungsverzeichnis fehlt
+if [ $USE_CHANGE_ARC = "yes" ]; then
+ if [ ! -e $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz ]; then
+  echo "Archiv $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz nicht gefunden"
+  exit 1;  # ohne Patches kein Image
+ else
+  # ?nderungsarchiv entpacken
+  cd $RT
+  cp $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz .
+  gzip -d $CHANGE_ARC.tar.gz
+  tar -xpf $CHANGE_ARC.tar
+  rm $CHANGE_ARC.tar
+  CHANGE_DIR=$RT/$CHANGE_ARC 	# es ist vorausgesetzt, das Archiv enthaelt einen Ordner mit dem Archivnamen (ohne '.tar.gz')
+ fi
+fi
+echo "Die Aenderungs-Daten wie Patches etc. befinden sich in "$CHANGE_DIR
 # Namensprefix mit Datum
 IMG_PRE=`date +%Y%m%d%H%M`
 IMG_PRE=$IMG_PRE"yadi_"
@@ -59,7 +81,7 @@ fi
 # 5. Zeile beschreibt, was gestartet werden soll
 # (etwas groesserer Abstand zur Zeile davor)
 
-VER=$CHFILES/.image_version
+VER=$CHANGE_DIR/.image_version
 EN=$VER.enigma
 NE=$VER.neutrino
 
@@ -75,16 +97,21 @@ echo "Datum: $(date '+%d.%m.%y')" >> $NE
 echo "$VERSION" >> $NE
 echo " Yadi - Image  " >> $NE
 echo "Starte Neutrino" >> $NE
+echo "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+echo
 
-# Pfad zu den geaenderten und sonstigen Dateien
-CHANGE_DIR=$DBOX/head_changed
-
-# Pfad zu mklibs setzen
-export MKLIBS=$CVS/hostapps/mklibs/mklibs.py
+# Benutzer Moeglichkeit zum Aendern von Patches, Logos etc. geben
+read -p "Druecken Sie [RETURN] um noch Aenderungen in $CHANGE_DIR vorzunehmen -> " -t 10
+if [ $? = 0 ]; then
+ read -p "Druecken Sie [RETURN], wenn Sie die Aenderungen in $CHANGE_DIR abgeschlossen haben -> "
+ # hier koennte jetzt noch das Packen und Sichern des veraenderten Archivs kommen
+fi
 }
 
 config()
 {
+# Pfad zu mklibs setzen
+export MKLIBS=$CVS/hostapps/mklibs/mklibs.py
 # Nur konfigurieren, falls kein Fehler aufgetreten ist
 if [ -e $RT/.mkheadall_error ];then
  echo
@@ -98,12 +125,6 @@ else
   fi
   mkdir $DBOX
   cd $DBOX
-
-  # Geaenderte Dateien kopieren
-  #cp $CHFILES/$HEADCH.tar.gz .
-  #gzip -d $HEADCH.tar.gz
-  #tar -xpf $HEADCH.tar
-  #rm $DBOX/$HEADCH.tar
 
    if [ $RM_CVS = "yes" ]; then
     # Archive verschieben
@@ -121,7 +142,7 @@ else
    then
    if  ! test -d $RT/Archive
     then
-     mkdir §CVS/cdk
+     mkdir ?CVS/cdk
     fi
     mv $RT/Archive mv $CVS/cdk
    fi
@@ -140,10 +161,10 @@ else
 
   patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
 
-  # Neu: Aenderungen für 1xI schon im CVS
+  # Neu: Aenderungen f?r 1xI schon im CVS
   cp Patches/u-boot.1x-flash.dbox2.h ../boot/u-boot/include/configs/dbox2.h
 
-  # Die Datei aus dem CVS für JFFS2-Only patchen
+  # Die Datei aus dem CVS f?r JFFS2-Only patchen
   patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
 fi
 }
@@ -183,7 +204,7 @@ cp $CVS/boot/u-boot/u-boot.stripped test
 ./mkflfs 1x
 mv flfs.img $DBOX/flfs/flfs1x.img
 
-# U-Boot für 2xI erzeugen
+# U-Boot f?r 2xI erzeugen
 cp $CVS/cdk/Patches/u-boot.2x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
 patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.2x.neu.diff
 rm $CVS/boot/u-boot/u-boot.stripped
@@ -191,7 +212,7 @@ cd $CVS/cdk
 rm .deps/u-boot
 make u-boot
 
-# FLFS für 2xI erzeugen
+# FLFS f?r 2xI erzeugen
 cd $CVS/hostapps/mkflfs/
 rm test
 cp $CVS/boot/u-boot/u-boot.stripped test
@@ -316,7 +337,7 @@ fi
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.cfg $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.cfg
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.so $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.so
 
-# Ein paar Dateien linken löschen
+# Ein paar Dateien linken l?schen
 cd $DBOX/cdkflash/root/sbin/
 
 #rm telnetd
@@ -327,16 +348,7 @@ cd $DBOX/cdkflash/root/sbin/
 
 ln -s ../bin/busybox ../bin/ps
 
-# Image bauen
-fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $DBOX/cdkflash/root-jffs2.tmp
-cat $DBOX/flfs/flfs1x.img  $DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE"neutrino_head_1x.img"
-cat $DBOX/flfs/flfs2x.img  $DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE"neutrino_head_2x.img"
-
-echo
-echo
-echo neutrino erstellt
-echo
-echo
+GUI="neutrino" # Der Zusammenbau der Images ist jetzt in cat_images
 }
 
 enigma()
@@ -487,27 +499,45 @@ ln -s ../bin/busybox ../bin/ps
 # /var/tuxbox/config/enigma erstellen
 mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma
 
-# Neutrino-Images zurueckbewegen
-#mv neutrino_head_* cdkflash/
+GUI="enigma" # Der Zusammenbau der Images ist jetzt in cat_images
+}
 
-# Image bauen
+cat_image()
+{
+# Image zusammenbauen aus flfs und root-jffs2
+# ist jetzt f?r beide GUIs zusammengefasst um die (existierenden) Fehler besser eingrenzen zu koennen
+echo
+echo
 fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $DBOX/cdkflash/root-jffs2.tmp
-cat $DBOX/flfs/flfs1x.img DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE"enigma_head_1x.img"
-cat $DBOX/flfs/flfs2x.img DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE"enigma_head_2x.img"
-echo
-echo
-echo enigma erstellt
+if [ ! -e $DBOX/cdkflash/root-jffs2.tmp ]; then
+ echo "$DBOX/cdkflash/root-jffs2.tmp nicht gefunden"
+else
+ if [ ! -e $DBOX/flfs/flfs1x.img ]; then
+  echo "$DBOX/flfs/flfs1x.img nicht gefunden"
+ else
+  cat $DBOX/flfs/flfs1x.img DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_1x.img"
+  echo $IMG_PRE$GUI"_head_1x.img erstellt"
+ fi
+ if [ ! -e $DBOX/flfs/flfs2x.img ]; then
+  echo "$DBOX/flfs/flfs2x.img nicht gefunden"
+ else
+  cat $DBOX/flfs/flfs2x.img DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_2x.img"
+  echo $IMG_PRE$GUI"_head_2x.img erstellt"
+ fi
+fi
 echo
 echo
 }
-
 #MAIN
 prepare
+exit;
 config
 make_it
 flfs
 neutrino
+cat_image
 enigma
+cat_image
 echo
 echo
 echo Images erstellt!
