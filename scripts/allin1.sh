@@ -1,11 +1,35 @@
 #!/bin/bash
-
+#
+# allin1
+# Copyright (c) 2004 Acoo, Steff Ulbrich, Dmitri Barski Germany. All rights reserved.
+# Mail: acoo@berlios.de
+# Mail: essu@berlios.de
+# Mail: @berlios.de
+# aktuelle Versionen gibt es hier:
+#
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm können Images für DBox2 erstellt werden
+#
 # -------------------------------------------------------
 # folgende Optionen einstellen:
 RM_CVS='yes' 			# yes | no  : altes CVS löschen oder updaten
 
 # Folgende Pfade und Dateinamen anpassen:
-RT=/home/tuxbox/yadi
+RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs	# Pfad zum CVS
 DBOX=$RT/dbox 		# Pfad zu dbox2
 CHFILES=$RT/changefiles # Pfad zur Datei mit den Aenderungen (ohne .tar.gz)
@@ -174,6 +198,11 @@ rm test
 cp $CVS/boot/u-boot/u-boot.stripped test
 ./mkflfs 2x
 mv flfs.img $DBOX/flfs/flfs2x.img
+echo
+echo
+echo flfs erstellt
+echo
+echo
 }
 
 neutrino()
@@ -303,6 +332,12 @@ ln -s ../bin/busybox ../bin/ps
 fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $DBOX/cdkflash/root-jffs2.tmp
 cat $DBOX/flfs/flfs1x.img  $DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE"neutrino_head_1x.img"
 cat $DBOX/flfs/flfs2x.img  $DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE"neutrino_head_2x.img"
+
+echo
+echo
+echo neutrino erstellt
+echo
+echo
 }
 
 enigma()
@@ -460,6 +495,11 @@ mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma
 fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $DBOX/cdkflash/root-jffs2.tmp
 cat $DBOX/flfs/flfs1x.img DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE"enigma_head_1x.img"
 cat $DBOX/flfs/flfs2x.img DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE"enigma_head_2x.img"
+echo
+echo
+echo enigma erstellt
+echo
+echo
 }
 
 #MAIN
@@ -467,28 +507,13 @@ prepare
 config
 make_it
 flfs
-echo
-echo
-echo flfs erstellt
-echo
-echo
 neutrino
-echo
-echo
-echo neutriono erstellt
-echo
-echo
 enigma
 echo
 echo
-echo enigma erstellt
-echo
-echo
-
-echo
-echo
 echo Images erstellt!
-exit;
 echo Diese sollten sich jetzt in $IMAGES befinden.
 echo
 echo
+exit;
+
