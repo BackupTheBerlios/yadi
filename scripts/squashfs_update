@@ -1,0 +1,10 @@
+# Update-Klassen von Neutrino und Enigma ändern
+cp $CHANGE_DIR/neutrino/update.cpp $CVS/apps/tuxbox/neutrino/src/gui/update.cpp
+cp $CHANGE_DIR/enigma/upgrade.cpp.squashfs $CVS/apps/tuxbox/enigma/src/upgrade.cpp
+
+# Neutrino und Enigma neu bauen
+cd $CVS/cdk
+rm .deps/neutrino
+rm .deps/enigma
+make neutrino
+make enigma
