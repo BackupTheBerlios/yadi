@@ -1,0 +1,13 @@
+--- /home/tuxbox/yadi/tuxbox-cvs/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp      2004-04-04 20:14:59.000000000 +0200
++++ /home/tuxbox/yadi/tuxbox-cvs/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp.orig 2004-04-04 03:34:04.000000000 +0200
+@@ -23,11 +23,9 @@
+ #if HAVE_DVB_API_VERSION < 3
+ #include <ost/audio.h>
+ #define AUDIO_DEV "/dev/dvb/card0/audio0"
+-#define DVR_DEV "/dev/pvr"
+ #else
+ #include <linux/dvb/audio.h>
+ #define AUDIO_DEV "/dev/dvb/adapter0/audio0"
+-#define DVR_DEV "/dev/dvb/adapter0/dvr0"
+ #endif
+

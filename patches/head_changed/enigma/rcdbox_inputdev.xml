@@ -77,14 +77,11 @@
 
   <actionmap name="mainmenu">
    <action name="close" key="d-box" flags="mr" />
-   <action name="prev" key="left" flags="mr" />
-   <action name="next" key="right" flags="mr" />
   </actionmap>
 
   <actionmap name="mainmenu" style="_new">
    <action name="close" key="home" flags="mr" />
   </actionmap>
-
   <actionmap name="enigmaMain">
    <action name="showMainMenu" key="d-box" flags="m" />
    <action name="standby_press" key="power" flags="m" />
@@ -195,10 +192,10 @@
    <action name="modeRadio" key="2" flags="m" />
    <action name="modeFile" key="3" flags="m" />
    <action name="addService" key="4" flags="m" />
-   <action name="marker" key="8" flags="m" />
+   <action name="marker" key="5" flags="m" />
    <action name="addServiceToUserBouquet" key="6" flags="m" />
    <action name="gotoPrevMarker" key="7" flags="mr" />
-   <action name="toggleFocus" key="5" flags="m" />
+   <action name="toggleFocus" key="8" flags="m" />
    <action name="gotoNextMarker" key="9" flags="mr" />
   </actionmap>
   <actionmap name="serviceSelector" style="sselect_default">
