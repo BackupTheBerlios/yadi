@@ -1,13 +1,91 @@
---- /home/tuxbox/yadi/tuxbox-cvs/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp      2004-04-04 20:14:59.000000000 +0200
-+++ /home/tuxbox/yadi/tuxbox-cvs/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp.orig 2004-04-04 03:34:04.000000000 +0200
-@@ -23,11 +23,9 @@
+--- servicedvb.cpp	2004-04-15 14:20:54.000000000 +0200
++++ servicedvb.cpp.lucgas	2004-04-14 19:55:00.000000000 +0200
+@@ -23,25 +23,28 @@
  #if HAVE_DVB_API_VERSION < 3
  #include <ost/audio.h>
  #define AUDIO_DEV "/dev/dvb/card0/audio0"
--#define DVR_DEV "/dev/pvr"
++#define DVR_DEV "/dev/pvr"
  #else
  #include <linux/dvb/audio.h>
  #define AUDIO_DEV "/dev/dvb/adapter0/audio0"
--#define DVR_DEV "/dev/dvb/adapter0/dvr0"
++#define DVR_DEV "/dev/dvb/adapter0/dvr0"
  #endif
-
+ 
+ #ifndef DISABLE_FILE
+ #include <lib/dvb/record.h>
+ 
+ eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *handler, int livemode )
+-	:handler(handler), buffer(64*1024), livemode(livemode), liveupdatetimer(this), lock(), messages(this, 1)
++	:handler(handler), buffer(348*188*10), livemode(livemode), liveupdatetimer(this), lock(), messages(this, 1)
+ {
+ 	state=stateInit;
+ 
+ 	int count=0;
+ 	seekbusy=0;
+ 	seeking=0;
++#if HAVE_DVB_API_VERSION < 3
+ 	do
+ 	{
+-		dvrfd=::open("/dev/pvr", O_WRONLY|O_NONBLOCK); // TODO: change to /dev/dvb/dvr0 (but only when drivers support this!)
++		dvrfd=::open(DVR_DEV, O_WRONLY|O_NONBLOCK); // TODO: change to /dev/dvb/dvr0 (but only when drivers support this!)
+ 		if (dvrfd < 0)
+ 		{
+ 			if ( errno == EBUSY )
+@@ -53,12 +56,18 @@
+ 					continue;
+ 				}
+ 			}
+-			eDebug("couldn't open /dev/pvr - buy the new $$$ box and load pvr.o! (%m)");
++			eDebug("couldn't open %s - buy the new $$$ box and load pvr.o! (%m)", DVR_DEV);
+ 			state=stateError;
+ 		}
+ 		break;
+ 	}
+ 	while( dvrfd < 0 );
++#else
++	if ((dvrfd = ::open(DVR_DEV, O_WRONLY|O_NONBLOCK)) == -1) {
++		perror(DVR_DEV);
++		state=stateError;
++	}
++#endif
+ 	
+ 	outputsn=new eSocketNotifier(this, dvrfd, eSocketNotifier::Write, 0);
+ 	CONNECT(outputsn->activated, eDVRPlayerThread::outputReady);
+@@ -98,7 +107,7 @@
+ 
+ 	CONNECT(messages.recv_msg, eDVRPlayerThread::gotMessage);
+ 	
+-	maxBufferSize=256*1024;
++	maxBufferSize=128*1024;
+ 	
+ 	speed=1;
+ 
+@@ -152,7 +161,7 @@
+ void eDVRPlayerThread::outputReady(int what)
+ {
+ 	(void)what;
+-	seekbusy-=buffer.tofile(dvrfd, 65536);
++	seekbusy-=buffer.tofile(dvrfd, 348*188);
+ 	if (seekbusy < 0)
+ 		seekbusy=0;
+ 	if ((state == stateBufferFull) && (buffer.size()<maxBufferSize))
+@@ -192,8 +201,10 @@
+ 
+ void eDVRPlayerThread::dvrFlush()
+ {
++#if HAVE_DVB_API_VERSION < 3
+ 	if ( ::ioctl(dvrfd, 0)< 0 )
+ 		eDebug("PVR_FLUSH_BUFFER failed (%m)");
++#endif
+ 	Decoder::flushBuffer();
+ }
+ 
+@@ -234,7 +245,7 @@
+ 		}
+ 	}
+ 	
+-	if (((state == stateBuffering) && (buffer.size()>16384)) || flushbuffer)
++	if (((state == stateBuffering) && (buffer.size()>100000)) || flushbuffer)
+ 	{
+ 		state=statePlaying;
+ 		outputsn->start();
