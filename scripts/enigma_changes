@@ -1,4 +1,4 @@
-# $Id: enigma_changes,v 1.7 2004/10/08 23:58:08 essu Exp $
+# $Id: enigma_changes,v 1.8 2004/10/14 20:13:27 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -91,6 +91,13 @@ $SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/etc/enigma_enter_standby.sh $CHAN
 $SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/etc/enigma_leave_standby.sh $CHANGE_DIR/enigma/enigma_leave_standby.sh
 chmod 755 $DBOX/cdkflash/root/var/etc/enigma_enter_standby.sh
 chmod 755 $DBOX/cdkflash/root/var/etc/enigma_leave_standby.sh
+
+# Blueqt-Skin hinzufuegen
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/share/tuxbox/enigma/skins/blueqt.esml $CHANGE_DIR/enigma/skins/blueqt/blueqt.esml
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/share/tuxbox/enigma/skins/blueqt.info $CHANGE_DIR/enigma/skins/blueqt/blueqt.info
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/share/tuxbox/enigma/pictures/blueqt
+sleep 1
+cp $CHANGE_DIR/enigma/skins/blueqt/pictures/*.png $DBOX/cdkflash/root/share/tuxbox/enigma/pictures/blueqt
 
 #Boot-Optionen-Plugin
 cd $PLUGIN_DIR/boot
