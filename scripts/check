@@ -195,4 +195,14 @@ if ( test -e $PYTHON )
 	exit 1
 fi
 #---------------------------------------------#
+# mkfs.jffs2
+MKFSJFFS2=`which mkfs.jffs2`
+if ( test -e $MKFSJFFS2 )
+	then
+	echo "mkfs.jffs2           :"`$MKFSJFFS2 --version 2>&1 >/dev/null | $GREP mkfs | $CUT -f3 -d " "`
+	else
+	echo -e "\033[37;41mkfs.jffs2 nicht installiert\033[37;40m"
+	exit 1
+fi
+#---------------------------------------------#
 echo "Versions-Check Ende"
