@@ -1,4 +1,4 @@
-# $Id: flfs,v 1.4 2004/10/08 23:58:08 essu Exp $
+# $Id: flfs,v 1.5 2004/10/27 19:04:20 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -6,7 +6,7 @@
 # Copyright (c) 2004 essu, acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
 # Mail: essu@berlios.de
-# 
+#
 #
 # aktuelle Versionen gibt es hier:
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/flfs,v $
@@ -64,7 +64,7 @@ mv flfs.img $DBOX/flfs/flfs2x.img
 # U-Boot für squashfs erzeugen
 rm $DBOX/tftpboot/u-boot
 rm $CVS/boot/u-boot-config/u-boot.config
-ln -s $CHANGE_DIR/uboot/u-boot.squashfs.dbox2.h $CVS/boot/u-boot-config/u-boot.config
+ln -s $CHANGE_DIR/uboot/u-boot.squashfs2.new.dbox2.h $CVS/boot/u-boot-config/u-boot.config
 cd $CVS/cdk
 rm .deps/u-boot
 make u-boot

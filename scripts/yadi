@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.16 2004/10/08 23:58:08 essu Exp $
+# $Id: yadi,v 1.17 2004/10/27 19:04:20 essu Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -31,7 +31,7 @@
 #
 #MAIN
 
-VERSION="yadi v. $Revision: 1.16 $"
+VERSION="yadi v. $Revision: 1.17 $"
 . check_arguments
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
@@ -82,7 +82,14 @@ GUI="all"
 . $SCRIPTS/squashfs_move_files
 . $SCRIPTS/squashfs_create_image
 
-rm $ROOT/.make_error 
-rm $ROOT/.compileImage 
+if [ -e $ROOT/.make_error ]; then
+  rm $ROOT/.make_error
+fi
+
+if [ -e $ROOT/.compileImage ]; then
+  rm $ROOT/.compileImage
+fi
+
 echo; echo; echo Images erstellt!; echo Diese sollten sich jetzt in $IMAGES befinden.; echo; echo
+cat wanted
 exit;

@@ -1,11 +1,11 @@
-# $Id: patch_cvs,v 1.9 2004/10/14 20:13:27 essu Exp $
+# $Id: patch_cvs,v 1.10 2004/10/27 19:04:20 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
 # Copyright (c) 2004 essu, acoo Germany. All rights reserved.
-# Mail:  alexh@yadi.org
-#         essu@yadi.org
-#       mogway@yadi.org
+# Mail:	alexh@yadi.org
+#		essu@yadi.org
+#		mogway@yadi.org
 #
 # aktuelle Versionen gibt es hier:
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/patch_cvs,v $
@@ -37,9 +37,7 @@ $SCRIPTS/y_patch.sh -p $CVS/cdk/linux-2.4.27/drivers/mtd/maps/dbox2-flash.c $CHA
 # add renice to busybox
 $SCRIPTS/y_patch.sh -p $CVS/cdk/Patches/busybox-flash.config $CHANGE_DIR/misc/busybox-flash.config.patch
 
-# Enigma 
-# Pause in Enigma-DVR by trans now in CVS
-#$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/lib/dvb/decoder.cpp $CHANGE_DIR/enigma/decoder.cpp.diff
+# Enigma
 
 # neue Menue-Struktur in Enigma
 $SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/enigma_mainmenu.cpp $CHANGE_DIR/enigma/enigma_mainmenu.cpp.diff
@@ -51,10 +49,6 @@ $SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/setup_extra.h $CHANGE_DIR/eni
 $SCRIPTS/y_patch.sh -c $CVS/apps/tuxbox/enigma/data/pictures/mainmenu/shutdown-fs8.png $CHANGE_DIR/enigma/setup_extra-fs8.png
 $SCRIPTS/y_patch.sh -c $CVS/apps/tuxbox/enigma/data/pictures/mainmenu/shutdown_sel-fs8.png $CHANGE_DIR/enigma/setup_extra_sel-fs8.png
 
-
-# add Enigma Plugindir /lib/tuxbox/plugins_enigma // BROKEN
-#$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/enigma_plugins.cpp $CHANGE_DIR/enigma/enigma_plugins.cpp.diff
-
 #Enigma-Debug-output in Testimages
 [ $IMAGETYPE = "2" ] && $SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/configure.ac $CHANGE_DIR/enigma/configure.ac.debug.diff
 
@@ -62,12 +56,8 @@ $SCRIPTS/y_patch.sh -c $CVS/apps/tuxbox/enigma/data/pictures/mainmenu/shutdown_s
 # Barfs Zapit Patch => remember apid
 $SCRIPTS/y_patch.sh -p $CVS/apps/dvb/zapit/src/zapit.cpp $CHANGE_DIR/neutrino/zapit.cpp.diff.2004-06-28
 
-#Patch version to 1.10
-$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/update.cpp $CHANGE_DIR/neutrino/update.cpp.1.10.diff
-
-# Live-Stream Movieplayer by gmo18t 2004-07-15 (mp 1.97)
-$SCRIPTS/y_patch.sh -c $CVS/apps/tuxbox/neutrino/src/gui/movieplayer.cpp $CHANGE_DIR/neutrino/movieplayer.cpp.gmo
-$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/movieplayer.h $CHANGE_DIR/neutrino/movieplayer.h.diff
+#Patch version to 2.0 Layout: root-var-uboot
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/update.cpp $CHANGE_DIR/neutrino/update.cpp.diff
 
 # Neutrino neue Menueinträge: Nokia Kabel treiber laden
 $SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/neutrino.cpp $CHANGE_DIR/neutrino/neutrino.cpp.patch

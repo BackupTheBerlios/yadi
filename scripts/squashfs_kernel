@@ -1,4 +1,4 @@
-# $Id: squashfs_kernel,v 1.6 2004/10/08 23:58:08 essu Exp $
+# $Id: squashfs_kernel,v 1.7 2004/10/27 19:04:20 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -29,12 +29,12 @@
 
 $SCRIPTS/y_patch.sh -c $CVS/cdk/linux/.config $CHANGE_DIR/kernel/27/linux.config
 
-$SCRIPTS/y_patch.sh -c $CVS/cdk/linux/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/kernel/dbox2-flash.squashfs.c
+$SCRIPTS/y_patch.sh -c $CVS/cdk/linux/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/kernel/dbox2-flash.squashfs2.new.c
 
 cd $CVS/cdk
 rm .deps/linuxkernel
 make .deps/linuxkernel
 
-$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/kernel
-cp $DBOX/tftpboot/kernel-cdk $DBOX/cdkflash/kernel/vmlinuz
 rm $DBOX/cdkflash/root/vmlinuz
+cp $DBOX/tftpboot/kernel-cdk $DBOX/cdkflash/root/vmlinuz
+

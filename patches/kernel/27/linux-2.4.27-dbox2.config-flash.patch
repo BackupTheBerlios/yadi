@@ -1,0 +1,22 @@
+--- linux-2.4.27-dbox2.config-flash	2004-09-09 09:59:41.000000000 +0200
++++ linux-2.4.27-dbox2.config-flash.yadi	2004-09-09 09:56:20.000000000 +0200
+@@ -191,7 +191,7 @@
+ # CONFIG_CISS_MONITOR_THREAD is not set
+ # CONFIG_BLK_DEV_DAC960 is not set
+ # CONFIG_BLK_DEV_UMEM is not set
+-# CONFIG_BLK_DEV_LOOP is not set
++CONFIG_BLK_DEV_LOOP=y
+ # CONFIG_BLK_DEV_NBD is not set
+ # CONFIG_BLK_DEV_RAM is not set
+ # CONFIG_BLK_DEV_INITRD is not set
+@@ -614,8 +614,8 @@
+ CONFIG_JFFS2_FS=y
+ CONFIG_JFFS2_FS_DEBUG=0
+ # CONFIG_JFFS2_FS_NAND is not set
+-CONFIG_CRAMFS=y
+-# CONFIG_SQUASHFS is not set
++# CONFIG_CRAMFS is not set
++CONFIG_SQUASHFS=y
+ # CONFIG_TMPFS is not set
+ CONFIG_RAMFS=y
+ # CONFIG_ISO9660_FS is not set

@@ -1,4 +1,4 @@
-# $Id: prepatch,v 1.2 2004/10/08 23:58:08 essu Exp $
+# $Id: prepatch,v 1.3 2004/10/27 19:04:20 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 mogway Germany. All rights reserved.
@@ -32,6 +32,6 @@
 $SCRIPTS/y_patch.sh -p $CVS/cdk/Patches/linux-2.4.27-dbox2.config-flash $CHANGE_DIR/kernel/27/linux-2.4.27-dbox2.config-flash.patch
 
 # Den Squashfs-Patch vom 26er Kernel benutzen, damit den Patch vom Squashfs 1.3 überschreiben
-rm $CVS/cdk/Patches/squashfs1.3r3-patch
-$SCRIPTS/y_patch.sh -c $CVS/cdk/Patches/squashfs1.3r3-patch $CHANGE_DIR/kernel/26/squashfs2.0-patch
+#rm $CVS/cdk/Patches/squashfs1.3r3-patch
+#$SCRIPTS/y_patch.sh -c $CVS/cdk/Patches/squashfs1.3r3-patch $CHANGE_DIR/kernel/26/squashfs2.0-patch
 

@@ -17,7 +17,7 @@
  				case 3:
 -					strcpy(mtd,"/dev/mtd/2");
 -					mtdsize=0x6e0000;
-+					strcpy(mtd,"/dev/mtd/3");
++					strcpy(mtd,"/dev/mtd/1");
 +					mtdsize=0x640000;
  					break;
  				case 5:   // dm7000

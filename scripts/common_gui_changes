@@ -1,4 +1,4 @@
-# $Id: common_gui_changes,v 1.6 2004/10/14 20:13:27 essu Exp $
+# $Id: common_gui_changes,v 1.7 2004/10/27 19:04:20 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -42,8 +42,10 @@ $SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/bin/etherwake $DBOX/cdkroot/bin/ether
 # eraseall ins Flash aufnehmen
 $SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/sbin/eraseall $DBOX/cdkroot/sbin/eraseall
 
-# fcp ins Flash aufnehmen
+# fcp und secup ins Flash aufnehmen
 $SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/sbin/fcp $DBOX/cdkroot/sbin/fcp
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/sbin/secup $PLUGIN_DIR/secureupdate/secup
+chmod 755 $DBOX/cdkflash/root/sbin/secup
 
 # rcs kopieren
 $SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/etc/init.d/rcS.local $CHANGE_DIR/misc/rcS.local

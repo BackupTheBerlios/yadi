@@ -1,4 +1,4 @@
-# $Id: squashfs_move_files,v 1.11 2004/10/08 23:58:08 essu Exp $
+# $Id: squashfs_move_files,v 1.12 2004/10/27 19:04:20 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -28,7 +28,7 @@
 # -------------------------------------------------------
 #
 cd $CVS/cdk
- 
+
 # Root und Var trennen
 rm -r $DBOX/cdkflash/var
 mv $DBOX/cdkflash/root/var/ $DBOX/cdkflash/
@@ -95,7 +95,7 @@ rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/shutdown.raw
 rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/scan.pal
 rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/shutdown.pal
 
-cp $CHANGE_DIR/kernel/fstab.squashfs $DBOX/cdkflash/root/etc/fstab
+cp $CHANGE_DIR/kernel/fstab.squashfs2.new $DBOX/cdkflash/root/etc/fstab
 cp $CHANGE_DIR/misc/squashfs.urls $DBOX/cdkflash/var/etc
 cd $DBOX/cdkflash/root/etc
 ln -sf /var/etc/squashfs.urls cramfs.urls
