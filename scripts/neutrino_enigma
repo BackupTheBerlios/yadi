@@ -1,3 +1,30 @@
+# $Id: neutrino_enigma,v 1.2 2004/04/03 12:20:13 essu Exp $
+# is part of yadi-script-pack
+#
+# Copyright (c) 2004 AlexH Germany. All rights reserved.
+# Mail: alexh@berlios.de
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/Attic/neutrino_enigma,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
 cd $CVS/cdk
 
 # Dateien in cdkflash loeschen
@@ -82,8 +109,8 @@ cp $CHANGE_DIR/Configs/rcS $DBOX/cdkflash/root/etc/init.d/
 
 # Logos kopieren
 mkdir $DBOX/cdkflash/root/var/tuxbox/boot
-cp $CHANGE_DIR/Logos/logo-fb $DBOX/cdkflash/root/var/tuxbox/boot
-cp $CHANGE_DIR/neutrino/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
+cp $CHANGE_DIR/Logos/yadi_logo-fb $DBOX/cdkflash/root/var/tuxbox/boot/logo-fb
+cp $CHANGE_DIR/Logos/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
 
 # ppcboot kopiern
 cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boot.conf
