@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# allin1 $Id: allin1.sh,v 1.15 2004/03/10 19:36:24 essu Exp $
+# allin1 $Id: allin1.sh,v 1.16 2004/03/25 19:22:21 alexh Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
@@ -36,7 +36,7 @@ RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" version$Revision: 1.15 $" 	# Zeilenlaenge: genau 15 Zeichen
+VERSION=" version$Revision: 1.16 $" 	# Zeilenlaenge: genau 15 Zeichen
 # Pfad zu den geaenderten und sonstigen Dateien
 CHANGE_DIR=$RT/patches/head_changed
 CHANGE_ARC_DIR=$RT/change_arcs
@@ -550,8 +550,8 @@ if [ -e $RT/.mkheadall_error ];then
  echo
 else
  get_cvs
- patch_cvs
  configure
+ patch_cvs
 fi
 
 make_it
