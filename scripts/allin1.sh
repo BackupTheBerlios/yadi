@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# allin1 $Id: allin1.sh,v 1.10 2004/03/05 14:45:05 essu Exp $
+# allin1 $Id: allin1.sh,v 1.11 2004/03/07 18:29:03 essu Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
@@ -36,7 +36,7 @@ RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig $Revision: 1.10 $ enthalten
+VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig $Revision: 1.11 $ enthalten
 # Pfad zu den geaenderten und sonstigen Dateien
 CHANGE_DIR=$RT/head_changed
 CHANGE_ARC_DIR=$RT/change_arcs
@@ -509,20 +509,21 @@ cat_image()
 # ist jetzt fuer beide GUIs zusammengefasst um die (existierenden) Fehler besser eingrenzen zu koennen
 echo
 echo
-fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $DBOX/cdkflash/root-jffs2.tmp
-if [ ! -e $DBOX/cdkflash/root-jffs2.tmp ]; then
- echo "$DBOX/cdkflash/root-jffs2.tmp nicht gefunden"
+fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $IMAGES/$GUI.root-jffs2.tmp
+read -p "Druecken Sie [RETURN] um fortzusetzen (automagisch nach 10 s) -> " -t 10 #um Zeit f?r fakeroot zu gewinnen
+if [ ! -e $IMAGES/$GUI.root-jffs2.tmp ]; then
+ echo "$IMAGES/$GUI.root-jffs2.tmp nicht gefunden"
 else
  if [ ! -e $DBOX/flfs/flfs1x.img ]; then
   echo "$DBOX/flfs/flfs1x.img nicht gefunden"
  else
-  cat $DBOX/flfs/flfs1x.img DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_1x.img"
+  cat $DBOX/flfs/flfs1x.img $IMAGES/$GUI.root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_1x.img"
   echo $IMG_PRE$GUI"_head_1x.img erstellt"
  fi
  if [ ! -e $DBOX/flfs/flfs2x.img ]; then
   echo "$DBOX/flfs/flfs2x.img nicht gefunden"
  else
-  cat $DBOX/flfs/flfs2x.img DBOX/cdkflash/root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_2x.img"
+  cat $DBOX/flfs/flfs2x.img $IMAGES/$GUI.root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_2x.img"
   echo $IMG_PRE$GUI"_head_2x.img erstellt"
  fi
 fi
