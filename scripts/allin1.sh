@@ -5,7 +5,7 @@
 RM_CVS='yes' 			# yes | no  : altes CVS löschen oder updaten
 
 # Folgende Pfade und Dateinamen anpassen:
-RT=$HOME/yadi/image
+RT=/home/tuxbox/yadi
 CVS=$RT/tuxbox-cvs	# Pfad zum CVS
 DBOX=$RT/dbox 		# Pfad zu dbox2
 CHFILES=$RT/changefiles # Pfad zur Datei mit den Aenderungen (ohne .tar.gz)
@@ -18,7 +18,6 @@ VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen
 prepare()
 {
 # Namensprefix mit Datum
-mkdir -p $RT $CVS $DBOX $CHFILES $IMAGES
 IMG_PRE=`date +%Y%m%d%H%M`
 IMG_PRE=$IMG_PRE"yadi_"
 if [ ! -e $IMAGES ]; then
@@ -83,26 +82,31 @@ else
   tar -xpf $HEADCH.tar
   rm $DBOX/$HEADCH.tar
 
-  # Archive verschieben
-  if test -d $CVS/cdk/Archive
-  then
-    mv $CVS/cdk/Archive $RT
-  fi
-if [ $RM_CVS = "yes" ]; then
-  #Inhalt von CVS loeschen
-  rm -rf $CVS
-  mkdir $CVS
-fi
-
+   if [ $RM_CVS = "yes" ]; then
+    # Archive verschieben
+    if test -d $CVS/cdk/Archive
+    then
+     mv $CVS/cdk/Archive $RT
+    fi
+   #Inhalt von CVS loeschen
+   rm -rf $CVS
+   mkdir $CVS
+   # CVS runterladen
+   cd $CVS
+   cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 co .
+   if test -d $RT/Archive
+   then
+   if  ! test -d $RT/Archive
+    then
+     mkdir §CVS/cdk
+    fi
+    mv $RT/Archive mv $CVS/cdk
+   fi
+ else
   cd $CVS
-
-  # CVS runterladen
-  cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 co .
-
-  # CDK konfigurieren und Archive verschieben
-  cd cdk
-
-  mv $RT/Archive .
+  cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 up -dP
+ fi
+ cd $CVS/cdk/
 
   ./autogen.sh
   ./configure --prefix=$DBOX --with-cvsdir=$CVS --enable-maintainer-mode --with-targetruleset=flash
@@ -110,13 +114,14 @@ fi
   # Kernel-Verzeichnisse erstellen und Patches kopieren
   #make .linuxdir
   make .deps/linuxdir
-  patch -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
+
+  patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
 
   # Neu: Aenderungen für 1xI schon im CVS
   cp Patches/u-boot.1x-flash.dbox2.h ../boot/u-boot/include/configs/dbox2.h
 
   # Die Datei aus dem CVS für JFFS2-Only patchen
-  patch -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
+  patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
 fi
 }
 
@@ -157,7 +162,7 @@ mv flfs.img $DBOX/flfs/flfs1x.img
 
 # U-Boot für 2xI erzeugen
 cp $CVS/cdk/Patches/u-boot.2x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
-patch -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.2x.neu.diff
+patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.2x.neu.diff
 rm $CVS/boot/u-boot/u-boot.stripped
 cd $CVS/cdk
 rm .deps/u-boot
@@ -221,7 +226,7 @@ cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
 cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 
 # rcs kopieren
-patch -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
 # cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # MKLibs ausfuehren
@@ -254,14 +259,14 @@ cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boo
 
 # XMLs kopieren
 cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/share/tuxbox/
-patch -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
+patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
 
 # Interfaces loeschen
 rm $DBOX/cdkflash/root/etc/network/interfaces
 
 # Start.neutrino kopieren
-patch -p0 $DBOX/cdkflash/root/etc/init.d/start $CHANGE_DIR/neutrino/start.diff
-patch -p0 $DBOX/cdkflash/root/etc/init.d/start_neutrino $CHANGE_DIR/neutrino/start_neutrino.diff
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/start $CHANGE_DIR/neutrino/start.diff
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/start_neutrino $CHANGE_DIR/neutrino/start_neutrino.diff
 chmod a+x $DBOX/cdkflash/root/etc/init.d/start_neutrino
 
 # Root-Home erstellen
@@ -360,7 +365,7 @@ cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
 cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 
 # rcs kopieren
-patch -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
 cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # Locales kopieren
@@ -399,20 +404,20 @@ fi
 # Logos kopieren
 mkdir $DBOX/cdkflash/root/var/tuxbox/boot
 cp $CHANGE_DIR/Logos/logo-fb $DBOX/cdkflash/root/var/tuxbox/boot
-cp $CHANGE_DIR/neutrino/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
+cp $CHANGE_DIR/enigma/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
 
 # ppcboot kopiern
 cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boot.conf
 
 # XMLs kopieren
 cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/share/tuxbox/
-patch -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
+patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
 
 # Interfaces loeschen
 rm $DBOX/cdkflash/root/etc/network/interfaces
 
 # Start kopieren
-patch -p0 $DBOX/cdkflash/root/etc/init.d/start $CHANGE_DIR/enigma/start.diff
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/start $CHANGE_DIR/enigma/start.diff
 chmod a+x $DBOX/cdkflash/root/etc/init.d/start_enigma
 
 # Root-Home erstellen
@@ -448,10 +453,6 @@ ln -s ../bin/busybox ../bin/ps
 # /var/tuxbox/config/enigma erstellen
 mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma
 
-# FLFS zurueckbewegen
-cd $DBOX
-mv flfs* cdkflash/
-
 # Neutrino-Images zurueckbewegen
 #mv neutrino_head_* cdkflash/
 
@@ -466,9 +467,23 @@ prepare
 config
 make_it
 flfs
+echo
+echo
+echo flfs erstellt
+echo
+echo
 neutrino
-flfs
+echo
+echo
+echo neutriono erstellt
+echo
+echo
 enigma
+echo
+echo
+echo enigma erstellt
+echo
+echo
 
 echo
 echo
