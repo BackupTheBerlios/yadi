@@ -1,0 +1,10 @@
+--- ../../../../tuxbox-cvs/apps/tuxbox/enigma/lib/system/info.cpp	2004-03-24 13:13:02.000000000 +0100
++++ ../../../../../ideas/diffs/info.cpp.neu	2004-04-04 12:38:38.000000000 +0200
+@@ -114,5 +114,6 @@
+ 			break;
+ 		case TUXBOX_SUBMODEL_DBOX2:
+-			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab;
++			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
++			canrecordts = 1;
+ 			caids.insert(0x1702);
+ 			caids.insert(0x1722);
