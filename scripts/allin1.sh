@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# allin1 $Id: allin1.sh,v 1.20 2004/04/28 23:29:37 alexh Exp $
+# allin1 $Id: allin1.sh,v 1.21 2004/10/07 12:27:10 essu Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
@@ -36,9 +36,9 @@ RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" version$Revision: 1.20 $" 	# Zeilenlaenge: genau 15 Zeichen
+VERSION=" version$Revision: 1.21 $" 	# Zeilenlaenge: genau 15 Zeichen
 # Pfad zu den geaenderten und sonstigen Dateien
-CHANGE_DIR=$RT/patches/head_changed
+CHANGE_DIR=$RT/patches
 CHANGE_ARC_DIR=$RT/change_arcs
 CHANGE_ARC=head_changed # Datei mit den Aenderungen (ohne .tar.gz)
 # Pfad zu mklibs setzen
@@ -152,13 +152,13 @@ get_cvs()
 patch_cvs()
 {
  # Patches kopieren
- patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
+ patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/kernel/dbox2-flash.c.diff
  # Neu: Aenderungen fuer 1xI schon im CVS
  cp $CVS/cdk/Patches/u-boot.1x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
  # Die Datei aus dem CVS fuer JFFS2-Only patchen
- patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
+ patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/kernel/dbox2.h.neu.diff
  # DVR in Enigma aktivieren
- patch -N -p0 $CVS/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp $CHANGE_DIR/Patches/enigma_dvr.diff
+ patch -N -p0 $CVS/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp $CHANGE_DIR/enigma/enigma_dvr.diff
 }
 
 configure()
@@ -208,7 +208,7 @@ mv flfs.img $DBOX/flfs/flfs1x.img
 
 # U-Boot fuer 2xI erzeugen
 cp $CVS/cdk/Patches/u-boot.2x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
-patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.2x.neu.diff
+patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/kernel/dbox2.h.2x.neu.diff
 rm $CVS/boot/u-boot/u-boot.stripped
 cd $CVS/cdk
 rm .deps/u-boot
@@ -296,12 +296,12 @@ cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 cp $DBOX/cdkroot/sbin/eraseall $DBOX/cdkflash/root/sbin
 
 # rcs kopieren
-patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
-# cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/misc/rcS.diff
+# cp $CHANGE_DIR/misc/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # Logos kopieren
 mkdir $DBOX/cdkflash/root/var/tuxbox/boot
-cp $CHANGE_DIR/Logos/logo-fb $DBOX/cdkflash/root/var/tuxbox/boot
+cp $CHANGE_DIR/logos/logo-fb $DBOX/cdkflash/root/var/tuxbox/boot
 cp $CHANGE_DIR/neutrino/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
 
 # ppcboot kopiern
@@ -313,7 +313,7 @@ cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boo
 
 # XMLs kopieren
 cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/share/tuxbox/
-patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
+patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/misc/cables.xml.diff
 
 # Interfaces loeschen
 rm $DBOX/cdkflash/root/etc/network/interfaces
@@ -326,11 +326,13 @@ chmod a+x $DBOX/cdkflash/root/etc/init.d/start_neutrino
 # Root-Home erstellen
 # mkdir $DBOX/cdkflash/root/root
 
-# lcdip kopieren
-cp $CHANGE_DIR/bin/lcdip $DBOX/cdkflash/root/bin/
+# lcdip compilieren & installieren
+cd $CHANGE_DIR/sources/lcdip
+make install
 
-# Ucode-Checker kopieren
-cp $CHANGE_DIR/bin/chkucodes $DBOX/cdkflash/root/sbin/
+# Ucode-Checker compilieren & installieren
+cd $CHANGE_DIR/sources/chkucodes
+make install
 
 # Image-Infos kopieren, falls existent
 if test -e $VER.neutrino
@@ -423,7 +425,7 @@ make install
 mkdir $DBOX/cdkflash/root/share/locale
 cp -r $DBOX/cdkroot/share/locale/de/ $DBOX/cdkflash/root/share/locale/
 cp -r $DBOX/cdkroot/share/locale/fr/ $DBOX/cdkflash/root/share/locale/
-cp $CHANGE_DIR/Configs/locales $DBOX/cdkflash/root/share/locale/
+cp $CHANGE_DIR/enigma/locales $DBOX/cdkflash/root/share/locale/
 
 # Strace kopieren
 cp $DBOX/cdkroot/bin/strace $DBOX/cdkflash/root/bin
@@ -444,8 +446,8 @@ cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 cp $DBOX/cdkroot/sbin/eraseall $DBOX/cdkflash/root/sbin
 
 # rcs kopieren
-patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
-cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/misc/rcS.diff
+cp $CHANGE_DIR/misc/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # Locales kopieren
 #cp $DBOX/cdkroot/bin/locale $DBOX/cdkflash/root/bin/
@@ -456,7 +458,7 @@ cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
 
 # Logos kopieren
 mkdir $DBOX/cdkflash/root/var/tuxbox/boot
-cp $CHANGE_DIR/Logos/logo-fb $DBOX/cdkflash/root/var/tuxbox/boot
+cp $CHANGE_DIR/logos/logo-fb $DBOX/cdkflash/root/var/tuxbox/boot
 cp $CHANGE_DIR/enigma/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
 
 # ppcboot kopiern
@@ -464,7 +466,7 @@ cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boo
 
 # XMLs kopieren
 cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/share/tuxbox/
-patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
+patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/misc/cables.xml.diff
 
 # Interfaces loeschen
 rm $DBOX/cdkflash/root/etc/network/interfaces

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.15 2004/10/07 12:27:10 essu Exp $
+# $Id: yadiyadd,v 1.1 2004/10/07 12:27:10 essu Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -9,7 +9,7 @@
 #
 #
 # aktuelle Versionen gibt es hier:
-# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/yadi,v $
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/yadiyadd,v $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -31,7 +31,7 @@
 #
 #MAIN
 
-VERSION="yadi v. $Revision: 1.15 $"
+VERSION="yadi v. $Revision: 1.1 $"
 . check_arguments
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
@@ -50,37 +50,17 @@ if [ ! -e $ROOT/.compileImage ]; then
     done
     . $SCRIPTS/check
     . $SCRIPTS/get_cvs
-    . $SCRIPTS/prepatch
-    . $SCRIPTS/configure
-    . $SCRIPTS/patch_cvs
-    . $SCRIPTS/flfs
+    . $SCRIPTS/yadd_configure
+    . $SCRIPTS/yadd_sfs_kernel
+    #. $SCRIPTS/patch_cvs
+    #. $SCRIPTS/flfs
   fi
 fi
 
 touch $ROOT/.make_error
 
-if [ $SQUASHFS_ONLY = "no" ]; then
-    GUI="neutrino"
-    . $SCRIPTS/build_gui
-    . $SCRIPTS/neutrino_changes
-    . $SCRIPTS/common_gui_changes
-    . $SCRIPTS/cat_image
-    GUI="enigma"
-    . $SCRIPTS/build_gui
-    . $SCRIPTS/enigma_changes
-    . $SCRIPTS/common_gui_changes
-    . $SCRIPTS/cat_image
-fi
-
-GUI="all"
-. $SCRIPTS/squashfs_update
-. $SCRIPTS/build_gui
-. $SCRIPTS/neutrino_changes
-. $SCRIPTS/enigma_changes
-. $SCRIPTS/common_gui_changes
-. $SCRIPTS/squashfs_kernel
-. $SCRIPTS/squashfs_move_files
-. $SCRIPTS/squashfs_create_image
+cd $CVS/cdk
+make all
 
 rm $ROOT/.make_error 
 rm $ROOT/.compileImage 

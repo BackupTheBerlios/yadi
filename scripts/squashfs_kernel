@@ -1,4 +1,4 @@
-# $Id: squashfs_kernel,v 1.4 2004/04/28 23:29:37 alexh Exp $
+# $Id: squashfs_kernel,v 1.5 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -26,13 +26,15 @@
 # -------------------------------------------------------
 #
 # Linux-Kernel konfigurieren
-cp $CHANGE_DIR/Configs/linux_config.squashfs $CVS/cdk/linux/.config
-cp $CHANGE_DIR/Patches/dbox2-flash.squashfs.c $CVS/cdk/linux/drivers/mtd/maps/dbox2-flash.c
- 
+
+$SCRIPTS/y_patch.sh -c $CVS/cdk/linux/.config $CHANGE_DIR/kernel/27/linux.config
+
+$SCRIPTS/y_patch.sh -c $CVS/cdk/linux/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/kernel/dbox2-flash.squashfs.c
+
 cd $CVS/cdk
 rm .deps/linuxkernel
 make .deps/linuxkernel
 
-mkdir $DBOX/cdkflash/kernel
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/kernel
 cp $DBOX/tftpboot/kernel-cdk $DBOX/cdkflash/kernel/vmlinuz
 rm $DBOX/cdkflash/root/vmlinuz

@@ -1,4 +1,4 @@
-# $Id: get_cvs,v 1.5 2004/04/28 23:29:37 alexh Exp $
+# $Id: get_cvs,v 1.6 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -29,47 +29,51 @@
 # -------------------------------------------------------
 #
 #get_cvs()
+#
 # DBOX loeschen, falls es existiert, DBOX-Verzeichnis erzeugen
-  if [ -d $DBOX ]; then
-    rm -rf $DBOX
-  fi
-  mkdir $DBOX
-# Archive verschieben
-  if [ -d $CVS/cdk/Archive ]; then
-   mv $CVS/cdk/Archive $ARCHIVE
-  fi
-  if [ $RM_CVS = "yes" ]; then
+[ -d $DBOX ] && rm -rf $DBOX && $SCRIPTS/y_patch.sh -m $DBOX
 
-   #Inhalt von CVS loeschen
-   rm -rf $CVS
-   mkdir $CVS
-   # CVS runterladen
-   cd $CVS
-   set CVS_RSH=ssh
-   cvs -d anoncvs@cvs.tuxbox.org:/cvs/tuxbox -z3 co -PA .
-  else
-   # den Patch auf u-boot-1.0.2 entfernen
-   PATCH=uboot102
-   if [ -e $CVS/boot/.$PATCH ]; then
-    rm -rf $CVS/boot/u-boot
-    mv $CVS/boot/u-boot.old $CVS/boot/u-boot
-    rm $CVS/boot/.$PATCH
-   fi
-   cd $CVS/cdk
-   make distclean
-   cd $CVS
-   #cvs -d:pserver:anonymous@cvs.tuxbox.org:/cvs/tuxbox -z3 up -PA
-   set CVS_RSH=ssh
-   cvs -d anoncvs@cvs.tuxbox.org:/cvs/tuxbox -z3 up -PA
-  fi
-  if [ ! -d $CVS/cdk ]; then
-    mkdir $CVS/cdk
-  fi
-  cd $CVS/cdk
-  if [ ! -L Archive ];then
-   ln -s $ARCHIVE Archive
-   if [ ! -e $ARCHIVE ]; then
-     mkdir $ARCHIVE
-   fi
-  fi
+# Archive nur verschieben, wenn sie keine Links sind (und existieren)
+if [ ! -L $CVS/cdk/Archive ]; then
+ [ -d $CVS/cdk/Archive ] && mv $CVS/cdk/Archive $ROOT
+fi
+
+if [ $RM_CVS = "yes" ]; then
+ #Inhalt von CVS loeschen
+ rm -rf $CVS && $SCRIPTS/y_patch.sh -m $CVS
+ cd $CVS
+ # CVS-checkout
+ set CVS_RSH=ssh && cvs -d anoncvs@82.149.243.100:/cvs/tuxbox -z3 co -PA .
+else
+ #Patches reversen
+ $SCRIPTS/y_patch.sh -a
+ cd $CVS/cdk && make distclean
+ # vor dem cvs update Dateien löschen, welche ansonsten gemerged würden
+ cd $CVS
+ rm -vf `find -iname *.orig`
+ rm -vf `find -iname *.rej`
+ rm $CVS/boot/u-boot-config/u-boot*
+ rm $CVS/hostapps/mkflfs/test
+ rm $CVS/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp
+ rm $CVS/apps/tuxbox/enigma/lib/system/info.cpp
+ rm $CVS/apps/tuxbox/enigma/po/*.po
+ rm $CVS/apps/tuxbox/enigma/src/upgrade.cpp
+ rm $CVS/apps/tuxbox/neutrino/src/gui/update.cpp
+ rm $CVS/hostapps/flash/flashmanage.pl
+ rm $CVS/apps/tuxbox/neutrino/src/neutrino.cpp
+ rm $CVS/apps/tuxbox/neutrino/src/gui/Makefile.am
+ rm $CVS/cdk/rules-make
+ rm $CVS/cdk/rules-archive
+ rm $CVS/cdk/Patches/busybox-flash.config
  
+ #CVS-update
+ set CVS_RSH=ssh && cvs -d anoncvs@82.149.243.100:/cvs/tuxbox -z3 up -dPA
+fi
+
+#fehlende Verzeichnisse erzeugen
+[ ! -d $CVS/cdk ] && $SCRIPTS/y_patch.sh -m $CVS/cdk
+[ ! -d $CVS/cdk/.deps ] && $SCRIPTS/y_patch.sh -m $CVS/cdk/.deps
+
+#Archive verlinken
+[ -e $ARCHIVE ] || $SCRIPTS/y_patch.sh -m $ARCHIVE
+[ -L "$CVS/cdk/Archive" ] || ln -s $ARCHIVE $CVS/cdk/Archive

@@ -1,11 +1,12 @@
-# $Id: squashfs_update,v 1.4 2004/10/07 12:27:10 essu Exp $
+# $Id: prepatch,v 1.1 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
-# Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
-# Mail: alexh@berlios.de
+# Copyright (c) 2004 mogway Germany. All rights reserved.
+# 
+# Mail: mogway@yadi.org 
 #
 # aktuelle Versionen gibt es hier:
-# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/squashfs_update,v $
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/prepatch,v $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -25,20 +26,12 @@
 #
 # -------------------------------------------------------
 #
+#
 
-# Neutrino-Makefile-Patch
-$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/Makefile.am $CHANGE_DIR/kernel/Makefile.am.diff
+# Changes for Linux Kernel 2.4.27
+$SCRIPTS/y_patch.sh -p $CVS/cdk/Patches/linux-2.4.27-dbox2.config-flash $CHANGE_DIR/kernel/27/linux-2.4.27-dbox2.config-flash.patch
 
-# Enigma-Upgrade-Patch
-$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/upgrade.cpp $CHANGE_DIR/enigma/upgrade.cpp.diff
+# Den Squashfs-Patch vom 26er Kernel benutzen, damit den Patch vom Squashfs 1.3 überschreiben
+rm $CVS/cdk/Patches/squashfs1.3r3-patch
+$SCRIPTS/y_patch.sh -c $CVS/cdk/Patches/squashfs1.3r3-patch $CHANGE_DIR/kernel/26/squashfs2.0-patch
 
-# Neutrino und Enigma neu bauen
-cd $CVS/apps/tuxbox/neutrino/
-#make clean
-cd $CVS/cdk
-rm .deps/neutrino
-make neutrino
-
-cd $CVS/cdk
-rm .deps/enigma
-make enigma

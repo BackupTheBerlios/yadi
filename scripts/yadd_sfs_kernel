@@ -1,11 +1,11 @@
-# $Id: squashfs_update,v 1.4 2004/10/07 12:27:10 essu Exp $
+# $Id: yadd_sfs_kernel,v 1.1 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
 # Mail: alexh@berlios.de
 #
 # aktuelle Versionen gibt es hier:
-# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/squashfs_update,v $
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/yadd_sfs_kernel,v $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -25,20 +25,11 @@
 #
 # -------------------------------------------------------
 #
-
-# Neutrino-Makefile-Patch
-$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/Makefile.am $CHANGE_DIR/kernel/Makefile.am.diff
-
-# Enigma-Upgrade-Patch
-$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/upgrade.cpp $CHANGE_DIR/enigma/upgrade.cpp.diff
-
-# Neutrino und Enigma neu bauen
-cd $CVS/apps/tuxbox/neutrino/
-#make clean
-cd $CVS/cdk
-rm .deps/neutrino
-make neutrino
+# Linux-Kernel konfigurieren
 
 cd $CVS/cdk
-rm .deps/enigma
-make enigma
+make .deps/linuxdir
+
+$SCRIPTS/y_patch.sh -c $CVS/cdk/linux/.config $CHANGE_DIR/kernel/27/yadd_linux.config
+$SCRIPTS/y_patch.sh -c $CVS/cdk/linux/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/kernel/dbox2-flash.squashfs.c
+

@@ -1,11 +1,11 @@
-# $Id: patch_cvs,v 1.5 2004/04/28 23:29:37 alexh Exp $
+# $Id: patch_cvs,v 1.6 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
 # Copyright (c) 2004 essu, acoo Germany. All rights reserved.
-# Mail: acoo@berlios.de
-# Mail: essu@berlios.de
-#
+# Mail:  alexh@yadi.org
+#         essu@yadi.org
+#       mogway@yadi.org
 #
 # aktuelle Versionen gibt es hier:
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/patch_cvs,v $
@@ -29,41 +29,56 @@
 # -------------------------------------------------------
 #
 #patch_cvs()
- # Flash-Patch
- patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
- # Patch fuer u-boot 1.0.2
- mv $CVS/boot/u-boot $CVS/boot/u-boot.old
- if [ ! -d $ROOT/patches ]; then
-  mkdir $ROOT/patches
- fi
- #cd $ROOT/patches
- PATCH=uboot102
- if [ ! -e $CVS/boot/.$PATCH ]; then
-   #cp $CHANGE_DIR/uboot/$PATCH.tar.gz $ROOT/patches
-   #gunzip -d $ROOT/patches/$PATCH.tar.gz
-   #tar -xvf $ROOT/patches/$PATCH.tar
-   #touch $ROOT/patches/.$PATCH
-   if [ ! -e $ARCHIVE/uboot102.tar.gz ]; then
-     cd $ARCHIVE
-     wget 'ftp://ftp.berlios.de/pub/yadi/uboot/uboot102.tar.gz'
-     if [ ! -e $ARCHIVE/uboot102.tar.gz ]; then
-       echo "Fehler: Kann uboot102.tar.gz von Berlios nicht laden, Make-Vorgang wird abgebrochen!"
-       exit 1
-     fi
-   fi
-   cd $CVS/boot
-   tar -xzvf $ARCHIVE/uboot102.tar.gz
-   mv u-boot-1.0.2/ u-boot
-   touch $CVS/boot/.$PATCH
- fi
- #ln -s $ROOT/patches/u-boot-1.0.2 $CVS/boot/u-boot
+#
 
- # Patch fuer 1xI (im CVS)
- cp $CVS/cdk/Patches/u-boot.1x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
- # Die Datei aus dem CVS fuer JFFS2-Only patchen
- patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
- # DVR in Enigma aktivieren
- patch -N -p0 $CVS/apps/tuxbox/enigma/lib/dvb/servicedvb.cpp $CHANGE_DIR/enigma/servicedvb.cpp.diff
- cp -f $CHANGE_DIR/enigma/info.cpp $CVS/apps/tuxbox/enigma/lib/system/
- #Upgrade-Patch
- cp -f $CHANGE_DIR/enigma/upgrade.cpp.squashfs $CVS/apps/tuxbox/enigma/src/upgrade.cpp
+# Flash-Patch
+$SCRIPTS/y_patch.sh -p $CVS/cdk/linux-2.4.27/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/kernel/dbox2-flash.c.diff
+
+# add renice to busybox
+$SCRIPTS/y_patch.sh -p $CVS/cdk/Patches/busybox-flash.config $CHANGE_DIR/misc/busybox-flash.config.patch
+
+# Enigma 
+# Textinput in Enigma reparieren
+#$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/lib/gui/textinput.cpp $CHANGE_DIR/enigma/textinput.cpp.diff
+
+# neue Menue-Struktur in Enigma
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/enigma_mainmenu.cpp $CHANGE_DIR/enigma/enigma_mainmenu.cpp.diff
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/enigma_mainmenu.h $CHANGE_DIR/enigma/enigma_mainmenu.h.diff
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/enigma_setup.cpp $CHANGE_DIR/enigma/enigma_setup.cpp.diff
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/enigma_setup.h $CHANGE_DIR/enigma/enigma_setup.h.diff
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/setup_extra.cpp $CHANGE_DIR/enigma/setup_extra.cpp.diff
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/setup_extra.h $CHANGE_DIR/enigma/setup_extra.h.diff
+$SCRIPTS/y_patch.sh -c $CVS/apps/tuxbox/enigma/data/pictures/mainmenu/shutdown-fs8.png $CHANGE_DIR/enigma/setup_extra-fs8.png
+$SCRIPTS/y_patch.sh -c $CVS/apps/tuxbox/enigma/data/pictures/mainmenu/shutdown_sel-fs8.png $CHANGE_DIR/enigma/setup_extra_sel-fs8.png
+
+
+# add Enigma Plugindir /lib/tuxbox/plugins_enigma // BROKEN
+#$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/src/enigma_plugins.cpp $CHANGE_DIR/enigma/enigma_plugins.cpp.diff
+
+#Enigma-Debug-output in Testimages
+[ $IMAGETYPE = "2" ] && $SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/enigma/configure.ac $CHANGE_DIR/enigma/configure.ac.debug.diff
+
+#Neutrino
+# Barfs Zapit Patch => remember apid
+$SCRIPTS/y_patch.sh -p $CVS/apps/dvb/zapit/src/zapit.cpp $CHANGE_DIR/neutrino/zapit.cpp.diff.2004-06-28
+
+#Patch version to 1.10
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/update.cpp $CHANGE_DIR/neutrino/update.cpp.1.10.diff
+
+# Live-Stream Movieplayer by gmo18t 2004-07-15 (mp 1.97)
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/movieplayer.cpp $CHANGE_DIR/neutrino/movieplayer.cpp.diff
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/movieplayer.h $CHANGE_DIR/neutrino/movieplayer.h.diff
+
+# Neutrino neue Menueinträge: Nokia Kabel treiber laden
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/neutrino.cpp $CHANGE_DIR/neutrino/neutrino.cpp.patch
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/data/locale/deutsch.locale $CHANGE_DIR/neutrino/deutsch.locale.patch
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/data/locale/english.locale $CHANGE_DIR/neutrino/english.locale.patch
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/system/locals.h $CHANGE_DIR/neutrino/locals.h.patch
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/system/locals_intern.h $CHANGE_DIR/neutrino/locals_intern.h.patch
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/system/settings.h $CHANGE_DIR/neutrino/settings.h.patch
+
+# add Neutrino Plugindir /lib/tuxbox/plugins_neutrino
+$SCRIPTS/y_patch.sh -p $CVS/apps/tuxbox/neutrino/src/gui/gamelist.cpp $CHANGE_DIR/neutrino/gamelist.cpp.diff
+
+# persoenliche Aenderungen koennen in ..yadi-cvs/privat/my_patch_cvs vorgenommen werden
+[ -e $ROOT/yadi-cvs/privat/my_patch_cvs ] && . $ROOT/yadi-cvs/privat/my_patch_cvs

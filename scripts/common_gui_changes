@@ -1,8 +1,10 @@
-# $Id: common_gui_changes,v 1.3 2004/04/28 23:29:37 alexh Exp $
+# $Id: common_gui_changes,v 1.4 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
-# Mail: alexh@berlios.de
+# Mail:  alexh@yadi.org,
+#         essu@yadi.org,
+#       mogway@yadi.org
 #
 # aktuelle Versionen gibt es hier:
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/common_gui_changes,v $
@@ -29,41 +31,45 @@
 cd $CVS/cdk
 
 # Udpstreampes ins Flash aufnehmen
-cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/sbin/udpstreampes $DBOX/cdkroot/sbin/udpstreampes
 
-# Top kopieren
-cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
+# udhcpc Konfiguration kopieren
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/share/udhcpc/default.script $CHANGE_DIR/misc/udhcpc.default.script
+
+# etherwake kopieren
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/bin/etherwake $DBOX/cdkroot/bin/etherwake
 
 # eraseall ins Flash aufnehmen
-cp $DBOX/cdkroot/sbin/eraseall $DBOX/cdkflash/root/sbin
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/sbin/eraseall $DBOX/cdkroot/sbin/eraseall
+
+# fcp ins Flash aufnehmen
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/sbin/fcp $DBOX/cdkroot/sbin/fcp
 
 # rcs kopieren
-# patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
-cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
-cp $CHANGE_DIR/Configs/rcS $DBOX/cdkflash/root/etc/init.d/
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/etc/init.d/rcS.local $CHANGE_DIR/misc/rcS.local
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/misc/rcS
 
 # Logos kopieren
-mkdir $DBOX/cdkflash/root/var/tuxbox/boot
-cp $CHANGE_DIR/Logos/yadi2_logo-fb $DBOX/cdkflash/root/var/tuxbox/boot/logo-fb
-
-cp $CHANGE_DIR/Logos/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/tuxbox/boot
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/tuxbox/boot/logo-fb $CHANGE_DIR/logos/yadi3_logo-fb
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/tuxbox/boot $CHANGE_DIR/logos/logo-lcd
 
 # ppcboot kopiern
-cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boot.conf
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/tuxbox/boot/boot.conf $CHANGE_DIR/misc/boot.conf
 
-# Iso kopieren
-#mkdir $DBOX/cdkflash/root/share/iso-codes
-# cp $DBOX/cdkroot/share/iso-codes/iso-639.tab $DBOX/cdkflash/root/share/iso-codes/
-
-# XMLs kopieren
-cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/share/tuxbox/
-#patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
+# XMLs kopieren & links erzeugen
+cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/var/tuxbox/config/
+cd $DBOX/cdkflash/root/share/tuxbox/
+ln -sf /var/tuxbox/config/cables.xml cables.xml
+ln -sf /var/tuxbox/config/satellites.xml satellites.xml
 
 # Interfaces loeschen
 rm $DBOX/cdkflash/root/etc/network/interfaces
 
 # Start-Dateien kopieren
-cp $CHANGE_DIR/Configs/start $DBOX/cdkflash/root/etc/init.d
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/etc/init.d/start $CHANGE_DIR/misc/start
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/etc/init.d/start_neutrino $CHANGE_DIR/neutrino/start_neutrino
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/etc/init.d/start_enigma $CHANGE_DIR/enigma/start_enigma
 
 if [ -e $DBOX/cdkflash/root/etc/init.d/start_neutrino ]; then
   chmod a+x $DBOX/cdkflash/root/etc/init.d/start_neutrino
@@ -74,17 +80,11 @@ if [ -e $DBOX/cdkflash/root/etc/init.d/start_enigma ]; then
 fi
 
 # profile kopieren
-cp CHANGE_DIR/Configs/profile $DBOX/cdkflash/etc/
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/etc/profile $CHANGE_DIR/misc/profile
 
-# Root-Home erstellen
-# mkdir $DBOX/cdkflash/root/root
-
-# lcdip kopieren
-#cp $CHANGE_DIR/bin/lcdip $DBOX/cdkflash/root/bin/
-cp $CHANGE_DIR/bin/lcdip $DBOX/cdkflash/root/bin/
-
-# Ucode-Checker kopieren
-cp $CHANGE_DIR/bin/chkucodes $DBOX/cdkflash/root/sbin/
+# lcdip, Ucode-Checker compilieren & installieren
+cd $CHANGE_DIR/sources
+make install
 
 # Image-Infos kopieren, falls existent
 if  [ -e $VE ]; then
@@ -94,37 +94,100 @@ fi
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.cfg $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.cfg
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.so $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.so
 
+# Copy tuxcal
+#cp $PLUGIN_DIR/tuxcal/tuxcal.* $DBOX/cdkflash/root/lib/tuxbox/plugins/
+#chmod +x $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxcal.so
+#$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/tuxbox/config/tuxcal
+#cp $PLUGIN_DIR/tuxcal/config/enigma_date $DBOX/cdkflash/root/var/tuxbox/config/tuxcal/
+#cp $PLUGIN_DIR/tuxcal/config/tuxcal.list $DBOX/cdkflash/root/var/tuxbox/config/tuxcal/
+
+# Copy tuxnews
+cp $PLUGIN_DIR/tuxnews/tuxnews.* $DBOX/cdkflash/root/lib/tuxbox/plugins/
+chmod +x $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxnews.so
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/tuxbox/config/tuxnews
+cp $PLUGIN_DIR/tuxnews/config/tuxnews.* $DBOX/cdkflash/root/var/tuxbox/config/tuxnews/
+
+# Copy vnc.conf
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/tuxbox/config/vnc.conf $PLUGIN_DIR/vnc/vnc.conf
+
 # Ein paar Dateien linken
 cd $DBOX/cdkflash/root/sbin/
-
-rm telnetd
 ln -sf /bin/busybox telnetd
-
-rm inetd
-ln -s /bin/busybox inetd
-
-rm depmod
-ln -s /bin/busybox depmod
-
-rm insmod
-ln -s /bin/busybox insmod
+ln -sf /bin/busybox inetd
+ln -sf /bin/busybox depmod
+ln -sf /bin/busybox insmod
+ln -sf /bin/busybox rdate
 
 cd $DBOX/cdkflash/root/bin/
-ln -sf /bin/busybox ps
+ln -sf busybox ps
+ln -sf busybox renice
+ln -sf busybox rdate
+ln -sf busybox time
+ln -sf busybox dd
+
+cd $DBOX/cdkflash/root/var/
+ln -sf /var/tuxbox/ucodes ucodes
 
 #Disclaimer kopieren
-cp $CHANGE_DIR/Configs/disclaimer.txt $DBOX/cdkflash/root/
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/disclaimer.txt $CHANGE_DIR/misc/disclaimer.txt
 
 # saa kopieren
-cp $DBOX/cdkroot/bin/saa $DBOX/cdkflash/root/bin/
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/bin/saa $DBOX/cdkroot/bin/saa
+
+# aviaext kopieren
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/bin/aviaext $DBOX/cdkroot/bin/aviaext
 
 # lircd kopieren
-cp $DBOX/cdkroot/sbin/lircd $DBOX/cdkflash/root/sbin/
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/sbin/lircd $DBOX/cdkroot/sbin/lircd
+
+# rcsim kopieren
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/bin/rcsim $DBOX/cdkroot/bin/rcsim
 
 #getset-Files anlegen
-if [ ! -d $DBOX/cdkflash/root/var/plugins ]; then
- mkdir $DBOX/cdkflash/root/var/plugins
-fi
-cp $ROOT/yadi-cvs/patches/getset/getset* $DBOX/cdkflash/root/var/plugins/
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/plugins
+cp $PLUGIN_DIR/getset/getset* $DBOX/cdkflash/root/var/plugins/
 chmod 500 $DBOX/cdkflash/root/var/plugins/getset
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/tuxbox/plugins
+mv $DBOX/cdkflash/root/var/plugins/getset.1 $DBOX/cdkflash/root/var/tuxbox/plugins/getset.so
+chmod 500 $DBOX/cdkflash/root/var/tuxbox/plugins/getset.so
+mv $DBOX/cdkflash/root/var/plugins/getset.2 $DBOX/cdkflash/root/var/tuxbox/plugins/getset.cfg
 
+# Mount-Verzeichnisse erzeugen
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/mnt
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/mnt/mp3
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/mnt/bilder
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/mnt/filme
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/mnt/custom
+
+# persoenliche Aenderungen koennen in ..yadi-cvs/privat/my_common_changes vorgenommen werden
+if [ -e $ROOT/yadi-cvs/privat/my_common_changes ]; then
+ . $ROOT/yadi-cvs/privat/my_common_changes
+fi
+
+# Sokoban Levels kopieren
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/share/tuxbox/sokoban
+cp $CVS/apps/tuxbox/plugins/fx2/sokoban/*.xsb $DBOX/cdkflash/root/share/tuxbox/sokoban/
+
+# Cleanup
+rm -r $DBOX/cdkflash/root/lib/locale/CVS
+rm -r $DBOX/cdkflash/root/lib/CVS
+rm $DBOX/cdkflash/root/etc/init.d/*.orig
+rm $DBOX/cdkflash/root/sbin/udpstreampes.orig
+
+# alternative ves1820.o für Kabelprobleme auf Nokia
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/lib/modules/2.4.27-dbox2/misc/cable_ves1820.o $CHANGE_DIR/bin/ves1820.o
+
+#Tool um Neutrino-TS Files allgemein lesbar machen
+cd $ROOT/yadi-cvs/tools/genpsi
+make install
+
+#Boot_info aktivieren
+touch $DBOX/cdkflash/root/var/etc/.boot_info
+
+# let it be the last thing ;)
+# Change something to get another magic
+MAGIC=$DBOX/cdkroot/bin/pzapit
+#cat $MAGIC >$DBOX/cdkflash/root/etc/yadi.org
+echo "Change something to get another magic" >$DBOX/cdkflash/root/etc/yadi.org
+#rm $DBOX/cdkflash/root/etc/yadi.org
+#rm $DBOX/cdkflash/root/bin/enigma

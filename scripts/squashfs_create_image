@@ -1,4 +1,4 @@
-# $Id: squashfs_create_image,v 1.3 2004/04/28 23:29:37 alexh Exp $
+# $Id: squashfs_create_image,v 1.4 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -27,10 +27,35 @@
 #
 cd $DBOX/cdkflash
 fakeroot mkfs.jffs2 -b -e 131072 -p -o kernel.img -r kernel
-fakeroot mksquashfs root root.img -be
+fakeroot mksquashfs root root.img -be -check_data
 fakeroot mkfs.jffs2 -b -e 131072 -p -o var.img -r var
-cp $CHANGE_DIR/Patches/flashmanage.squashfs.pl $CVS/hostapps/flash/flashmanage.pl
+$SCRIPTS/y_patch.sh -c $CVS/hostapps/flash/flashmanage.pl $CHANGE_DIR/kernel/flashmanage.squashfs.pl
 fakeroot $CVS/hostapps/flash/flashmanage.pl -i $IMAGES/$IMG_PRE"squashfs_head_1x.img" -o build --part ppcboot=$DBOX/flfs/squashfs1x.img --part kernel=kernel.img --part root=root.img --part var=var.img
 fakeroot $CVS/hostapps/flash/flashmanage.pl -i $IMAGES/$IMG_PRE"squashfs_head_2x.img" -o build --part ppcboot=$DBOX/flfs/squashfs2x.img --part kernel=kernel.img --part root=root.img --part var=var.img
-cp root.img $IMAGES/$IMG_PRE"_mtd3.img"
+MTD3_NAME=$IMG_PREMTD3"mtd3.img"
+cp root.img $IMAGES/$MTD3_NAME
+chmod 644 $IMAGES/$MTD3_NAME
 
+cd $IMAGES
+MD5SUM=`md5sum -b $MTD3_NAME`
+MD5=`expr substr "$MD5SUM" 1 32`
+MYVERSION=`expr substr "$MTD3_NAME" 1 12`
+case $IMAGETYPE in
+ 0) UPDATEDIR=release;;
+ 1) UPDATEDIR=snapshot;;
+ 2) UPDATEDIR=test;;
+ *) UPDATEDIR=test;;
+esac
+
+#Eintrag fuer catalog.xml
+CATALOG=$MTD3_NAME".catalog"
+echo "<image" >$CATALOG
+echo "    target=\"123\"" >>$CATALOG
+echo "    name=\"$MTD3_NAME Yadi $UPDATEDIR $VERSIONNR squashfs\"" >>$CATALOG
+echo "    url=\"http://osdn.dl.sourceforge.net/sourceforge/dboxjffs2/$MTD3_NAME\"" >>$CATALOG
+echo "    version=\"$IMAGETYPE$VERSIONNR$MYVERSION\"" >>$CATALOG
+echo "    creator=\"yadi\"" >>$CATALOG
+echo "    md5=\"$MD5\" />" >>$CATALOG
+
+#Eintrag für squashfs.list
+echo "http://osdn.dl.sourceforge.net/sourceforge/dboxjffs2/$MTD3_NAME $IMAGETYPE$VERSIONNR$MYVERSION yadi" >$MTD3_NAME".list"

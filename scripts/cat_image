@@ -1,4 +1,4 @@
-# $Id: cat_image,v 1.2 2004/04/28 23:29:37 alexh Exp $
+# $Id: cat_image,v 1.3 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -31,26 +31,23 @@
 #cat_image()
 # Image zusammenbauen aus flfs und root-jffs2
 # ist jetzt fuer beide GUIs zusammengefasst um die (existierenden) Fehler besser eingrenzen zu koennen
-echo
-echo
+echo; echo
 fakeroot mkfs.jffs2 -b -e 0x20000 --pad=0x7c0000 -r $DBOX/cdkflash/root/ -o $IMAGES/$GUI.root-jffs2.tmp
-read -p "Druecken Sie [RETURN] um fortzusetzen (automagisch nach 10 s) -> " -t 10 #um Zeit f?r fakeroot zu gewinnen
+read -p "Druecken Sie [RETURN] um fortzusetzen (automagisch nach 10 s) -> " -t 10 #um Zeit fuer fakeroot zu gewinnen
 if [ ! -e $IMAGES/$GUI.root-jffs2.tmp ]; then
- echo "$IMAGES/$GUI.root-jffs2.tmp nicht gefunden"
+ read -p "$IMAGES/$GUI.root-jffs2.tmp nicht gefunden. [RETURN] um fortzusetzen" 
 else
  if [ ! -e $DBOX/flfs/flfs1x.img ]; then
-  echo "$DBOX/flfs/flfs1x.img nicht gefunden"
+  read -p "$DBOX/flfs/flfs1x.img nicht gefunden. [RETURN] um fortzusetzen" 
  else
   cat $DBOX/flfs/flfs1x.img $IMAGES/$GUI.root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_1x.img"
   echo $IMG_PRE$GUI"_head_1x.img erstellt"
  fi
  if [ ! -e $DBOX/flfs/flfs2x.img ]; then
-  echo "$DBOX/flfs/flfs2x.img nicht gefunden"
+   read -p "$DBOX/flfs/flfs2x.img nicht gefunden. [RETURN] um fortzusetzen" 
  else
   cat $DBOX/flfs/flfs2x.img $IMAGES/$GUI.root-jffs2.tmp >$IMAGES/$IMG_PRE$GUI"_head_2x.img"
   echo $IMG_PRE$GUI"_head_2x.img erstellt"
  fi
 fi
-echo
-echo
- 
+echo; echo

@@ -1,4 +1,4 @@
-# $Id: check,v 1.7 2004/04/28 23:29:37 alexh Exp $
+# $Id: check,v 1.8 2004/10/07 12:27:10 essu Exp $
 #
 #
 # Copyright (c) 2004 dietmarw Germany. All rights reserved.
@@ -230,13 +230,13 @@ if ( test -e $MKFSJFFS2 )
 fi
 #---------------------------------------------#
 # mksquashfs #welche version ist mindestens noetig?
-#MKSQUASHFS=`which mksquashfs`
-#if ( test -e $MKSQUASHFS)
-#        then
-#        echo "mksquashfs           :"`$MKSQUASHFS --version 2>&1 >/dev/null | $GREP mkfs | $CUT -f3 -d " "`
-#        else
-#        echo -e "\033[37;41mksquashfs nicht installiert\033[37;40m"
-#        exit 1
-#fi
+MKSQUASHFS=`which mksquashfs`
+if ( test -e $MKSQUASHFS)
+        then
+        echo "mksquashfs 2.0    :"`$MKSQUASHFS -version | $GREP mksquashfs | cut -d" " -f3`
+        else
+        echo -e "\033[37;41mksquashfs nicht installiert\033[37;40m"
+        exit 1
+fi
 #---------------------------------------------#
 echo "Versions-Check Ende"

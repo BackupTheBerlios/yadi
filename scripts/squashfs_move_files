@@ -1,8 +1,10 @@
-# $Id: squashfs_move_files,v 1.9 2004/04/28 23:29:37 alexh Exp $
+# $Id: squashfs_move_files,v 1.10 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
-# Mail: alexh@berlios.de
+# Mail:  alexh@yadi.org
+#         essu@yadi.org
+#       mogway@yadi.org
 #
 # aktuelle Versionen gibt es hier:
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/squashfs_move_files,v $
@@ -28,9 +30,11 @@
 cd $CVS/cdk
  
 # Root und Var trennen
+rm -r $DBOX/cdkflash/var
 mv $DBOX/cdkflash/root/var/ $DBOX/cdkflash/
-mkdir $DBOX/cdkflash/root/var/
-mkdir $DBOX/cdkflash/var/etc
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/var/etc
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/var/bin
 
 cd $DBOX/cdkflash/root/etc/
 
@@ -52,24 +56,14 @@ ln -sf /var/etc/hosts hosts
 mv passwd $DBOX/cdkflash/var/etc
 ln -sf /var/etc/passwd passwd
 
-mkdir $DBOX/cdkflash/var/bin
-mv $DBOX/cdkflash/root/bin/camd2 $DBOX/cdkflash/var/bin/
-
-cd $DBOX/cdkflash/root/bin
-
-ln -sf /var/bin/camd2 camd2
-
 #EnigmaDVR
 cd $DBOX/cdkflash/root
 rm -rf hdd
-rm -rf mnt
-mkdir $DBOX/cdkflash/var/mnt
-mkdir $DBOX/cdkflash/var/mnt/movie
 
-cd $DBOX/cdkflash/root
-
-ln -sf /var/mnt mnt
-ln -sf /var/mnt hdd
+ln -sf /mnt hdd
+cd $DBOX/cdkflash/root/mnt
+ln -sf /mnt/custom images
+ln -sf /mnt/filme movie
 
 cd $DBOX/cdkflash/var/
 ln -sf /tmp tmp
@@ -77,35 +71,37 @@ ln -sf log tmp
 ln -sf pid tmp
 ln -sf run tmp
 
-#Platz sparen
 # einige Spiele entfernen
-for PLUGIN in solitair tank # lemmings sol pacman yahtzee mines snake outdoor tuxcal
+for PLUGIN in tank # lemmings sol pacman yahtzee mines snake master soko vierg solitair
 do
  if [ -e $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.so ]; then
   rm $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.so
   rm $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.cfg
  fi
 done
+
+# einige Plugins entfernen
+for PLUGIN in dslconnect dsldisconnect enigma_demo #  ngrabstart ngrabstop outdoor tuxcal lcdcirc tuxcom tuxmail tuxnews vnc
+do
+ if [ -e $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.so ]; then
+  rm $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.so
+  rm $DBOX/cdkflash/root/lib/tuxbox/plugins/$PLUGIN.cfg
+ fi
+done
+
 # Neutrino-Overflow loeschen
- rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/scan.raw
- rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/shutdown.raw
- rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/scan.pal
- rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/shutdown.pal
+rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/scan.raw
+rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/shutdown.raw
+rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/scan.pal
+rm $DBOX/cdkflash/root/share/tuxbox/neutrino/icons/shutdown.pal
 
- cd $DBOX/cdkflash/root/share/tuxbox/neutrino/icons
-
- #ln -sf /share/tuxbox/neutrino/icons/radiomode.raw scan.raw
- #ln -sf /share/tuxbox/neutrino/icons/radiomode.raw shutdown.raw
- #ln -sf /share/tuxbox/neutrino/icons/radiomode.pal scan.pal
- #ln -sf /share/tuxbox/neutrino/icons/radiomode.pal shutdown.pal
-
-cp $CHANGE_DIR/Patches/fstab.squashfs $DBOX/cdkflash/root/etc/fstab
-cp $CHANGE_DIR/Configs/squashfs.urls $DBOX/cdkflash/var/etc
+cp $CHANGE_DIR/kernel/fstab.squashfs $DBOX/cdkflash/root/etc/fstab
+cp $CHANGE_DIR/misc/squashfs.urls $DBOX/cdkflash/var/etc
 cd $DBOX/cdkflash/root/etc
 ln -sf /var/etc/squashfs.urls cramfs.urls
 
 #Startdateien nach /var/etc/init.d verlinken
-mkdir $DBOX/cdkflash/var/etc/init.d
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/var/etc/init.d
 cd $DBOX/cdkflash/var/etc/init.d/
 for FILE in rcS.local start_enigma start_neutrino
 do

@@ -1,9 +1,10 @@
-# $Id: build_gui,v 1.3 2004/04/28 23:29:37 alexh Exp $
+# $Id: build_gui,v 1.4 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
-# Mail: alexh@berlios.de
-# Mail: essu@berlios.de
+# Mail:  alexh@yadi.org
+#         essu@yadi.org
+#       mogway@yadi.org
 #
 # aktuelle Versionen gibt es hier:
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/build_gui,v $
@@ -26,83 +27,66 @@
 #
 # -------------------------------------------------------
 #
-cd $CVS/cdk
- 
+
 # Dateien in cdkflash loeschen
 rm -rf $DBOX/cdkflash/
+
+cd $CVS/cdk
 
 # Neutrino ins Flash aufnehmen
 if  [ ! $GUI = "enigma" ]; then
  make flash-neutrino
-  if [ ! test -e $DBOX/cdkflash/.part_neutrino ]; then
-      echo FEHLER: make flash-neutrino abgebrochen!!
-      exit 1
-  fi
+ [ ! -e $DBOX/cdkflash/.part_neutrino ] &&  echo FEHLER: make flash-neutrino abgebrochen!! &&  exit 1
 fi
 
 # Enigma ins Flash aufnehmen
 if  [ ! $GUI = "neutrino" ]; then
  make flash-enigma
- if ! test -e $DBOX/cdkflash/.part_enigma
- then
-  echo FEHLER: make flash-enigma abgebrochen!!
-  exit 1
- fi
+ [ ! -e $DBOX/cdkflash/.part_enigma ] &&  echo FEHLER: make flash-enigma abgebrochen!! && exit 1
 fi
+
+# Zum Erzeugen der Sprachen fuer enigma benoetigte Dateien ins Jffs2-Only kopieren
+if  [ $GUI = "enigma" ]; then
+  # Locales kopieren
+  cp $DBOX/cdkroot/bin/locale $DBOX/cdkflash/root/bin/
+  cp $DBOX/cdkroot/bin/localedef $DBOX/cdkflash/root/bin/
+fi
+
+# Plugindirs erzeugen
+#$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/lib/tuxbox/plugins_enigma
+#$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/lib/tuxbox/plugins_neutrino
 
 # Plugins ins Flash aufnehmen
 make flash-plugins
-if ! test -e $DBOX/cdkflash/.part_plugins
-then
-  echo FEHLER: make flash-plugins abgebrochen!!
-  exit 1
-fi
+[ ! -e $DBOX/cdkflash/.part_plugins ] && echo FEHLER: make flash-plugins abgebrochen!! && exit 1
 
 # LCDMenu erstellen
 if [ $GUI = "all" ]; then
   make flash-lcdmenu
-  cp $CHANGE_DIR/Configs/lcdmenu.conf $DBOX/cdkflash/root/var/tuxbox/config/
+  cp $CHANGE_DIR/misc/lcdmenu.conf $DBOX/cdkflash/root/var/tuxbox/config/
 fi
 
 # ftpd ins Flash aufnehmen
 make flash-ftpd
-if ! test -e $DBOX/cdkflash/.part_ftpd
-then
-  echo FEHLER: make flash-ftpd abgebrochen!!
-  exit 1
-fi
+[ ! -e $DBOX/cdkflash/.part_ftpd ] && echo FEHLER: make flash-ftpd abgebrochen!! && exit 1
 
 # telnetd ins Flash aufnehmen
 make flash-telnetd
-if ! test -e $DBOX/cdkflash/.part_telnetd
-then
-  echo FEHLER: make flash-telnetd abgebrochen!!
-  exit 1
-fi
+[ ! -e $DBOX/cdkflash/.part_telnetd ] &&  echo FEHLER: make flash-telnetd abgebrochen!! &&  exit 1
+
+# top ins Flash aufnehmen
+cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
 
 # MKLibs ausfuehren
 make flash-lib
-if ! test -e $DBOX/cdkflash/.lib
-then
-  echo FEHLER: make flash-lib abgebrochen!!
-  exit 1
-fi
+[ ! -e $DBOX/cdkflash/.lib ] && echo FEHLER: make flash-lib abgebrochen!! &&  exit 1
+
+# genlocales zum Erzeugen der locales von enigma ins Image kopieren
+[ $GUI = "enigma" ]&& cp $CVS/apps/tuxbox/enigma/po/genlocales $DBOX/cdkflash/root/bin
 
 # dvb-tools ins Flash aufnehmen
 make flash-dvb-tools
-if ! test -e $DBOX/cdkflash/.part_dvb_tools
- then
-  echo FEHLER: make flash-dvb-tools abgebrochen!!
-  exit 1
-fi
+[ ! -e $DBOX/cdkflash/.part_dvb_tools ] && echo FEHLER: make flash-dvb-tools abgebrochen!! &&  exit 1
 
 # contrib_apps ins Flash aufnehmen (lircd...)
 make contrib_apps
-
-# FIXME: touch .part_contrib_apps wird irgendwie nicht gemacht
-#if ! test -e $DBOX/cdkflash/.part_contrib_apps
-# then
-#  echo FEHLER: make contrib_apps abgebrochen!!
-#  exit 1
-#fi
-

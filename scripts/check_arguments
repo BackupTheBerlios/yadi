@@ -1,4 +1,4 @@
-# $Id: check_arguments,v 1.2 2004/04/28 23:29:37 alexh Exp $
+# $Id: check_arguments,v 1.3 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 #
@@ -29,9 +29,10 @@
 #
 show_help()
 {
-echo "Usage: $PROGGIE [-rm]|[-qc]|[-pi IMAGEPATH]|[-it IMAGETYPE]|[-iv IMAGEVERSION]|[-me YOURNAME]|[-h]";
+echo "Usage: $PROGGIE [-rm]|[-qc]|[-so]|[-pi IMAGEPATH]|[-it IMAGETYPE]|[-iv IMAGEVERSION]|[-me YOURNAME]|[-h]";
 echo "-rm: RM_CVS=yes";
 echo "-qc: quick-compile";
+echo "-so: only squashfs-images, no jffs2"
 echo "-pi: IMAGEPATH=[next argument: if a dir]";
 echo "-it: IMAGETYPE=[next argument: if 0|1|2]";
 echo "-iv: IMAGEVERSION=[next argument]";
@@ -44,7 +45,7 @@ check_option()
 {
 case $OPTION in
  -pi)if [ -d $ARG ];then IMAGES=$ARG;echo "IMAGES=$ARG"; else echo "$ARG does not exist";show_help;fi;;
- -it)if [ $ARG = "0" -o $ARG = "1" -o $ARG = "2" ];then echo "IMAGETYPE=$ARG"; else echo "$ARG is not an imagetype";show_help;fi;;
+ -it)if [ $ARG = "0" -o $ARG = "1" -o $ARG = "2" ];then IMAGETYPE=$ARG; echo "IMAGETYPE=$ARG"; else echo "$ARG is not an imagetype";show_help;fi;;
  -iv) VERSIONNR=$ARG;echo "VERSIONNR=$ARG";;
  -me) ME=$ARG;echo "ME=$ARG";;
  *)echo "wrong usage: $ARG";show_help;;
@@ -55,15 +56,17 @@ OPTION=no
 check_arg()
 {
 case $ARG in
- -rm)RM_CVS=yes;echo "RM_CVS=yes";;
- -qc)COMPILE_IMAGE=yes;echo "COMPILE_IMAGE=yes";;
+ -rm)RM_CVS="yes" ;echo "RM_CVS=yes";;
+ -qc)COMPILE_IMAGE="yes"; echo "COMPILE_IMAGE=yes";;
+ -so)SQUASHFS_ONLY="yes"; echo "SQUASHFS_ONLY=yes";;
  -pi|-it|-iv|-me)OPTION=$ARG;;
  -h)show_help;;
   *)check_option;;
 esac
 }
-COMPILE_IMAGE=no;
-RM_CVS=no;
+COMPILE_IMAGE="no";
+SQUASHFS_ONLY="no";
+RM_CVS="no";
 PROGGIE=$0
 for ARG; do
  echo

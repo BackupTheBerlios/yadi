@@ -1,4 +1,4 @@
-# $Id: flfs,v 1.2 2004/04/28 23:29:37 alexh Exp $
+# $Id: flfs,v 1.3 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -29,34 +29,59 @@
 #
 # -------------------------------------------------------
 #
-#flfs()
 # FLFS bauen
 #
-if [ ! -d $DBOX/flfs ]; then
- mkdir $DBOX/flfs
+
+$SCRIPTS/y_patch.sh -m $DBOX/flfs
+
+# U-Boot für jffs2only erzeugen
+if [ -e $CVS/boot/u-boot-config/u-boot.config ]; then
+ rm $CVS/boot/u-boot-config/u-boot.config
+fi
+ln -s $CHANGE_DIR/uboot/u-boot.jffs2only.dbox2.h $CVS/boot/u-boot-config/u-boot.config
+
+cd $CVS/cdk
+if [ -e .deps/u-boot ];then
+ rm .deps/u-boot
 fi
 
-# FLFS 1XI mit u-boot erzeugen
+make u-boot
+
+# FLFS für jffs2only erzeugen
 cd $CVS/hostapps/mkflfs/
+
 gcc -o mkflfs mkflfs.c minilzo.c
-cp $CVS/boot/u-boot/u-boot.stripped test
+
+rm test
+cp $DBOX/tftpboot/u-boot test
+
 ./mkflfs 1x
 mv flfs.img $DBOX/flfs/flfs1x.img
+./mkflfs 2x
+mv flfs.img $DBOX/flfs/flfs2x.img
 
-# U-Boot fuer 2xI erzeugen
-cp $CVS/cdk/Patches/u-boot.2x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h
-patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.2x.neu.diff
-rm $CVS/boot/u-boot/u-boot.stripped
+
+# U-Boot für squashfs erzeugen
+rm $DBOX/tftpboot/u-boot
+rm $CVS/boot/u-boot-config/u-boot.config
+ln -s $CHANGE_DIR/uboot/u-boot.squashfs.dbox2.h $CVS/boot/u-boot-config/u-boot.config
 cd $CVS/cdk
 rm .deps/u-boot
 make u-boot
 
-# FLFS fuer 2xI erzeugen
+# FLFS für squashfs erzeugen
 cd $CVS/hostapps/mkflfs/
+
+gcc -o mkflfs mkflfs.c minilzo.c
+
 rm test
-cp $CVS/boot/u-boot/u-boot.stripped test
+cp $DBOX/tftpboot/u-boot test
+
+./mkflfs 1x
+mv flfs.img $DBOX/flfs/squashfs1x.img
 ./mkflfs 2x
-mv flfs.img $DBOX/flfs/flfs2x.img
+mv flfs.img $DBOX/flfs/squashfs2x.img
+
 echo
 echo
 echo flfs erstellt

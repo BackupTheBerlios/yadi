@@ -1,8 +1,10 @@
-# $Id: enigma_changes,v 1.5 2004/04/28 23:29:37 alexh Exp $
+# $Id: enigma_changes,v 1.6 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
-# Mail: alexh@berlios.de
+# Mail:  alexh@yadi.org
+#         essu@yadi.org
+#       mogway@yadi.org
 #
 # aktuelle Versionen gibt es hier:
 # $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/enigma_changes,v $
@@ -32,13 +34,10 @@ cd $CVS/cdk
 cp -r $CHANGE_DIR/enigma/lib/ $DBOX/cdkflash/root
 cd $CVS/apps/tuxbox/enigma/po/
 make install
-mkdir $DBOX/cdkflash/root/share/locale
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/share/locale
 cp -r $DBOX/cdkroot/share/locale/de/ $DBOX/cdkflash/root/share/locale/
-cp -r $DBOX/cdkroot/share/locale/fr/ $DBOX/cdkflash/root/share/locale/
-cp $CHANGE_DIR/Configs/locales $DBOX/cdkflash/root/share/locale/
-
-# Strace fuer Enigma kopieren (???)
-#cp $DBOX/cdkroot/bin/strace $DBOX/cdkflash/root/bin
+#cp -r $DBOX/cdkroot/share/locale/fr/ $DBOX/cdkflash/root/share/locale/
+cp  $CHANGE_DIR/enigma/locales $DBOX/cdkflash/root/share/locale/
 
 # Fonts fuer Enigma kopieren
 cp $DBOX/cdkroot/share/fonts/* $DBOX/cdkflash/root/share/fonts/
@@ -47,31 +46,52 @@ cp $DBOX/cdkroot/share/fonts/* $DBOX/cdkflash/root/share/fonts/
 cp $DBOX/cdkroot/var/tuxbox/config/scart.conf $DBOX/cdkflash/root/var/tuxbox/config/
 
 # fehlende Verzeichnisse fuer Enigma erstellen
-mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma
-mkdir $DBOX/cdkflash/root/var/plugins
-mkdir $DBOX/cdkflash/root/var/tuxbox/plugins
-#fuer DVR
-mkdir $DBOX/cdkflash/root/hdd
-mkdir $DBOX/cdkflash/root/hdd/movie
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/tuxbox/config/enigma
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/plugins
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/tuxbox/plugins
+
+# fuer DVR
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/hdd
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/hdd/movie
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/tuxbox/config/enigma/resources
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/mnt
+
+cd $DBOX/cdkflash/root/var/mnt
+ln -s /hdd CIFS
+ln -s /hdd NFS
 
 # Overflow loeschen
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/pictures/scan.mvi
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/pictures/radio.mvi
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/help.xml
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox_inputdev.xml
-#rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox2.xml
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox_keyboard.xml
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdm5xxx.xml
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdm7000.xml
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rctrdvb272.xml
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/htdocs/topbalk.png
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/htdocs/topbalk3.png
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/htdocs/topbalk4.png
 
 # Tastaturbelegung aendern
-mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma/resources
-cp $CHANGE_DIR/enigma/rcdbox_inputdev.xml $DBOX/cdkflash/root/var/tuxbox/config/enigma/resources/
-
-# Image-Infos kopieren, falls existent
-#if test -e $VER.enigma
-#then
-#  cp $VER.enigma $DBOX/cdkflash/root/.image_version
-#fi
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/tuxbox/config/enigma/resources/rcdbox_inputdev.xml $CHANGE_DIR/enigma/rcdbox_inputdev.xml
 
 #Disclaimer
-cp $CHANGE_DIR/Configs/disclaimer_help.xml $DBOX/cdkflash/root/share/tuxbox/enigma/resources/help.xml
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/share/tuxbox/enigma/resources/help.xml $CHANGE_DIR/enigma/disclaimer_help.xml
+
+# rcs.local für enigma mount
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/etc/init.d/rcS.local $CHANGE_DIR/misc/rcS.local
+
+# Standard-Config anlegen
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/tuxbox/config/enigma/config $CHANGE_DIR/enigma/config
+
+#Standby-Scripten
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/root/var/etc
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/etc/enigma_enter_standby.sh $CHANGE_DIR/enigma/enigma_enter_standby.sh
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/root/var/etc/enigma_leave_standby.sh $CHANGE_DIR/enigma/enigma_leave_standby.sh
+chmod 755 $DBOX/cdkflash/root/var/etc/enigma_enter_standby.sh
+chmod 755 $DBOX/cdkflash/root/var/etc/enigma_leave_standby.sh
+
+#Boot-Optionen-Plugin
+cd $PLUGIN_DIR/boot
+make install

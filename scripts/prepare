@@ -1,4 +1,4 @@
-# $Id: prepare,v 1.7 2004/04/28 23:29:37 alexh Exp $
+# $Id: prepare,v 1.8 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -28,7 +28,6 @@
 #
 # -------------------------------------------------------
 #
-#
 # um kueftig verschiedene Aenderungsarchive verwenden zu koennen, die evtl. per download eingebunden werden
 cd $CHANGEDIR || USE_CHANGE_ARC='yes' # falls das Aenderungsverzeichnis fehlt
 if [ $USE_CHANGE_ARC = "yes" ]; then
@@ -37,9 +36,7 @@ if [ $USE_CHANGE_ARC = "yes" ]; then
   exit 1;  # ohne Patches kein Image
  else
   # Aenderungsarchiv entpacken
-  if [ ! -d $ROOT/patches ]; then
-   mkdir $ROOT/patches
-  fi
+  $SCRIPTS/y_patch.sh -m $ROOT/patches
   cd $ROOT/patches
   cp $CHANGE_ARC_DIR/$CHANGE_ARC.tar.gz .
   gzip -d $CHANGE_ARC.tar.gz
@@ -52,26 +49,16 @@ echo "Die Aenderungs-Daten wie Patches etc. befinden sich in "$CHANGE_DIR
 
 # Namensprefix mit Datum
 IMG_PRE=`date +%Y%m%d%H%M`
+IMG_PREMTD3=$IMG_PRE"_"
 IMG_PRE=$IMG_PRE"_yadi_"
-if [ ! -e $IMAGES ]; then
- mkdir $IMAGES
-fi
+$SCRIPTS/y_patch.sh -m $IMAGES
 
 # File mit Image-Infos (wird erstellt)
-# Aufbau:
-# Zwei Dateien (.image_version.neutrino und .image_version.enigma)
-# Zeilenlaenge: Jeweils genau 15 Zeichen + Return
-# 1. Zeile Ueberschrift (ein paar Pixel mehr Abstand zur neuen Zeile)
-# 2. Zeile Image-Datum
-# 3. Zeile Image-Version
-# 4. Zeile Image-Name
-# 5. Zeile beschreibt, was gestartet werden soll
-# (etwas groesserer Abstand zur Zeile davor)
-
 VER=$CHANGE_DIR/.image_version
 EN=$VER.enigma
 NE=$VER.neutrino
 VE=$CHANGE_DIR/.version
+
 # Image-Versionen schreiben
 echo " IMAGE-INFOS:  "  >$EN
 echo "Datum: $(date '+%d.%m.%y')" >>$EN
@@ -89,15 +76,16 @@ echo "version=$IMAGETYPE$VERSIONNR$(date '+%Y%m%d%H%M')" >$VE
 echo "comment=yadi made by $ME" >>$VE
 echo "target=123" >>$VE
 echo "creator=$ME" >>$VE
-echo "url=http://yadi.berlios.de/squashfs/update/$IMG_PRE.mtd3.img" >>$VE
-echo "catalog=http://yadi.berlios.de/squashfs/update/catalog.xml" >>$VE
+echo "url=http://switch.dl.sourceforge.net/sourceforge/dboxjffs2/"$IMG_PRE"mtd3.img" >>$VE #------changed---------
+echo "catalog=http://yadi.org/update/squashfs_catalog.xml?rc=$VERSIONNR" >>$VE #------changed---------
 echo "" >>$VE
-echo "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+echo -e "\nXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 echo
 
 # Benutzer Moeglichkeit zum Aendern von Patches, Logos etc. geben
 read -p "Druecken Sie [RETURN] um noch Aenderungen in $CHANGE_DIR vorzunehmen -> " -t 10
 if [ $? = 0 ]; then
+ echo ""
  read -p "Druecken Sie [RETURN], wenn Sie die Aenderungen in $CHANGE_DIR abgeschlossen haben -> "
  # hier koennte jetzt noch das Packen und Sichern des veraenderten Archivs kommen
 fi

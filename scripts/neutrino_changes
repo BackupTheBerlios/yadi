@@ -1,4 +1,4 @@
-# $Id: neutrino_changes,v 1.2 2004/04/28 23:29:37 alexh Exp $
+# $Id: neutrino_changes,v 1.3 2004/10/07 12:27:10 essu Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -29,12 +29,19 @@
 cd $CVS/cdk
  
 # Image-Infos kopieren, falls existent
-#if test -e $VER.neutrino
-#then
-#  cp $VER.neutrino $DBOX/cdkflash/root/.image_version
-#fi
-if  [ -e $VE ]; then
-  cp $VE $DBOX/cdkflash/root/.version
-fi
+[ -e $VE ] &&  cp $VE $DBOX/cdkflash/root/.version
 
+# link radiomode.* to /var and back. It make it possible to change radiomode picture
+cd $DBOX/cdkflash/root/share/tuxbox/neutrino/icons
+mv radiomode.pal radiomode_ro.pal
+mv radiomode.raw radiomode_ro.raw
+$SCRIPTS/y_patch.sh -m $DBOX/cdkflash/var/tuxbox/config/neutrino/icons
+ln -sf /var/tuxbox/config/neutrino/icons/radiomode.pal radiomode.pal
+ln -sf /var/tuxbox/config/neutrino/icons/radiomode.raw radiomode.raw
+cd $DBOX/cdkflash/var/tuxbox/config/neutrino/icons
+ln -sf /share/tuxbox/neutrino/icons/radiomode_ro.pal radiomode.pal
+ln -sf /share/tuxbox/neutrino/icons/radiomode_ro.raw radiomode.raw
+
+# Nach der Aufnahme genpsi ausführen
+$SCRIPTS/y_patch.sh -c $DBOX/cdkflash/var/tuxbox/config/recording.end.dist $CHANGE_DIR/neutrino/recording.end
 
