@@ -115,6 +115,7 @@ eSystemInfo::eSystemInfo()
 		case TUXBOX_SUBMODEL_DBOX2:
 			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
 			canrecordts = 1;
+			hashdd = 1;
 			caids.insert(0x1702);
 			caids.insert(0x1722);
 			caids.insert(0x1762);
