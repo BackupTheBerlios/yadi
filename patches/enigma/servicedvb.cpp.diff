@@ -1,0 +1,40 @@
+--- servicedvb.cpp	2004-08-19 22:23:24.234787904 +0200
++++ servicedvb.cpp.diff	2004-08-19 22:23:12.465577096 +0200
+@@ -32,7 +32,7 @@
+ #include <lib/dvb/record.h>
+ 
+ eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *handler, int livemode )
+-	:handler(handler), buffer(65424), livemode(livemode), liveupdatetimer(this)
++	:handler(handler), buffer(348*188), livemode(livemode), liveupdatetimer(this)
+ 	,inputsn(0), outputsn(0), lock(), messages(this, 1)
+ {
+ 	state=stateInit;
+@@ -95,7 +95,7 @@
+ 
+ 	CONNECT(messages.recv_msg, eDVRPlayerThread::gotMessage);
+ 
+-	maxBufferSize=65424*3;
++	maxBufferSize=65424*2;
+ 
+ 	speed=1;
+ 
+@@ -161,10 +161,6 @@
+ 	(void)what;
+ 
+ 	// on dbox2 we write only blocks of 65424 bytes
+-	if ( eSystemInfo::getInstance()->getHwType() < 3	// dbox2
+-		&& buffer.size() < 65424		// no full block in buffer
+-		&& state != stateFileEnd )	// not eof
+-		return;
+ 
+ 	seekbusy-=buffer.tofile(dvrfd, 65424);
+ 	if (seekbusy < 0)
+@@ -250,7 +246,7 @@
+ 		}
+ 	}
+ 
+-	int bla = eSystemInfo::getInstance()->getHwType() < 3 ? 65423 : 16384;
++	int bla = eSystemInfo::getInstance()->getHwType() < 3 ? 65423 : 100000;
+ 
+ 	if ( (state == stateBuffering && buffer.size() > bla) || flushbuffer )
+ 	{

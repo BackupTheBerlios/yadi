@@ -1,0 +1,33 @@
+--- enigma_setup.h.orig	2004-09-29 00:07:09.000000000 +0200
++++ enigma_setup.h.yadi	2004-09-29 08:37:02.000000000 +0200
+@@ -2,6 +2,8 @@
+ #define __enigma_setup_h
+ 
+ #include <src/setup_window.h>
++#include <lib/gui/ewidget.h>
++#include <lib/gui/listbox.h>
+ 
+ class eZapSetup: public eSetupWindow
+ {
+@@ -9,11 +11,20 @@
+ 	void system_settings();
+ 	void service_organising();
+ 	void service_searching();
++	void sel_streaminfo();
+ #ifndef DISABLE_CI
+ 	void common_interface();
+ #endif
+-	void expert_setup();
++/*	void expert_setup(); */
+ 	void parental_lock();
++	void sel_about();
++	void osd_settings();
++	void osd_language();
++	void time_settings();
++	void av_settings();
++#ifndef DISABLE_LCD
++	void lcd_settings();
++#endif
+ public:
+ 	eZapSetup();
+ };

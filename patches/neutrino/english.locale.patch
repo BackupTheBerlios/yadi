@@ -1,0 +1,10 @@
+--- english.locale	2004-07-13 00:14:11.178703600 +0200
++++ english.locale.patch	2004-07-13 00:14:02.214066432 +0200
+@@ -412,6 +412,7 @@
+ messagebox.yes Yes
+ miscsettings.bootinfo Show infos at start
+ miscsettings.bootmenu Show boot menu
++miscsettings.cabledriver load Nokia cable driver
+ miscsettings.driver_boot driver and boot options
+ miscsettings.fb_destination Expert! Boot-Console
+ miscsettings.general General

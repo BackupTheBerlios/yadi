@@ -1,0 +1,8 @@
+--- Makefile.am.old	2004-05-08 00:17:35.000000000 +0200
++++ Makefile.am	2004-05-08 00:18:39.000000000 +0200
+@@ -28,4 +28,4 @@
+ libtimerlist_a_SOURCES = \
+ 	timerlist.cpp
+ 
+-AM_CPPFLAGS = -DSKIP_CA_STATUS
++AM_CPPFLAGS = -DSKIP_CA_STATUS -DSQUASHFS

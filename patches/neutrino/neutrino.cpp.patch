@@ -1,0 +1,10 @@
+--- neutrino.cpp	2004-07-14 00:21:25.520913584 +0200
++++ neutrino.cpp.patch	2004-07-14 00:21:02.978340576 +0200
+@@ -1675,6 +1675,7 @@
+ 	{LOCALE_MISCSETTINGS_STARTBHDRIVER, "/var/etc/.bh"         , OPTIONS_OFF0_ON1_OPTIONS },
+ #endif
+ 	{LOCALE_MISCSETTINGS_HWSECTIONS   , "/var/etc/.hw_sections", OPTIONS_OFF1_ON0_OPTIONS },
++        {LOCALE_MISCSETTINGS_CABLEDRIVER  , "/var/etc/.cable"      , OPTIONS_OFF0_ON1_OPTIONS },
+ 	{LOCALE_MISCSETTINGS_PMTUPDATE    , "/var/etc/.pmt_update" , OPTIONS_OFF0_ON1_OPTIONS }
+ };
+ 

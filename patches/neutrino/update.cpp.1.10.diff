@@ -1,0 +1,11 @@
+--- update.cpp	2004-08-03 14:50:43.000000000 +0200
++++ update.cpp.1.9	2004-08-06 00:46:12.000000000 +0200
+@@ -75,7 +75,7 @@
+ #ifdef SQUASHFS
+ #define LIST_OF_UPDATES_LOCAL_FILENAME "squashfs.list"
+ #define UPDATE_LOCAL_FILENAME          "update.squashfs"
+-#define RELEASE_CYCLE                  "1.8"
++#define RELEASE_CYCLE                  "1.10"
+ #define FILEBROWSER_UPDATE_FILTER      "squashfs"
+ #define MTD_OF_WHOLE_IMAGE             5
+ #define MTD_DEVICE_OF_UPDATE_PART      "/dev/mtd/3"

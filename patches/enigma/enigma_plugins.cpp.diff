@@ -1,0 +1,23 @@
+--- enigma_plugins.cpp	2004-08-20 23:43:20.140074536 +0200
++++ enigma_plugins.cpp.diff	2004-08-20 23:45:37.291224392 +0200
+@@ -120,8 +120,9 @@
+ 	:eListBoxWindow<ePlugin>(type==2?_("Plugins"):_("Games"), 8, 400), type(type)
+ {
+ 	PluginPath[0] = "/var/tuxbox/plugins/";
+-	PluginPath[1] = PLUGINDIR "/";
+-	PluginPath[2] = "";
++	PluginPath[1] = "/lib/tuxbox/plugins_enigma";
++	PluginPath[2] = PLUGINDIR "/";
++	PluginPath[3] = "";
+ 	setHelpText(_("select plugin and press ok"));
+ 	move(ePoint(150, 100));
+ #ifndef DISABLE_LCD
+@@ -135,7 +136,7 @@
+ 	int cnt=0;
+ 	ePlugin *plg=0;
+ 	std::set<eString> exist;
+-	for ( int i = 0; i < 2; i++ )
++	for ( int i = 0; i < 3; i++ )
+ 	{
+ 		DIR *d=opendir(PluginPath[i].c_str());
+ 		if (!d)

@@ -1,0 +1,24 @@
+--- textinput.cpp.orig	2004-10-01 10:35:56.000000000 +0200
++++ textinput.cpp.yadi	2004-10-01 10:36:21.000000000 +0200
+@@ -661,21 +661,6 @@
+ 
+ int eTextInputField::keyDown(int rc)
+ {
+-	if (editMode & (rc >= KEY_ASCII))
+-	{
+-		int ascii = rc - KEY_ASCII;
+-		eDebug("ascii is %d (%c)", ascii, ascii);
+-		if ( strchr( useableChars.c_str(), ascii ) ) // char useable?
+-		{
+-			if ( curPos == (int)isotext.length() )
+-				isotext += ascii;
+-			else
+-				isotext[curPos] = ascii;
+-			updated();
+-			nextdChar();
+-			return 1;
+-		}
+-	}
+ 	return 0;
+ }
+ 

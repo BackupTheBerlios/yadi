@@ -1,0 +1,12 @@
+#!/bin/sh
+# $Id: recording.end,v 1.1 2004/10/07 12:11:27 essu Exp $
+FOUND=`grep network_nfs_recordingdir /var/tuxbox/config/neutrino.conf` || exit
+RECDIR=`expr substr $FOUND 26 154`
+cd $RECDIR && FILES=`ls -c *.001.ts` || exit
+for WORD in $FILES; do
+ FILE=$FILE" "$WORD
+ if [ $( expr index $WORD "." ) -gt 0 ]; then
+  break;
+ fi
+done
+dbox2genpsi $RECDIR/$FILE

@@ -1,0 +1,27 @@
+--- start	2004-01-13 21:59:30.000000000 +0100
++++ start.new	2003-12-01 23:48:58.000000000 +0100
+@@ -2,17 +2,12 @@
+ 
+ . /etc/profile
+ 
+-if test -x /bin/lcdmenu ; then
+-  lcdmenu
+-  RC="$?"
+-  test "$RC" -eq 0 && /etc/init.d/start_enigma
+-  test "$RC" -eq 1 && /etc/init.d/start_neutrino
+-  test "$RC" -eq 2 && /etc/init.d/start_lcars
+-elif test -x /bin/neutrino ; then
+-  /etc/init.d/start_neutrino
+-elif test -x /bin/enigma ; then
+-  /etc/init.d/start_enigma
+-elif test -x /bin/lcars ; then
+-  /etc/init.d/start_lcars
++if ! test -e /etc/network/interfaces
++then
++  /bin/lcdip
++  /sbin/reboot
+ fi
+ 
++/sbin/chkucodes
++/etc/init.d/start_neutrino
++

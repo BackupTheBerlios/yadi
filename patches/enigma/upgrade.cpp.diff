@@ -1,0 +1,24 @@
+--- upgrade.cpp	2004-06-03 16:12:40.000000000 +0200
++++ upgrade.cpp.squashfs	2004-06-03 16:09:39.000000000 +0200
+@@ -19,8 +19,8 @@
+ #include <sys/ioctl.h>
+ #include <sys/mount.h>
+ 
+-#define TMP_IMAGE "/tmp/root.cramfs"
+-#define TMP_IMAGE_ALT "/tmp/cdk.cramfs"
++#define TMP_IMAGE "/tmp/root.squashfs"
++#define TMP_IMAGE_ALT "/tmp/cdk.squashfs"
+ #define TMP_CHANGELOG "/tmp/changelog"
+ 
+ class ProgressWindow: public eWindow
+@@ -535,8 +535,8 @@
+ 				case 1:   // d-box2
+ 				case 2:
+ 				case 3:
+-					strcpy(mtd,"/dev/mtd/2");
+-					mtdsize=0x6e0000;
++					strcpy(mtd,"/dev/mtd/3");
++					mtdsize=0x640000;
+ 					break;
+ 				case 5:   // dm7000
+ 				case 6:   // dm56xx

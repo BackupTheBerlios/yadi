@@ -1,0 +1,8 @@
+#!/bin/sh
+
+#Fuer NFS und CIFS
+insmod sunrpc
+insmod lockd
+insmod nfs
+insmod cifs
+

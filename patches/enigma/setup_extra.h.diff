@@ -1,0 +1,71 @@
+--- setup_extra.h.orig	2004-10-06 09:38:16.000000000 +0200
++++ setup_extra.h	2004-09-29 00:13:20.000000000 +0200
+@@ -3,6 +3,16 @@
+ 
+ #include <setup_window.h>
+ 
++#include <lib/gui/ewindow.h>
++#include <lib/gui/statusbar.h>
++
++class eNumber;
++class eButton;
++class eCheckbox;
++class eComboBox;
++class eTextInputField;
++class eListBoxEntryText;
++
+ class eExpertSetup: public eSetupWindow
+ {
+ #ifndef DISABLE_NETWORK
+@@ -15,8 +25,51 @@
+ 	void colorbuttonsChanged(bool);
+ 	void reinitializeHTTPServer(bool);
+ 	void fastZappingChanged(bool b);
++	void fileToggle(bool newState, const char* filename);
++	void fileDelete(const char* file);
++#ifndef DISABLE_NFS
++ 	void mount_setup();
++#endif
+ public:
+ 	eExpertSetup();
+ };
+ 
+ #endif
++
++
++#ifndef DISABLE_NFS
++class eConsoleAppContainer;
++class eMountSetup: public eWindow
++{
++ 	eTimer timeout;
++ 	eButton *ok, *mount, *umount, *prev, *next;
++ 	eCheckbox *doamount;
++ 	eComboBox *combo_fstype, *combo_options;
++ 	eLabel *lpass , *luser;
++ 	eNumber *ip;
++ 	eStatusBar *sbar;
++ 	eString cmd,headline;
++ 	eTextInputField *sdir, *ldir, *user, *pass, *extraoptions;
++ 	int cur_entry;
++ 	eConsoleAppContainer *mountContainer;
++
++ 	void fieldSelected(int *number) { focusNext(eWidget::focusDirNext); }
++ 	void fstypeChanged(eListBoxEntryText *le);
++
++ 	void load_config();
++
++ 	int eventHandler(const eWidgetEvent &e);
++ 	void appClosed(int);
++ 	void okPressed();
++ 	void prevPressed();
++ 	void nextPressed();
++ 	void mountPressed();
++ 	void umountPressed();
++ 	void mountTimeout();
++public:
++ 	eMountSetup();
++ 	~eMountSetup();
++
++ 	void automount();
++};
++#endif

@@ -1,0 +1,84 @@
+--- enigma_mainmenu.cpp.orig	2004-09-29 00:07:09.000000000 +0200
++++ enigma_mainmenu.cpp.yadi	2004-09-29 09:42:17.000000000 +0200
+@@ -17,6 +17,7 @@
+ #include <lib/gui/guiactions.h>
+ #include <lib/system/init_num.h>
+ #include <lib/system/info.h>
++#include <setup_extra.h>
+ 
+ struct enigmaMainmenuActions
+ {
+@@ -66,7 +67,7 @@
+ 		description->setText(eString("(4) ") + eString(_("Information")));
+ 		break;
+ 	case 4:
+-		description->setText(eString("(5) ") + eString(_("Shutdown")));
++		description->setText(eString("(5) ") + eString(_("Expert Setup")));
+ 		break;
+ 	case 5:
+ 		description->setText(eString("(6) ") + eString(_("Setup")));
+@@ -107,7 +108,7 @@
+ 	: eWidget(0, 1),
+ 	wnd(_("Mainmenu"),
+ #ifndef DISABLE_FILE	
+-	11,
++	12,
+ #else
+ 	eSystemInfo::getInstance()->getHwType()==eSystemInfo::DM500?7:8,
+ #endif
+@@ -194,6 +195,7 @@
+ 		new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)wnd.getList(), eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+ 		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Timer"), eString().sprintf("(%d) %s", ++entry, _("Timer")) ))->selected, eMainMenu::sel_timer);
+ 		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Setup"), eString().sprintf("(%d) %s", ++entry, _("Setup")) ))->selected, eMainMenu::sel_setup);
++		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Expert Setup"), eString().sprintf("(%d) %s", ++entry, _("Expert Setup")) ))->selected, eMainMenu::sel_expert);
+ 		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Games"), eString().sprintf("(%d) %s", ++entry, _("Games")) ))->selected, eMainMenu::sel_plugins);
+ 		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Information"), eString().sprintf("(%d) %s", ++entry, _("Information")) ))->selected, eMainMenu::sel_info);
+ 		new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)wnd.getList(), eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+@@ -270,6 +272,30 @@
+ 
+ extern bool checkPin( int, const char* );
+ 
++void eMainMenu::sel_expert()
++{
++	int setuppin=0;
++	eConfig::getInstance()->getKey("/elitedvb/pins/setuplock", setuppin);
++
++	if ( checkPin( setuppin, _("setup") ) )
++	{
++		hide();
++		int i=0;
++		do
++		{
++			eExpertSetup setup;
++#ifndef DISABLE_LCD
++			setup.setLCD(LCDTitle, LCDElement);
++#endif
++			setup.show();
++			setup.exec();
++			setup.hide();
++		}
++		while(i==-1);      // to redisplay Expert Setup after language change
++		show();
++	}
++}
++
+ void eMainMenu::sel_setup()
+ {
+ 	int setuppin=0;
+@@ -442,12 +468,15 @@
+ 	case 3:
+ 		sel_info();
+ 		break;
+-	case 4:
++	case 9:
+ 		sel_quit();
+ 		break;
+ 	case 5:
+ 		sel_setup();
+ 		break;
++	case 4:
++		sel_expert();
++		break;
+ 	case 6:
+ 		sel_plugins();
+ 		break;

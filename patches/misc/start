@@ -1,0 +1,54 @@
+#!/bin/sh
+# $Id: start,v 1.1 2004/10/07 12:11:27 essu Exp $
+get_gui()
+{
+if [ -e /var/etc/.neutrino ]; then
+ GUI=neutrino
+elif [ -e /var/etc/.enigma ]; then
+ GUI=enigma
+elif [ -x /bin/lcdmenu ]; then
+  lcdmenu
+  RC="$?"
+  if [ "$RC" -eq 0 ]; then
+    GUI=neutrino
+  elif [ "$RC" -eq 1 ]; then
+    GUI=enigma
+  elif [ "$RC" -eq 2 ]; then
+    GUI=maintainance
+  elif [ "$RC" -eq 3 ]; then
+    halt;
+  fi
+elif [ -x /bin/neutrino ]; then
+  GUI=neutrino
+elif [ -x /bin/enigma ]; then
+  GUI=enigma
+fi
+}
+
+start_gui()
+{
+ if [ -x /var/etc/init.d/start_$GUI ]; then
+   /var/etc/init.d/start_$GUI
+ elif [ -x /etc/init.d/start_$GUI ]; then
+   /etc/init.d/start_$GUI
+ else
+   start_maintainance
+ fi
+}
+
+start_maintainance()
+{
+ /bin/lcdip
+ ifup -a &
+ [ -x /sbin/inetd ] && inetd
+ [ -x /sbin/sshd ] && /etc/init.d/start_sshd &
+# /sbin/chkucodes
+ /bin/chkIVersion &
+ get_gui
+ start_gui
+}
+
+. /etc/profile
+
+get_gui
+start_gui

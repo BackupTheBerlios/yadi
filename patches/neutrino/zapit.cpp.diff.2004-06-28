@@ -1,0 +1,139 @@
+--- zapit.cpp.orig	2004-06-28 22:34:36.193965000 +0200
++++ zapit.cpp	2004-06-28 23:21:41.836402200 +0200
+@@ -22,6 +22,18 @@
+  *
+  */
+ 
++/*
++ Options:
++ -d	Debugmode: Don't fork, additionally generate debugging messages
++
++ -q     Be quiet.
++
++ Signal handling:
++  SIGTERM, SIGHUP: Terminates zapit (gracefully)
++  SIGUSR1:         Toggles debug mode
++*/ 
++
++
+ /* system headers */
+ #include <csignal>
+ #include <fcntl.h>
+@@ -33,6 +45,10 @@
+ #include <config.h>
+ #endif
+ 
++// AudioPIDs per channel are saved here between sessions.
++// define to /dev/null to disable
++#define AUDIO_CONFIG_FILE "/var/tuxbox/config/zapit/audioPIDs.data"
++
+ /* tuxbox headers */
+ #include <configfile.h>
+ #include <connection/basicserver.h>
+@@ -78,6 +94,9 @@
+ CDemux *teletextDemux = NULL;
+ CDemux *videoDemux = NULL;
+ 
++// This associative array holds the last selected AudioPid for each channel
++map<t_channel_id, unsigned short> audio_map;
++
+ /* current zapit mode */
+ enum {
+ 	TV_MODE = 0x01,
+@@ -158,11 +177,36 @@
+ 
+ 		if (config.getModifiedFlag())
+ 			config.saveConfig(CONFIGFILE);
++		FILE *audio_config_file = fopen(AUDIO_CONFIG_FILE, "w");
++		if (audio_config_file) {
++		  for (map<t_channel_id, unsigned short>::iterator audio_map_it = audio_map.begin(); 
++		       audio_map_it != audio_map.end();
++		       audio_map_it++) {
++		    fwrite(&(audio_map_it->first), sizeof(t_channel_id), 1,
++			    audio_config_file);
++		    fwrite(&(audio_map_it->second), sizeof(unsigned short), 1,
++			    audio_config_file);
++		  }
++		  fclose(audio_config_file);
++		}
+ 	}
+ }
+ 
+ CZapitClient::responseGetLastChannel load_settings(void)
+ {
++        FILE *audio_config_file = fopen(AUDIO_CONFIG_FILE, "r");
++	if (audio_config_file) {
++	  t_channel_id chan;
++	  unsigned short apid;
++	  while (! feof(audio_config_file)) {
++	    fread(&chan, sizeof(t_channel_id), 1, audio_config_file);
++	    fread(&apid, sizeof(unsigned short), 1, audio_config_file);
++	    //printf("**** Old channelinfo: %d %d\n", (int) chan, (int) apid);
++	    audio_map[chan] = apid;
++	  }
++	  fclose(audio_config_file);
++	}	  
++
+ 	CZapitClient::responseGetLastChannel lastchannel;
+ 
+ 	if (currentMode & RADIO_MODE)
+@@ -192,12 +236,23 @@
+ static int pmt_update_fd = -1;
+ static bool update_pmt = false;
+ 
++void
++remember_selected_audio()
++{
++  if (channel) {
++    audio_map[channel->getServiceId()] = channel->getAudioPid();
++    DBG("*** Remembering apid = %d for channel (service-id) = %d",  channel->getAudioPid(), channel->getServiceId());
++  }
++}
++
+ int zapit(const t_channel_id channel_id, bool in_nvod, uint32_t tsid_onid)
+ {
+ 	bool transponder_change;
+ 	tallchans_iterator cit;
+ 	uint32_t current_transponder_id;
+ 
++	remember_selected_audio();
++
+ 	DBG("tuned_transponder_id: %08x", tuned_transponder_id);
+ 
+ 	/* usual zap */
+@@ -339,7 +394,7 @@
+ 			failed = true;
+ 		}
+ 
+-      thisChannel->setAudioChannel(audioChannel);
++		thisChannel->setAudioChannel(audioChannel);
+ 
+ 		if ((!failed) && (thisChannel->getAudioPid() == NONE) && (thisChannel->getVideoPid() == NONE)) {
+ 			WARN("neither audio nor video pid found");
+@@ -359,6 +414,18 @@
+ 	else
+ 		thisChannel->getCaPmt()->ca_pmt_list_management = 0x04;
+ 
++	DBG("***Now trying to get audio right:  %d\t%d\t%d\t%d",
++	       thisChannel->getAudioChannelCount(),
++	       thisChannel->getAudioChannel(0)->pid,
++	       thisChannel->getServiceId(),
++	       audio_map[thisChannel->getServiceId()]);
++	for (int i = 0; i < thisChannel->getAudioChannelCount(); i++) {
++	  if (thisChannel->getAudioChannel(i)->pid == audio_map[thisChannel->getServiceId()]) {
++	    DBG("***** Setting audio!\n");
++	    thisChannel->setAudioChannel(i);
++	  }
++	}
++						
+ 	startPlayBack(thisChannel);
+ 	cam->setCaPmt(thisChannel->getCaPmt());
+ 	saveSettings(false);
+@@ -408,6 +475,7 @@
+ 
+ 	/* update current channel */
+ 	channel->setAudioChannel(index);
++	remember_selected_audio();
+ 
+ 	/* set bypass mode */
+ 	CZapitAudioChannel *currentAudioChannel = channel->getAudioChannel();

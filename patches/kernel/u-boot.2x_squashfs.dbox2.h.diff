@@ -1,0 +1,37 @@
+--- u-boot.2x_flash.dbox2.h.ori	2004-05-03 23:30:20.000000000 +0200
++++ u-boot.2x_flash.dbox2.h	2004-05-03 23:34:33.000000000 +0200
+@@ -53,12 +53,12 @@
+ #if 0
+ #define CONFIG_BOOTDELAY	-1	/* autoboot disabled		*/
+ #else
+-#define CONFIG_BOOTDELAY	1	/* autoboot after 5 seconds	*/
++#define CONFIG_BOOTDELAY	0	/* autoboot after 5 seconds	*/
+ #endif
+ 
+ #undef	CONFIG_BOOTARGS
+ #define	CONFIG_BOOTCOMMAND							\
+-	"setenv bootargs console=$(console) root=/dev/mtdblock2; protect off 10020000 107fffff; fsload; bootm"
++"setenv bootargs console=$(console) root=/dev/mtdblock3 rootfstype=squashfs; protect off 10020000 107fffff;fsload; bootm"
+ 
+ #define	CONFIG_EXTRA_ENV_SETTINGS 						\
+ 	"console=ttyS0\0"
+@@ -72,14 +72,14 @@
+ 
+ #define	CONFIG_COMMANDS		( CONFIG_CMD_DFL | CFG_CMD_FS | CFG_CMD_DHCP )
+ 
+-#define	CONFIG_FS		( CFG_FS_CRAMFS | CFG_FS_JFFS2 )
++#define	CONFIG_FS		( CFG_FS_JFFS2 )
+ 
+-#define	CFG_FS_PART0_TYPE	CFG_FS_CRAMFS
++#define	CFG_FS_PART0_TYPE	CFG_FS_JFFS2
+ #define	CFG_FS_PART0_OFFSET	0x10040000
+-#define	CFG_FS_PART0_SIZE	0x6e0000
++#define	CFG_FS_PART0_SIZE	0xa0000
+ #define	CFG_FS_PART1_TYPE	CFG_FS_JFFS2
+-#define	CFG_FS_PART1_OFFSET	0x10720000
+-#define	CFG_FS_PART1_SIZE	0xe0000
++#define	CFG_FS_PART1_OFFSET	0x106a0000
++#define	CFG_FS_PART1_SIZE	0x160000
+ 
+ #define	CONFIG_DBOX2_ENV_READ_FS		"1:tuxbox/boot/boot.conf"
+ 

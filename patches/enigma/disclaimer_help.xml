@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE enigmahelp[
+<!ELEMENT enigmahelp (version, author, help)>
+<!ELEMENT version (imageversion, date, previous?)>
+<!ELEMENT imageversion (#PCDATA)>
+<!ELEMENT date (#PCDATA)>
+<!ELEMENT previous (#PCDATA)>
+<!ELEMENT author (name?, email)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!ELEMENT help (helptext)+>
+<!ELEMENT helptext EMPTY>
+<!ATTLIST helptext
+	id			ID	#REQUIRED
+	device		(Dbox2|Dreambox|DVBs|all)	#IMPLIED
+	helptext	CDATA	#REQUIRED
+	name		NMTOKEN	#IMPLIED
+	pic			CDATA	#IMPLIED
+	desc_file	CDATA	#IMPLIED
+	usage_file	CDATA	#IMPLIED>
+<!ENTITY lt "<">
+<!ENTITY gt ">">
+<!ENTITY auml "&#228;">
+<!ENTITY ouml "&#246;">
+<!ENTITY uuml "&#252;">
+<!ENTITY Auml "&#196;">
+<!ENTITY Ouml "&#214;">
+<!ENTITY Uuml "&#220;">
+<!ENTITY szlig "&#223;">
+<!ENTITY RT "->[DBOX] ->">
+<!ENTITY EA "ein/aus">
+<!ENTITY Z "[ZIFFERN]">
+<!ENTITY Es "Einstellungen">
+<!ENTITY FB "Fernbedienung">
+<!ENTITY LR "[LINKS]/[RECHTS]">
+<!ENTITY OU "[OBEN]/[UNTEN]">
+<!ENTITY HkS "Hier k&#246;nnen Sie ">
+<!ENTITY VN "vorheriger/n&#228;chster">
+<!ENTITY Gsave "(GR&#220;N)/speichern:[OK]">
+<!ENTITY sLa "speichern\n\nabbrechen">
+<!ENTITY X "\n     * ">
+<!ENTITY LN "\n. . . . . . . . . .\n\n">
+<!ENTITY LN2 "&LN;Bedienung:\n\n">
+<!ENTITY OUsel "&OU;&X;Eingabefeld oder Button w&#228;hlen\n\n" >
+<!ENTITY Fos "[HOME]&X;Fenster ohne &#196;nderungen schliessen" >
+<!ENTITY Fs "[HOME]&X;Fenster schliessen" >
+<!ENTITY na "\n\nz.Zt. keine Hilfe verf&#252;gbar\n\n">
+<!ENTITY DIS "\tDISCLAIMER\n\nDiese alternative Software für die DBox2, veröffentlicht unter GNU General Public License, ist in der Entwicklung und weder stabil, noch voll funktionsfähig. Sie ist für den Empfang von FTA-Programmen bestimmt. Illegale Aktivitäten, die mit dieser Software begangen werden, werden strafrechtlich verfolgt!\n
+Installation und Verwendung dieser Software erfolgt in Verantwortung und auf alleinige Gefahr des Nutzers/der Nutzerin. Für Schäden irgendwelcher Art, die durch diese Software entstehen, kann von uns keine Haftung übernommen werden. Ein Anspruch auf Support besteht nicht.\n
+Erwähnte Markennamen sind Eigentum der Marken-Inhaber. Sollten durch die Veröffentlichung dieser Software die Rechte Dritter verletzt sein, bitten wir diese, uns dies umgehend mitzuteilen, damit wir sofort für Abhilfe sorgen können.\n
+Gerichtsstand für alle mit dieser Software zusammenhängenden Klagen ist der Wohnort des/der Beklagten, soweit diese nichts abweichendes wünschen.\n
+Mit dem Download oder der Installation dieser Software erfolgt die Anerkennung dieser Bedingungen." >
+]>
+<enigmahelp>
+ <version>
+ <imageversion>1.8.1.2 02062004</imageversion>
+ <date>200406021111</date>
+ <previous>200316050930</previous>
+ </version>
+ <author>
+ <name>essu</name>
+ <email>essu@yadi.org</email>
+ </author>
+
+ <help>
+ <helptext id="1" text="(1)&DIS;" />
+ <helptext id="2" text="(2)&DIS;" />
+ <helptext id="3" text="(3)&DIS;" />
+ <helptext id="4" text="(4)&DIS;" />
+ <helptext id="5" text="(5)&DIS;" />
+ <helptext id="6" text="(6)&DIS;" />
+ <helptext id="7" text="(7)&DIS;" />
+ <helptext id="8" text="(8)&DIS;" />
+ <helptext id="9" text="(9)&DIS;" />
+ <helptext id="10" text="(10)&DIS;" />
+ <helptext id="11" text="(12)&DIS;" />
+ <helptext id="12" text="(11)&DIS;" />
+ <helptext id="13" text="(13)&DIS;" />
+ <helptext id="14" text="(14)&DIS;" />
+ <helptext id="15" text="(15)&DIS;" />
+ <helptext id="16" text="(16)&DIS;" />
+ <helptext id="17" text="(17)&DIS;" />
+ <helptext id="18" text="(18)&DIS;" />
+ <helptext id="19" text="(19)&DIS;" />
+ <helptext id="20" text="(20)&DIS;" />
+ <helptext id="21" text="(21)&DIS;" />
+ <helptext id="22" text="(22)&DIS;" />
+ <helptext id="23" text="(23)&DIS;" />
+ <helptext id="24" text="(24)&DIS;" />
+ <helptext id="25" text="(25)&DIS;" />
+ <helptext id="26" text="(26)&DIS;" />
+ <helptext id="27" text="(27)&DIS;" />
+ <helptext id="28" text="(28)&DIS;" />
+ <helptext id="29" text="(29)&DIS;" />
+ <helptext id="30" text="(30)&DIS;" />
+ <helptext id="31" text="(31)&DIS;" />
+ <helptext id="32" text="(32)&DIS;" />
+ <helptext id="33" text="(33)&DIS;" />
+ <helptext id="34" text="(34)&DIS;" />
+ <helptext id="35" text="(35)&DIS;" />
+ <helptext id="36" text="(36)&DIS;" />
+ <helptext id="37" text="(37)&DIS;" />
+ <helptext id="38" text="(38)&DIS;" />
+ <helptext id="39" text="(39)&DIS;" />
+ <helptext id="40" text="(40)&DIS;" />
+ <helptext id="41" text="(41)&DIS;" />
+ <helptext id="42" text="(42)&DIS;" />
+ <helptext id="43" text="(43)&DIS;" />
+ <helptext id="44" text="(44)&DIS;" />
+ <helptext id="45" text="(45)&DIS;" />
+ <helptext id="46" text="(46)&DIS;" />
+ <helptext id="47" text="(47)&DIS;" />
+ <helptext id="48" text="(48)&DIS;" />
+ <helptext id="49" text="(49)&DIS;" />
+ <helptext id="50" text="(50)&DIS;" />
+ <helptext id="51" text="(51)&DIS;" />
+ <helptext id="52" text="(52)&DIS;" />
+ <helptext id="53" text="(53)&DIS;" />
+ <helptext id="54" text="(54)&DIS;" />
+ <helptext id="55" text="(55)&DIS;" />
+ <helptext id="56" text="(56)&DIS;" />
+ <helptext id="57" text="(57)&DIS;" />
+ <helptext id="58" text="(58)&DIS;" />
+ <helptext id="59" text="(59)&DIS;" />
+ <helptext id="60" text="(60)&DIS;" />
+ <helptext id="61" text="(61)&DIS;" />
+ <helptext id="62" text="(62)&DIS;" />
+ <helptext id="63" text="(63)&DIS;" />
+ <helptext id="64" text="(64)&DIS;" />
+ <helptext id="65" text="(65)&DIS;" />
+ <helptext id="66" text="(66)&DIS;" />
+ <helptext id="67" text="(67)&DIS;" />
+ <helptext id="68" text="(68)&DIS;" />
+ <helptext id="69" text="(69)&DIS;" />
+ <helptext id="70" text="(70)&DIS;" />
+ <helptext id="71" text="(71)&DIS;" />
+ <helptext id="72" text="(72)&DIS;" />
+ <helptext id="73" text="(73)&DIS;" />
+ <helptext id="74" text="(74)&DIS;" />
+ <helptext id="75" text="(75)&DIS;" />
+ <helptext id="76" text="(76)&DIS;" />
+ <helptext id="77" text="(77)&DIS;" />
+ <helptext id="78" text="(78)&DIS;" />
+ <helptext id="79" text="(79)&DIS;" />
+ <helptext id="80" text="(80)&DIS;" />
+ <helptext id="81" text="(81)&DIS;" />
+ <helptext id="82" text="(82)&DIS;" />
+ <helptext id="83" text="(83)&DIS;" />
+ <helptext id="84" text="(84)&DIS;" />
+ <helptext id="85" text="(85)&DIS;" />
+ <helptext id="86" text="(86)&DIS;" />
+ <helptext id="87" text="(87)&DIS;" />
+ <helptext id="88" text="(88)&DIS;" />
+ <helptext id="89" text="(89)&DIS;" />
+ <helptext id="90" text="(90)&DIS;" />
+ <helptext id="91" text="(91)&DIS;" />
+ <helptext id="92" text="(92)&DIS;" />
+ <helptext id="93" text="(93)&DIS;" />
+ <helptext id="94" text="(94)&DIS;" />
+ <helptext id="95" text="(95)&DIS;" />
+ <helptext id="96" text="(96)&DIS;" />
+ <helptext id="97" text="(97)&DIS;" />
+ <helptext id="98" text="(98)&DIS;" />
+ <helptext id="99" text="(99)&DIS;" />
+</help>
+</enigmahelp>

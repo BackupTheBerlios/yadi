@@ -1,0 +1,39 @@
+#!/bin/sh
+# $Id: start_enigma,v 1.1 2004/10/07 12:11:27 essu Exp $
+get_boot_options()
+{
+config=/var/tuxbox/config/enigma/config
+grep -v "yadi/bootoptions/" $config  >$config"_"
+for option in boot_info cable enigma hw_sections oldrc spts_mode tda80xx.o
+do
+ optionline="i:/yadi/bootoptions/$option=0000000"
+ [ -e  /var/etc/.$option ] && optionline=$optionline"1" || optionline=$optionline"0"
+ echo $optionline >>$config"_"
+done
+echo >>$config"_"
+mv $config $config.old
+mv $config"_" $config
+}
+
+[ -e /var/bin/camd2 ] && chmod +x /var/bin/camd2 && /var/bin/camd2 || /bin/camd2
+unset TZ
+touch /tmp/.enigma
+get_boot_options
+while [ -e /tmp/.enigma ]
+do
+        /bin/enigma
+        case "$?" in
+                0)
+                        echo "Shutdown"
+                        rm /tmp/.enigma
+                        /sbin/halt
+                        ;;
+                2)
+                        echo "Restart"
+                        ;;
+                *)
+                        rm /tmp/.enigma
+                        /sbin/reboot
+                        ;;
+                esac
+done

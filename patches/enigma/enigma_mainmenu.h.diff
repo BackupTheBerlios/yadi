@@ -1,0 +1,19 @@
+--- enigma_mainmenu.h.orig	2004-08-23 09:42:51.000000000 +0200
++++ enigma_mainmenu.h	2004-08-23 20:04:17.000000000 +0200
+@@ -9,7 +9,7 @@
+ class eLabel;
+ 
+ #ifndef DISABLE_FILE
+-#define MENU_ENTRIES 9
++#define MENU_ENTRIES 9
+ #else
+ #define MENU_ENTRIES 6
+ #endif
+@@ -37,6 +37,7 @@
+ 	void sel_timer();	
+ 	void eraseBackground(gPainter *, const eRect &where);
+ 	void selected(int num);
++	void sel_expert();
+ protected:
+ 	int eventHandler(const eWidgetEvent &event);
+ public:

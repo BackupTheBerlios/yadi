@@ -1,0 +1,10 @@
+--- locals_intern.h	2004-07-12 23:54:11.860027752 +0200
++++ locals_intern.h.patch	2004-07-12 23:47:30.647021400 +0200
+@@ -476,6 +476,7 @@
+ 	"messagebox.yes",
+ 	"miscsettings.bootinfo",
+ 	"miscsettings.bootmenu",
++        "miscsettings.cabledriver",
+ 	"miscsettings.driver_boot",
+ 	"miscsettings.fb_destination",
+ 	"miscsettings.general",

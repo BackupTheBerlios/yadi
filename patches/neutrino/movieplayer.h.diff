@@ -1,0 +1,33 @@
+--- movieplayer.h.orig	2004-10-06 09:13:53.000000000 +0200
++++ movieplayer.h	2004-10-06 09:25:45.000000000 +0200
+@@ -62,12 +62,15 @@
+ 		    RESYNC      =  7,
+ 		    JF          =  9,
+ 		    JB          = 10,
+-			SKIP        = 11,
+-			AUDIOSELECT = 12,
++		    SKIP        = 11,
++		    AUDIOSELECT = 12,
++		    ITEMSELECT  = 13,
+ 		    SOFTRESET   = 99
+ 		};
+ 
+  private:
++        static int     lastParental;
++        
+ 	pthread_t      rct;
+ 	CFrameBuffer * frameBuffer;
+ 	int            m_LastMode;	
+@@ -81,10 +84,10 @@
+ 	CBookmarkManager * bookmarkmanager;
+ 
+ 	void PlayStream(int streamtype);
+-	void PlayFile();
++	void PlayFile(int parental=0);
++	void ParentalEntrance(void);
+ 
+ 	CFileFilter tsfilefilter;
+-	CFileFilter pesfilefilter;
+ 	CFileFilter vlcfilefilter;
+ 
+  public:

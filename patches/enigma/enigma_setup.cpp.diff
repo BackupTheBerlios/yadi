@@ -1,0 +1,383 @@
+--- enigma_setup.cpp.orig	2004-09-29 00:07:09.000000000 +0200
++++ enigma_setup.cpp.yadi	2004-09-29 08:33:37.000000000 +0200
+@@ -31,26 +31,77 @@
+ #include <enigma_scan.h>
+ #include <setup_extra.h>
+ #include <parentallock.h>
++#include <streaminfo.h>
++
++#include <setup_osd.h>
++#include <wizard_language.h>
++#include <time_settings.h>
++
++#include <setup_lcd.h>
++#include <setup_keyboard.h>
++#include <setupvideo.h>
++#include <lib/dvb/edvb.h>
++#include <lib/gui/emessage.h>
++#include <lib/system/info.h>
++
++#include <unistd.h>
++#include <lib/base/i18n.h>
++#include <lib/dvb/service.h>
++#include <lib/dvb/frontend.h>
++#include <lib/gui/ewindow.h>
++#include <lib/gui/eskin.h>
++#include <lib/gui/elabel.h>
++#include <lib/gui/ebutton.h>
++
++#include <lib/system/dmfp.h>
+ 
+ eZapSetup::eZapSetup()
+-	:eSetupWindow(_("Setup"), 10, 400)
++	:eSetupWindow(_("Setup"), 12, 400)
+ {
+ 	move(ePoint(160, 100));
+ 	int entry=0;
+ 	CONNECT((new eListBoxEntryMenu(&list, _("Service Organising"), eString().sprintf("(%d) %s", ++entry, _("open service organising")) ))->selected, eZapSetup::service_organising);
+ 	CONNECT((new eListBoxEntryMenu(&list, _("Service Searching"), eString().sprintf("(%d) %s", ++entry, _("open service searching")) ))->selected, eZapSetup::service_searching);
++	CONNECT((new eListBoxEntryMenu(&list, _("Streaminfo"), eString().sprintf("(%d) %s", ++entry, _("open the Streaminfo")) ))->selected, eZapSetup::sel_streaminfo);
+ 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+-	CONNECT((new eListBoxEntryMenu(&list, _("System Settings"), eString().sprintf("(%d) %s", ++entry, _("open system settings")) ))->selected, eZapSetup::system_settings);
++//	CONNECT((new eListBoxEntryMenu(&list, _("System Settings"), eString().sprintf("(%d) %s", ++entry, _("open system settings")) ))->selected, eZapSetup::system_settings);
++	CONNECT((new eListBoxEntryMenu(&list, _("A/V Settings"), eString().sprintf("(%d) %s", ++entry, _("open A/V settings")) ))->selected, eZapSetup::av_settings);
++#ifdef ENABLE_KEYBOARD
++	if ( eSystemInfo::getInstance()->hasKeyboard() )
++		CONNECT((new eListBoxEntryMenu(&list, _("Keyboard Setup"), eString().sprintf("(%d) %s", ++entry, _("open keyboard setup")) ))->selected, eZapSetup::keyboard_setup);
++#endif
++	CONNECT((new eListBoxEntryMenu(&list, _("OSD Settings"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eZapSetup::osd_settings);
++	CONNECT((new eListBoxEntryMenu(&list, _("OSD Language"), eString().sprintf("(%d) %s", ++entry, _("open language selector")) ))->selected, eZapSetup::osd_language);
++#ifndef DISABLE_LCD
++	if ( eSystemInfo::getInstance()->hasLCD() )
++		CONNECT((new eListBoxEntryMenu(&list, _("LCD Settings"), eString().sprintf("(%d) %s", ++entry, _("open LCD settings")) ))->selected, eZapSetup::lcd_settings);
++#endif
+ #ifndef DISABLE_CI
+ 	if ( eSystemInfo::getInstance()->hasCI() )
+ 		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface"), eString().sprintf("(%d) %s", ++entry, _("open common interface menu")) ))->selected, eZapSetup::common_interface);
+ #endif
+-	CONNECT((new eListBoxEntryMenu(&list, _("Parental Lock"), eString().sprintf("(%d) %s", ++entry, _("open parental setup")) ))->selected, eZapSetup::parental_lock );
+ 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+-	CONNECT((new eListBoxEntryMenu(&list, _("Expert Setup"), eString().sprintf("(%d) %s", ++entry, _("open expert setup")) ))->selected, eZapSetup::expert_setup);
++	CONNECT((new eListBoxEntryMenu(&list, _("Time Settings"), eString().sprintf("(%d) %s", ++entry, _("open time settings")) ))->selected, eZapSetup::time_settings);
++	CONNECT((new eListBoxEntryMenu(&list, _("Parental Lock"), eString().sprintf("(%d) %s", ++entry, _("open parental setup")) ))->selected, eZapSetup::parental_lock );
++	CONNECT((new eListBoxEntryMenu(&list, _("About..."), eString().sprintf("(%d) %s", ++entry, _("open the about dialog")) ))->selected, eZapSetup::sel_about);
++//	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
++//	CONNECT((new eListBoxEntryMenu(&list, _("Expert Setup"), eString().sprintf("(%d) %s", ++entry, _("open expert setup")) ))->selected, eZapSetup::expert_setup);
+ 	/* emit */ setupHook(this, &entry);
+ }
+ 
++void eZapSetup::sel_streaminfo()
++{
++	hide();
++	eStreaminfo si(0, eServiceInterface::getInstance()->service);
++#ifndef DISABLE_LCD
++	si.setLCD(LCDTitle, LCDElement);
++#endif
++	si.show();
++	si.exec();
++	si.hide();
++	show();
++}
++
+ void eZapSetup::system_settings()
+ {
+ 	hide();
+@@ -105,7 +156,7 @@
+ }
+ #endif
+ 
+-void eZapSetup::expert_setup()
++/*void eZapSetup::expert_setup()
+ {
+ 	hide();
+ 	eExpertSetup setup;
+@@ -116,7 +167,7 @@
+ 	setup.exec();
+ 	setup.hide();
+ 	show();
+-}
++}*/
+ 
+ void eZapSetup::parental_lock()
+ {
+@@ -131,3 +182,280 @@
+ 	show();
+ }
+ 
++static eString getVersionInfo(const char *info)
++{
++	FILE *f=fopen("/.version", "rt");
++	if (!f)
++		return "";
++	eString result;
++	while (1)
++	{
++		char buffer[128];
++		if (!fgets(buffer, 128, f))
++			break;
++		if (strlen(buffer))
++			buffer[strlen(buffer)-1]=0;
++		if ((!strncmp(buffer, info, strlen(info)) && (buffer[strlen(info)]=='=')))
++		{
++			int i = strlen(info)+1;
++			result = eString(buffer).mid(i, strlen(buffer)-i);
++			break;
++		}
++	}
++	fclose(f);
++	return result;
++}
++
++class eAboutScreen: public eWindow
++{
++	eLabel *machine, *processor, *frontend, *harddisks, *vendor, *logo, *version, *dreamlogo, *triaxlogo, *fpversion;
++	eButton *okButton;
++
++public:
++	eAboutScreen()
++	{
++		setHelpID(43);
++
++		machine=new eLabel(this);
++		machine->setName("machine");
++
++		vendor=new eLabel(this);
++		vendor->setName("vendor");
++
++		processor=new eLabel(this);
++		processor->setName("processor");
++
++		frontend=new eLabel(this);
++		frontend->setName("frontend");
++
++		harddisks=new eLabel(this);
++		harddisks->setName("harddisks");
++
++		okButton=new eButton(this);
++		okButton->setName("okButton");
++
++		dreamlogo=new eLabel(this);
++		dreamlogo->setName("dreamlogo");
++
++		triaxlogo=new eLabel(this);
++		triaxlogo->setName("triaxlogo");
++
++		version=new eLabel(this);
++		version->setName("version");
++
++		fpversion=new eLabel(this);
++		fpversion->setName("fp_version");
++
++		if (eSkin::getActive()->build(this, "eAboutScreen"))
++			eFatal("skin load of \"eAboutScreen\" failed");
++
++		dreamlogo->hide();
++		triaxlogo->hide();
++
++		if ( !eSystemInfo::getInstance()->hasHDD() )
++		{
++			harddisks->hide();
++			eWidget *h=search("harddisk_label");
++			if(h)
++				h->hide();
++		}
++
++		machine->setText(eSystemInfo::getInstance()->getModel());
++		vendor->setText(eSystemInfo::getInstance()->getManufacturer());
++		processor->setText(eString().sprintf("Processor: %s", eSystemInfo::getInstance()->getCPUInfo()));
++
++		switch (eSystemInfo::getInstance()->getFEType())
++		{
++			case eSystemInfo::feSatellite:
++				frontend->setText(_("Frontend: Satellite"));
++				break;
++			case eSystemInfo::feCable:
++				frontend->setText(_("Frontend: Cable"));
++				break;
++			case eSystemInfo::feTerrestrial:
++				frontend->setText(_("Frontend: Terrestrial"));
++				break;
++		}
++
++		eString sharddisks;
++#ifndef DISABLE_FILE
++		if ( eSystemInfo::getInstance()->hasHDD() )
++		{
++			for (int c='a'; c<'h'; c++)
++			{
++				char line[1024];
++				int ok=1;
++				FILE *f=fopen(eString().sprintf("/proc/ide/hd%c/media", c).c_str(), "r");
++				if (!f)
++					continue;
++				if ((!fgets(line, 1024, f)) || strcmp(line, "disk\n"))
++					ok=0;
++				fclose(f);
++				if (ok)
++				{
++					FILE *f=fopen(eString().sprintf("/proc/ide/hd%c/model", c).c_str(), "r");
++					if (!f)
++						continue;
++					*line=0;
++					fgets(line, 1024, f);
++					fclose(f);
++					if (!*line)
++						continue;
++					line[strlen(line)-1]=0;
++					sharddisks+=line;
++					f=fopen(eString().sprintf("/proc/ide/hd%c/capacity", c).c_str(), "r");
++					if (!f)
++						continue;
++					int capacity=0;
++					fscanf(f, "%d", &capacity);
++					fclose(f);
++					sharddisks+=" (";
++					if (c&1)
++						sharddisks+="master";
++					else
++						sharddisks+="slave";
++					if (capacity)
++						sharddisks+=eString().sprintf(", %d MB", capacity/2048);
++					sharddisks+=")\n";
++				}
++			}
++		}
++#endif //DISABLE_FILE
++		if (sharddisks == "")
++			sharddisks=_("none");
++		harddisks->setText(sharddisks);
++
++		{
++			eString verid=getVersionInfo("version");
++			if (!verid)
++				version->setText(_("unknown"));
++			else
++			{
++				int type=atoi(verid.left(1).c_str());
++				char *typea[3];
++				typea[0]=_("release");
++				typea[1]=_("beta");
++				typea[2]=_("internal");
++				eString ver=verid.mid(1, 3);
++				eString date=verid.mid(4, 8);
++//				eString time=verid.mid(12, 4);
++				if ( eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DM7000 )
++					version->setText(
++						eString(typea[type%3]) + eString(" ") + ver[0] + "." + ver[1] + "." + ver[2]
++							+ ", " + date.mid(6, 2) + "." + date.mid(4,2) + "." + date.left(4));
++				else
++					version->setText(
++														eString().sprintf
++															("%s %c.%d. %s", typea[type%3], ver[0],
++															atoi( eString().sprintf("%c%c",ver[1],ver[2]).c_str()	),
++															(date.mid(6, 2) + "." + date.mid(4,2) + "." + date.left(4)).c_str()
++															)
++													);
++			}
++		}
++
++		if ( !strcmp(eSystemInfo::getInstance()->getManufacturer(),"Triax") )
++			triaxlogo->show();
++		else if ( !strcmp(eSystemInfo::getInstance()->getManufacturer(),"Dream-Multimedia-TV") )
++			dreamlogo->show();
++
++		if ( eSystemInfo::getInstance()->getHwType() == eSystemInfo::DM7000 )
++		{
++			eString fp_version = fpversion->getText();
++			fp_version += eString().sprintf(" 1.%02d", eDreamboxFP::getFPVersion());
++			eDebug("%s", fp_version.c_str());
++			fpversion->setText(fp_version);
++		}
++		else
++			fpversion->hide();
++
++		CONNECT(okButton->selected, eWidget::accept);
++	}
++};
++
++void eZapSetup::sel_about()
++{
++	hide();
++	eAboutScreen about;
++	about.show();
++	about.exec();
++	about.hide();
++	show();
++}
++
++void eZapSetup::osd_settings()
++{
++	hide();
++	eZapOsdSetup setup;
++#ifndef DISABLE_LCD
++	setup.setLCD(LCDTitle, LCDElement);
++#endif
++	setup.show();
++	setup.exec();
++	setup.hide();
++	show();
++}
++
++void eZapSetup::osd_language()
++{
++	eWidget *oldfocus=focus;
++	hide();
++	eWizardLanguage::run();
++	show();
++	setFocus(oldfocus);
++}
++
++void eZapSetup::time_settings()
++{
++	hide();
++	eTimeSettings setup;
++#ifndef DISABLE_LCD
++	setup.setLCD(LCDTitle, LCDElement);
++#endif
++	setup.show();
++	setup.exec();
++	setup.hide();
++	show();
++}
++
++void eZapSetup::av_settings()
++{
++	hide();
++	eZapVideoSetup setup;
++#ifndef DISABLE_LCD
++	setup.setLCD(LCDTitle, LCDElement);
++#endif
++	setup.show();
++	setup.exec();
++	setup.hide();
++	show();
++}
++
++#ifdef ENABLE_KEYBOARD
++void eZapSetup::keyboard_setup()
++{
++	hide();
++	eZapKeyboardSetup setup;
++#ifndef DISABLE_LCD
++	setup.setLCD(LCDTitle, LCDElement);
++#endif
++	setup.show();
++	setup.exec();
++	setup.hide();
++	show();
++}
++#endif
++
++#ifndef DISABLE_LCD
++void eZapSetup::lcd_settings()
++{
++	hide();
++	eZapLCDSetup setup;
++	setup.setLCD(LCDTitle, LCDElement);
++	setup.show();
++	setup.exec();
++	setup.hide();
++	show();
++}
++#endif
++
