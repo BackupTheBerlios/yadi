@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.12 2004/04/05 08:51:08 essu Exp $
+# $Id: yadi,v 1.13 2004/04/19 17:22:05 essu Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -32,39 +32,45 @@
 #MAIN
 
 
-VERSION="yadi v. $Revision: 1.12 $"
+VERSION="yadi v. $Revision: 1.13 $"
+. check_arguments
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
 
-. $SCRIPTS/prepare
+if [ ! -e $ROOT/.compileImage ];then
 
-# Logfile Anfang
-#echo ""
-#echo "Alle weiteren Ausgaben findet Ihr in der $ROOT/$IMG_PRE.log Datei"
-#{
+  . $SCRIPTS/prepare
 
-# Nur konfigurieren, falls kein Fehler aufgetreten ist
-if [ -e $ROOT/.mkheadall_error ];then
- echo
- echo "Beim letzten Durchgang ist ein Fehler aufgetreten"
- echo "Make-Vorgang wird an der letzten Position fortgesetzt"
- echo
-else
- for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image build_gui enigma_changes neutrino_changes common_gui_changes squashfs_flfs squashfs_kernel squashfs_move_files squashfs_create_image
- do
-  if [ -e $SCRIPTS/$FILE ]; then
-   continue;
+  # Logfile Anfang
+  #echo ""
+  #echo "Alle weiteren Ausgaben findet Ihr in der $ROOT/$IMG_PRE.log Datei"
+  #{
+
+  # Nur konfigurieren, falls kein Fehler aufgetreten ist
+  if [ -e $ROOT/.mkheadall_error ];then
+    echo
+    echo "Beim letzten Durchgang ist ein Fehler aufgetreten"
+    echo "Make-Vorgang wird an der letzten Position fortgesetzt"
+    echo
   else
-   echo "$SCRIPTS/$FILE nicht gefunden"
-   exit;
+    for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image build_gui enigma_changes neutrino_changes common_gui_changes squashfs_flfs squashfs_kernel squashfs_move_files squashfs_create_image
+    do
+      if [ -e $SCRIPTS/$FILE ]; then
+        continue;
+      else
+        echo "$SCRIPTS/$FILE nicht gefunden"
+        exit 1;
+      fi
+    done
+    . $SCRIPTS/check
+    . $SCRIPTS/get_cvs
+    . $SCRIPTS/configure
+    . $SCRIPTS/patch_cvs
   fi
- done
- . $SCRIPTS/check
- . $SCRIPTS/get_cvs
- . $SCRIPTS/configure
- . $SCRIPTS/patch_cvs
+  . $SCRIPTS/make_it
+
 fi
-. $SCRIPTS/make_it
+
 . $SCRIPTS/flfs
 GUI="neutrino"
 . $SCRIPTS/build_gui
@@ -77,6 +83,7 @@ GUI="enigma"
 . $SCRIPTS/common_gui_changes
 . $SCRIPTS/cat_image
 GUI="all"
+. $SCRIPTS/squashfs_update
 . $SCRIPTS/build_gui
 . $SCRIPTS/neutrino_changes
 . $SCRIPTS/enigma_changes
