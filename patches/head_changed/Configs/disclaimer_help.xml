@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE enigmahelp[
+<!ELEMENT enigmahelp (version, author, help)>
+<!ELEMENT version (imageversion, date, previous?)>
+<!ELEMENT imageversion (#PCDATA)>
+<!ELEMENT date (#PCDATA)>
+<!ELEMENT previous (#PCDATA)>
+<!ELEMENT author (name?, email)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!ELEMENT help (helptext)+>
+<!ELEMENT helptext EMPTY>
+<!ATTLIST helptext
+	id			ID	#REQUIRED
+	device		(Dbox2|Dreambox|DVBs|all)	#IMPLIED
+	helptext	CDATA	#REQUIRED
+	name		NMTOKEN	#IMPLIED
+	pic			CDATA	#IMPLIED
+	desc_file	CDATA	#IMPLIED
+	usage_file	CDATA	#IMPLIED>
+<!ENTITY lt "<">
+<!ENTITY gt ">">
+<!ENTITY auml "&#228;">
+<!ENTITY ouml "&#246;">
+<!ENTITY uuml "&#252;">
+<!ENTITY Auml "&#196;">
+<!ENTITY Ouml "&#214;">
+<!ENTITY Uuml "&#220;">
+<!ENTITY szlig "&#223;">
+<!ENTITY RT "->[DBOX] ->">
+<!ENTITY EA "ein/aus">
+<!ENTITY Z "[ZIFFERN]">
+<!ENTITY Es "Einstellungen">
+<!ENTITY FB "Fernbedienung">
+<!ENTITY LR "[LINKS]/[RECHTS]">
+<!ENTITY OU "[OBEN]/[UNTEN]">
+<!ENTITY HkS "Hier k&#246;nnen Sie ">
+<!ENTITY VN "vorheriger/n&#228;chster">
+<!ENTITY Gsave "(GR&#220;N)/speichern:[OK]">
+<!ENTITY sLa "speichern\n\nabbrechen">
+<!ENTITY X "\n     * ">
+<!ENTITY LN "\n. . . . . . . . . .\n\n">
+<!ENTITY LN2 "&LN;Bedienung:\n\n">
+<!ENTITY OUsel "&OU;&X;Eingabefeld oder Button w&#228;hlen\n\n" >
+<!ENTITY Fos "[HOME]&X;Fenster ohne &#196;nderungen schliessen" >
+<!ENTITY Fs "[HOME]&X;Fenster schliessen" >
+<!ENTITY na "\n\nz.Zt. keine Hilfe verf&#252;gbar\n\n">
+]>
+<enigmahelp>
+ <version>
+ <imageversion>1.8 22042004</imageversion>
+ <date>200306061111</date>
+ <previous>200316050930</previous>
+ </version>
+ <author>
+ <name>EssU</name>
+ <email>essu@no-enigma.de</email>
+ </author>
+
+ <help>
+<!-- helpIDs ab hier nochmal vergleichen -->
+ <helptext id="50" text="(10)\tDISCLAIMER\n\nDiese alternative Software für die DBox2, veröffentlicht unter GNU General Public License, ist in der Entwicklung und weder stabil, noch voll funktionsfähig. Sie ist für den Empfang von FTA-Programmen bestimmt.Illegale Aktivitäten, die mit dieser Software begangen werden, werden strafrechtlich verfolgt!\nFür Schäden irgendwelcher Art, die durch diese Software entstehen, kann von uns keine Haftung übernommen werden. Ein Anspruch auf Support besteht nicht. Erwähnte Markennamen sind Eigentum der Marken-Inhaber.\n\nSollten durch die Veröffentlichung dieser Software die Rechte Dritter verletzt sein, bitten wir diese, uns dies umgehend mitzuteilen, damit wir sofort für Abhilfe sorgen können.\n\nGerichtsstand für alle mit dieser Software zusammenhängenden Klagen ist der Wohnort des/der Beklagten, soweit diese nichts abweichendes wünschen.\n\nMit dem Download oder der Installation dieser Software erfolgt die Anerkennung dieser Bedingungen." />
+</help>
+</enigmahelp>

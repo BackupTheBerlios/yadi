@@ -1,0 +1,33 @@
+# Copyright (c) 2004 essu, alexh, mogway Germany. All rights reserved.
+# Mail: alexh@berlios.de
+# Mail: essu@berlios.de
+# Mail: mogway@berlios.de
+# $Id: disclaimer.txt,v 1.1 2004/04/29 00:36:23 alexh Exp $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+
+DISCLAIMER
+
+Diese alternative Software für die DBox2, veröffentlicht unter GNU General Public License, ist in der Entwicklung und weder stabil, noch voll funktionsfähig. Sie ist für den Empfang von FTA-Programmen bestimmt.
+Illegale Aktivitäten, die mit dieser Software begangen werden, werden strafrechtlich verfolgt!
+
+Für Schäden irgendwelcher Art, die durch diese Software entstehen, kann von uns keine Haftung übernommen werden. Ein Anspruch auf Support besteht nicht. Erwähnte Markennamen sind Eigentum der Marken-Inhaber.
+
+Sollten durch die Veröffentlichung dieser Software die Rechte Dritter verletzt sein, bitten wir diese, uns dies umgehend mitzuteilen, damit wir sofort für Abhilfe sorgen können.
+
+Gerichtsstand für alle mit dieser Software zusammenhängenden Klagen ist der Wohnort des/der Beklagten, soweit diese nichts abweichendes wünschen.
+
+Mit dem Download oder der Installation dieser Software erfolgt die Anerkennung dieser Bedingungen.
