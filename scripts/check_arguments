@@ -1,0 +1,72 @@
+# $Id: check_arguments,v 1.1 2004/04/19 17:23:39 essu Exp $
+# is part of yadi-script-pack
+#
+#
+# Copyright (c) 2004 essu Germany. All rights reserved.
+# Mail: essu@berlios.de
+# 
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/check_arguments,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
+show_help()
+{
+echo "Usage: $PROGGIE [-rm]|[-qc]|[-pi IMAGEPATH]|[-it IMAGETYPE]|[-iv IMAGEVERSION]|[-me YOURNAME]|[-h]";
+echo "-rm: RM_CVS=yes";
+echo "-qc: quick-compile";
+echo "-pi: IMAGEPATH=[next argument: if a dir]";
+echo "-it: IMAGETYPE=[next argument: if 0|1|2]";
+echo "-iv: IMAGEVERSION=[next argument]";
+echo "-me: ME=[next argument]";
+echo "-h: this help";
+exit 1;
+}
+
+check_option()
+{
+case $OPTION in
+ -pi)if [ -d $ARG ];then IMAGES=$ARG;echo "IMAGES=$ARG"; else echo "$ARG does not exist";show_help;fi;;
+ -it)if [ $ARG = "0" -o $ARG = "1" -o $ARG = "2" ];then echo "IMAGETYPE=$ARG"; else echo "$ARG is not an imagetype";show_help;fi;;
+ -iv) VERSIONNR=$ARG;echo "VERSIONNR=$ARG";;
+ -me) ME=$ARG;echo "ME=$ARG";;
+ *)echo "wrong usage: $ARG";show_help;;
+esac
+OPTION=no
+}
+
+check_arg()
+{
+case $ARG in
+ -rm)RM_CVS=yes;echo "RM_CVS=yes";;
+ -qc)COMPILE_IMAGE=yes;echo "COMPILE_IMAGE=yes";;
+ -pi|-it|-iv|-me)OPTION=$ARG;;
+ -h)show_help;;
+  *)check_option;;
+esac
+}
+
+PROGGIE=$0
+for ARG; do
+ echo
+ echo $ARG;
+ check_arg
+ shift;
+done
