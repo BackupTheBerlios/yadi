@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# allin1 $Id: allin1.sh,v 1.13 2004/03/08 15:45:57 acoo Exp $
+# allin1 $Id: allin1.sh,v 1.14 2004/03/08 16:05:55 acoo Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
@@ -36,7 +36,7 @@ RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig $Revision: 1.13 $ enthalten
+VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig $Revision: 1.14 $ enthalten
 # Pfad zu den geaenderten und sonstigen Dateien
 CHANGE_DIR=$RT/patches/head_changed
 CHANGE_ARC_DIR=$RT/change_arcs
@@ -163,7 +163,7 @@ else
   patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
 
   # Neu: Aenderungen fuer 1xI schon im CVS
-  cp patches/u-boot.1x-flash.dbox2.h ../boot/u-boot/include/configs/dbox2.h
+  cp $CVS/cdk/Patches/u-boot.1x-flash.dbox2.h ../boot/u-boot/include/configs/dbox2.h
 
   # Die Datei aus dem CVS fuer JFFS2-Only patchen
   patch -N -p0 $CVS/boot/u-boot/include/configs/dbox2.h $CHANGE_DIR/Patches/dbox2.h.neu.diff
