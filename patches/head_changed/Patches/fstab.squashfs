@@ -1,3 +1,0 @@
-proc	/proc		proc	defaults	0 0
-tmpfs	/tmp		ramfs	defaults	0 0
-/dev/mtdblock/4     /var     jffs2     defaults     0 0
