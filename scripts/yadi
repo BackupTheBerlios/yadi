@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.8 2004/04/03 22:32:49 dietmarw Exp $
+# $Id: yadi,v 1.9 2004/04/03 22:44:34 dietmarw Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -32,7 +32,7 @@
 #MAIN
 
 
-VERSION="yadi v. $Revision: 1.8 $"
+VERSION="yadi v. $Revision: 1.9 $"
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
 for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image neutrino enigma neutrino_enigma squashfs_flfs squashfs_kernel squashfs_move_files squashfs_create_image
@@ -83,6 +83,6 @@ echo Diese sollten sich jetzt in $IMAGES befinden.
 echo
 echo
 
-} > /$ROOT/$IMG_PRE.log
+} > /$ROOT/$IMG_PRE.log 2>&1
 
 exit;
