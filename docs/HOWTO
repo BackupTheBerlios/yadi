@@ -1,0 +1,49 @@
+# Copyright (c) 2004 essu, alexh, mogway Germany. All rights reserved.
+# Mail: alexh@yadi.org
+# Mail: essu@yadi.org
+# Mail: mogway@yadi.org
+# $Id: HOWTO,v 1.1 2004/10/07 13:12:38 essu Exp $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+
+HOWTO
+
+Da das CVS momentan nicht aktuell ist, ist die Download Version vorzuziehen !!!
+
+
+Yadi selber bauen (Download Version):
+1. fakeroot, mksquashfs und mkfs.jffs2 herunterladen und in den Suchpfad kopieren.
+   (http://sourceforge.net/project/showfiles.php?group_id=100493&package_id=116737)
+2. yadi-script-xxxxxxxxxxxx.tar.gz herunterladen => Download. 
+3. cp yadi-script-xxxxxxxxxxxx.tar.gz ~ 
+4. cd ~ 
+5. tar xvfz yadi-script-xxxxxxxxxxxx.tar.gz 
+6. cd yadi/yadi-cvs/scripts/ 
+7. ./yadi -rm 
+
+ 
+Yadi selber bauen (CVS Checkout):
+1. fakeroot, mksquashfs und mkfs.jffs2 herunterladen und in den Suchpfad kopieren.
+   (http://sourceforge.net/project/showfiles.php?group_id=100493&package_id=116737)
+2. mkdir ~/yadi 
+3. cd ~/yadi 
+4. mkdir Archive 
+5. mkdir yadi-cvs 
+6. cd yadi-cvs 
+7. cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/dboxjffs2 co . 
+8. cd ~/yadi/yadi-cvs/scripts 
+9. ./yadi -rm 
+

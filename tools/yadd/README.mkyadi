@@ -1,0 +1,85 @@
+# Copyright (c) 2004 gmo18t Germany. All rights reserved.
+# $Id: README.mkyadi,v 1.1 2004/10/07 13:12:38 essu Exp $
+
+Generieren einer yadd Umgebung aus einem YaDI squashfs-1x
+Image vom yadi-Team Homepage: http://yadi.org
+=========================================================
+
+1. Vorraussetzungen
+
+1.1 Linux Kernel Modul "squashfs"
+
+  2.4 / 2.6 Kerenl muß gepatcht werden -> Anleitung und
+  Sourcen siehe http://squashfs.sourceforge.net
+
+1.2 Linux Kernel Parameter
+
+  ...
+  <M> Memory Technologie Devices (MTD) support
+      <M> Direct char device access to MTD devices
+      Self contained MTD device drivers --->
+      <M> Test driver using RAM
+      (8192) MTDRAM device size in KiB
+      (128) MTDRAM erase block size in KiB
+  
+  ...
+  Miscellaneous filesystems --->
+  <M> Journaling Flash File System v2 (JFFS2) support
+  (0)   JFFS2 debugging verbosity (0 = quiet, 2 = noisy)
+  [ ]   JFFS2 support for NAND flash (EXPERIMENTAL)
+  <M> SquashFS - Squashed file system support
+  ...
+
+ Auf little Endian Systemen (i386) muß vor dem Kernelbau
+ die Datei ./linux/include/linux/jffs2.h wie folgt geändert
+ werden:
+
+  Zeile "#define JFFS2_NATIVE_ENDIAN" ersetzen 
+  durch "#define JFFS2_BIG_ENDIAN".
+
+ Dadurch können Images für big endian (ppc) direkt verwendet werden. 
+ Mit Hilfe von mkfs.jffs2 können selbst jffs2 Images erstellt werden,
+ wobei immer die Option "-b" verwendet werden sollte ...
+
+
+1.3 Device Dateien
+
+ Wenn kein "devfs" benutzt wird, sind noch die Device Dateien für 
+ MTD anzulegen (falls noch nicht vorhanden):
+
+  mknod /dev/mtd/0 b 31 0
+  mknod /dev/mtd/0c c 90 0 
+  
+1.4 Sonstiges 
+ 
+ Verzeichnis /mnt muss vorhanden sein und es sollte nichts dran
+ gemountet sein.
+
+ Verzeichnis /tmp sollte noch 10-20 MB Freiplatz haben und beschreibbar 
+ sein.
+
+2. Converter Script (mkyadi) 
+
+Aufruf: ./mkyadd <squash-image (uncompressed)>
+
+Das script wandelt ein squashfs image in eine yadd-Filestruktur um.
+Dabei werden folgende Schritte durchlaufen:
+- Unload/Load der entsprechenden Module (mtdram, jffs2, squashsf...)
+- Extrahieren des squashsf Teils (root) in ein File
+- Einspielen des jffs2 Teils (var) in das MTD Test-Device (mtdram 
+  -> simuliert MTD im RAM).
+- Mounten des squshsfs Files (nach /mnt)
+- Mounten des MTD devices (nach /var/mnt)
+- Übetragen aller Image-Dateien in eine yadd-Filestruktur (/tmp/yaddroot) 
+- Patchen der yadd-Filestruktur mit Inhalt aus "yadd-patch1.tar"
+- Falls vorhanden, Einspielen einer gesicherten Konfiguration und 
+  der ucodes aus "var_tuxbox.tar" 
+
+Anschliessend kann "yaddroot/" aus /tmp zusammen mit einem tftpboot/
+(-> "tftpboot.tar" entpacken) zum Starten der DBox verwendet werden.
+
+ODER falls kein tftpboot.tar vorhanden entsprechendes Verzeichnis tftpboot
+anlegen und kernel-cdk dort reinkopieren evtl. je nach boot program
+(yadd faehiges(!) ppcboot/u-boot) muss kernel-cdk noch in kernel-yadd 
+umbenannt werden (link geht natuerlich auch).
+ 

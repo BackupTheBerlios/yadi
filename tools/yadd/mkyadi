@@ -1,0 +1,79 @@
+#!/bin/sh
+# copyright 2004 gmo18t Germany. All rights reserved
+# $Id: mkyadi,v 1.1 2004/10/07 13:12:38 essu Exp $
+# usage: mkyadi <yadi-image-file (uncompressed)>
+#
+KVERS=`uname -r`
+MTD_CHAR=/dev/mtd/0c
+MTD_BLOCK=/dev/mtd/0
+CURR_DIR=`pwd`
+MNT_SQUASH_DIR=/mnt/yadi
+MNT_JFFS2_DIR=/mnt/yadi/var
+YADD_DIR=/tmp/yaddroot
+YADI_ROOT=/tmp/yadi-root
+
+if [ ! -e $1 ]; then
+  echo "usage: mkyadi <uncompressed-yadi-image-file>"
+  exit 0;
+fi;
+
+# free resources
+umount $MNT_JFFS2_DIR
+umount $MNT_SQUASH_DIR
+  
+#
+# unload/load modules
+#
+rmmod mtdram
+#rmmod mtdchar                 
+#rmmod jffs2                  
+#rmmod zlib_deflate           
+#rmmod mtdcore
+modprobe jffs2
+modprobe mtdchar                 
+insmod /lib/modules/$KVERS/kernel/drivers/mtd/devices/mtdram.ko total_size=8064 erase_size=128
+insmod /lib/modules/$KVERS/kernel/fs/squashfs/squashfs.ko
+
+#
+# skip flfs + jffs2 (kernel) part of image (first 768K = 0xC0000 bytes)
+# take only squashfs part (5888K = 0x5C0000 bytes)
+#
+dd if=$1 of=$YADI_ROOT bs=1024 skip=768 count=5888
+
+#
+# take rest (var part: skip 768 + 5888), see above)
+#
+dd if=$1 of=$MTD_CHAR bs=1024 skip=6656
+
+#
+# mount 
+#
+mount -t squashfs $YADI_ROOT $MNT_SQUASH_DIR -o loop=/dev/loop1
+mount -t jffs2 $MTD_BLOCK $MNT_JFFS2_DIR
+
+if [ ! -e $MNT_SQUASH_DIR/.version ]; then
+  echo "no valid yadi squashfs mount available"
+  exit 0;
+fi;
+
+#
+# build new yadd
+#
+mv $YADD_DIR $YADD_DIR.old
+mkdir -p $YADD_DIR
+cd $MNT_SQUASH_DIR
+tar -cvf - .version * | (cd $YADD_DIR; tar -xf -)
+
+#
+# now deploy yadd modifications
+#
+cd $YADD_DIR
+tar -xvf $CURR_DIR/yadd-patch1.tar
+
+#
+# if available, restore own configuration and ucodes 
+#
+if [ -e $CURR_DIR/var_tuxbox.tar ]; then
+  tar -xvf $CURR_DIR/var_tuxbox.tar
+fi;
+

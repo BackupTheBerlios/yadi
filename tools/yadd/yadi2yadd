@@ -1,0 +1,180 @@
+#
+# $Id: yadi2yadd,v 1.1 2004/10/07 13:12:38 essu Exp $
+#
+# Yadi2YADD
+#
+# Dieses Script erstellt aus einem kompletten Yadi Image Source
+# eine lauffähige Yadd.
+#
+#
+# Copyright (C) 2004 mogway <mogway@yadi.org>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# Or, point your browser to http://www.gnu.org/copyleft/gpl.html
+#
+#
+#!/bin/sh
+
+#############################################################################
+# change directorys and patchfile as you need                               #
+#############################################################################
+
+YADDDIR=/dbox/yadi
+YADIDIR=~/yadi/dbox/cdkflash/root
+PATCHFILE=~/yadi/yadi-cvs/tools/yadd/yadd-patch1.tar
+
+#############################################################################
+# do not change anything below this line                                    #
+#############################################################################
+
+TYPE="file"
+
+if [ ! "$1" = "" ]; then
+  if [ -e $1 ]; then
+    TYPE=`file -b $1`
+    echo "<$TYPE>"
+    if [ "$TYPE" = "POSIX tar archive" ]; then
+      echo "Use Filemode $TYPE"
+      PATCHFILE=$1
+      PM="Patchfile......:"
+      TYPE="file"
+    fi
+    if [ "$TYPE" = "directory" ]; then
+      echo "Use: Dirmode $TYPE";
+      PATCHFILE=$1
+      PM="Patch Directory.:"
+      TYPE="dir"
+    fi
+  fi
+fi
+
+#############################################################################
+# some informational output                                                 #
+#############################################################################
+
+echo ""
+echo "This is Yadi2YADD"
+echo "Now we are create a YADD distribution"
+echo ""
+echo "Sourcedir.......: $YADIDIR"
+echo "Destinationdir..: $YADDDIR"
+echo "$PM $PATCHFILE"
+echo ""
+
+
+#############################################################################
+# check Directorys                                                          #
+#############################################################################
+
+if [ "$YADDDIR" = "" ]; then
+   echo "You must set YADDDIR"
+   exit
+fi
+
+if [ "$YADIDIR" = "" ]; then
+   echo "You must set YADIDIR"
+   exit
+fi
+
+if [ ! -d $YADDDIR ]; then
+   echo "YADDDIR ($YADDDIR) does not exists"
+   exit
+fi
+
+if [ ! -d $YADIDIR ]; then
+   echo "YADIDIR ($YADIDIR) does not exists"
+   exit
+fi
+
+if [ ! -e $PATCHFILE ]; then
+   echo "PATCHFILE ($PATCHFILE) does not exists"
+   exit
+fi
+
+
+#############################################################################
+# delete old stuff                                                          #
+#############################################################################
+
+echo "Deleting old stuff..."
+cd $YADDDIR 
+
+for DIR in bin dev etc lib mnt proc sbin share tmp 
+do
+ if [ -d $YADDDIR/$DIR ]; then
+   rm -Rf $YADDDIR/$DIR
+ fi
+done
+
+for FILE in ".version" "disclaimer.txt" hdd root 
+do
+ if [ -e $YADDDIR/$FILE ]; then
+   rm -f $YADDDIR/$FILE
+ fi
+done
+
+
+#############################################################################
+# copy yadi files                                                           #
+#############################################################################
+
+echo "Copying Yadi files..."
+
+for DIR in bin dev etc lib mnt proc sbin share tmp
+do
+ if [ -d $YADIDIR/$DIR ]; then
+   cp -dpR $YADIDIR/$DIR $YADDDIR/
+ fi
+done
+
+for FILE in ".version" "disclaimer.txt" hdd root
+do
+ if [ -e $YADIDIR/$FILE ]; then
+   cp -dpR $YADIDIR/$FILE $YADDDIR/
+ fi
+done
+
+
+#############################################################################
+# change some files                                                         #
+#############################################################################
+
+cd $YADDDIR
+
+if [ "$TYPE" = "file" ]; then
+  echo "Extract Patch-Tarfile..."
+  tar xvf $PATCHFILE >/dev/null 2>&1
+fi
+
+if [ "$TYPE" = "dir" ]; then
+  echo "Copy Patch Directory..."
+  
+  if [ -e $PATCHFILE/etc/network ]; then
+    rm -R $YADDDIR/etc/network
+  fi
+
+  cp -fdpR $PATCHFILE/* $YADDDIR
+fi
+
+#############################################################################
+# create info file                                                          #
+#############################################################################
+
+DATE=`date`
+echo "This YADD is created by Yadi2YADD at $DATE" >YADD.txt
+echo ""
+cat YADD.txt
+echo ""
+
