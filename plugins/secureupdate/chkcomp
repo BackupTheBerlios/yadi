@@ -1,0 +1,20 @@
+#!/bin/sh
+# $Id: chkcomp,v 1.1 2004/10/27 19:37:19 essu Exp $
+status=""
+[ -n $1 ] && img=$1 || img="root.squashfs"
+[ -e /tmp/$img ] || status="no image found"
+while [ -z $status ]
+do
+	x=`date +%s`
+	mkdir /tmp/$x
+	mount -t squashfs -o loop /tmp/$img /tmp/$x || status="unable to mount $img" 
+	rc=`expr substr $(grep version /tmp/$x/.version) 10 3` || status="no version of $img" 
+	umount /tmp/$x
+	rmdir /tmp/$x
+	myrc=`expr substr $(grep version /.version) 10 3`
+	[ $myrc -ne $rc ] || status="Flashimage $myrc not updateable with $rc of $img"
+done
+[ -z status ] && status="ok"
+echo $status
+
+

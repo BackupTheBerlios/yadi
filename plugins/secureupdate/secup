@@ -1,0 +1,45 @@
+#!/bin/sh
+# $Id: secup,v 1.1 2004/10/27 19:37:19 essu Exp $
+
+decide()
+{
+case $step in
+ 0)
+         echo 0
+         if [ $img = "/tmp/" ]; then
+                img="/tmp/root.squashfs"
+        fi
+        echo "Image: "$img
+        [ -e $img ] && step=1 || step=$img" not found";;
+ 1)
+         echo 1
+        x=`date +%s`
+        mkdir /tmp/$x
+        mount -t squashfs -o loop $img /tmp/$x && step=2 || step=4;;
+ 2)
+         echo 2
+        myrc=`expr substr $(grep version /.version) 10 3`
+        rc=`expr substr $(grep version /tmp/$x/.version) 10 3` && step=3 || step=5;;
+ 3)
+         echo 3
+        [ $myrc = $rc ] && step=7 || step=6;;
+ 4)
+         echo 4
+         rmdir /tmp/$x; step="unable to mount "$img;;
+ 5)
+         echo 5
+        umount /tmp/$x;        rmdir /tmp/$x; step="no version of "$img;;
+ 6)
+         echo 6
+        umount /tmp/$x;        rmdir /tmp/$x;step="Flashimage "$myrc" not updateable with "$rc" "$img;;
+ 7)
+         echo 7
+        umount /tmp/$x;        rmdir /tmp/$x; fcp -v $img /dev/mtd/1; step="ok";;
+ *)
+         echo "*"
+         echo $step; exit
+esac
+}
+step=0;
+img=/tmp/$1;
+decide; decide; decide; decide; decide; decide; decide
