@@ -1,0 +1,753 @@
+#!/bin/sh
+#
+# getset v0.$Revision: 1.1 $
+$Id: getset,v 1.1 2004/03/06 12:57:39 essu Exp $
+# Copyright (c) 2004 Steff Ulbrich, Germany. All rights reserved.
+# Author: Steff Ulbrich
+# Mail: essu@no-enigma.de
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/patches/getset/Attic/getset,v $
+#
+# based on
+# get_settings Version: 0.03 (31.01.2004)
+# by
+# Copyright (c) 2004 Kristian Fischer, Germany. All rights reserved.
+#
+# Author: Kristian Fischer
+# Mail: settings@kfsw.de
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm können Senderlisten direkt aus dem Internet auf die
+# Box geladen werden.
+# Voraussetzung ist natürlich, dass die Box eine Verbindung ins Netz hat ;-)
+#
+#############################################################################################################
+############ Ab hier nicht mehr rumschreiben, es sei denn du weißt, was du tust #############################
+#############################################################################################################
+
+################################################################################
+# Standardwerte setzen
+################################################################################
+set_standards()
+{
+############## Sicherheitswerte #############
+# Da sollen die Settings rein
+# Enigma => /var/tuxbox/config/enigma
+# Neutrino => /var/tuxbox/config/zapit
+# Format der Settings
+# D_Box_2_Linux_Enigma  => D-Box 2 Linux Enigma
+# Dreambox_Linux_Enigma  => Dreambox Linux Enigma
+# D_Box_2_Linux_Neutrino  => D-Box 2 Linux Neutrino alt ISO-8859-1
+# D_Box_2_Linux_Neutrino_UTF  => D-Box 2 Linux Neutrino (AlexW 1.6.9)
+# D_Box_2_Linux_Neutrino_1_7  => D-Box 2 Linux Neutrino (AlexW 1.7)
+# D_Box_2_Linux_Neutrino_1_7_1_AlexH => D-Box 2 Linux Neutrino (AlexH 1.7.1)
+SETTINGSDIR='/var/tuxbox/config/zapit'; FORMAT='D_Box_2_Linux_Neutrino_1_7_1_AlexH';
+
+# SAT
+SAT1='Astra_19_2'; SAT2=''; SAT3=''; SAT4=''; ALLSATS='no';
+
+# SORTORDER
+SORT1='Anbieter'; SORT2='Satellit'; SORT1=''; SORT3=''; SORT4=''; SORT5=''; SORT6='';
+
+# Weitere Optionen
+PAYTV='no'; PAYSIGN='no'; PRESORT='yes'; KEEP_MARKED='yes';
+NO_USERBOUQUETS='no'; NEWSORT_ONLY='no';
+
+# Programm Optionen
+RELOAD='no' ; REBOOT='no'; HALTNOW='no'; QUIET='-q'; PROXY='-Y off';
+REALYQUIET='no'; ANNOUNCEMENT='yes'; LOG='yes'; SAVELOG='yes';
+WAIT=10; INTERNET_UPDATE='no'; AUTOUPDATE='no';
+USE_CONFIG='no'; SAVE_CONFIG='no'
+#################feststehende Werte##########
+#
+# Adressen / URLS der Server
+TESTURI='http://www.dewi-sat.de/';
+BASEURI='http://satinfo.kfsw.de';
+SETTINGSURI='http://satinfo.kfsw.de/sat/settings.fcgi';
+PINGURI='http://its.no-enigma.de';
+UPDATEURI='http://its.no-enigma.de/getset';
+
+# Verzeichnisse
+MYTEMP='/tmp/settings';
+INSTALLDIR='/var/plugins';
+CONFIGDIR='/var/tuxbox/config';
+PLUGINSDIR='/var/tuxbox/plugins';
+#LOG
+if [ -e /tmp/getset.log  ]; then
+ rm /tmp/getset.log
+fi
+touch /tmp/getset.log
+date  >/tmp/getset.log
+MESG='\nStandardwerte setzen:'; tellme;
+#VersionID
+VERSION='$Id: getset,v 1.1 2004/03/06 12:57:39 essu Exp $'; FOUNDVERSION='';
+MESG='getset VERSION: '$VERSION; tellme;
+}
+
+################################################################################
+# Testen des Systems
+################################################################################
+check_system()
+{
+MESG='\nTesten des Systems:'; tellme;
+cd /tmp
+#Erkennen der GUI
+if [ -e /tmp/neutrino.sock ]; then
+ GUI='n'
+ SETTINGSDIR="$CONFIGDIR/zapit"
+ pzapit -sb #Bouquets speichern
+else
+ GUI='e'
+ SETTINGSDIR="$CONFIGDIR/enigma"
+fi
+MESG='Verzeichnis der Settings: '$SETTINGSDIR ;  tellme;
+#Versionskennung
+VERSIONFILE=$CONFIGDIR"/.getset"
+if [ -e $VERSIONFILE ]; then
+ FOUNDVERSION=`cat $VERSIONFILE`
+fi
+MESG="Gefundene Version: $FOUNDVERSION"; tellme;
+
+#Pruefen ob beide GUIs installiert sind
+INSTALLGUI=$GUI
+if [ -e /bin/enigma ]; then
+ if [ -e /bin/neutrino ]; then
+ INSTALLGUI="b"
+ fi
+fi
+
+MESG="Installierte GUI(s): $INSTALLGUI";  tellme;
+if [ ! $INSTALLGUI = 'e' ]; then
+ if [ -e /.version ]; then
+  NVERSION=`cat /.version`
+ else
+  NVERSION=''
+ fi
+MESG="Neutrinoversion: $NVERSION";  tellme;
+fi
+
+if [ ! $INSTALLGUI = "n" ]; then
+MODEL_ID=`/bin/tuxinfo -m`
+ if [ $MODEL_ID -eq 1 ]; then
+  EVERSION='dbox2'
+ elif [ $MODEL_ID -eq 2 ]; then
+  EVERSION='dream'
+ fi
+ MESG="Enigmaversion: $EVERSION";  tellme;
+fi
+
+if [ $VERSION = $FOUNDVERSION ]; then
+ MESG="Gefundene Version: $FOUNDVERSION - laufende Version: $VERSION";  tellme;
+else
+ MESG="Gefundene Version: "$FOUNDVERSION" - \ndie Version: "$VERSION" wird jetzt installiert";  tellme;
+ install_getset
+fi
+}
+
+################################################################################
+# Lesen der cfg-Datei
+################################################################################
+init()
+{
+echo "\nLesen der settings.cfg:"
+ #Ini-Datei laden
+ if [ -e $CONFIGDIR/settings.cfg ]; then
+  . $CONFIGDIR/settings.cfg
+  MESG="Die Einstellungen aus "$CONFIGDIR"/settings.cfg\n werden statt der CONFIG-Bouquet-Einstellungen verwendet";  tellme;
+ else
+  MESG=$CONFIGDIR"/settings.cfg nicht gefunden,\nversuche Einstellungen aus CONFIG-Bouquets zu laden";  tellme;
+  USE_CONFIG='no';
+ fi
+}
+
+################################################################################
+#Konfiguration ueber Konfig-Bouquets
+################################################################################
+auto_init()
+{
+MESG="\nKonfiguration mit Konfig-Bouquets:"; tellme;
+echo "# CONFIGURATION Settings-Download - getset "$VERSION >/tmp/cfg.tmp
+echo "# by essu@no-enigma.de\n#" >>/tmp/cfg.tmp
+if [ $GUI = "e" ]; then
+ if [ ! -e $INSTALLDIR/getset.7 ]; then
+  MESG=$INSTALLDIR"/getset.7 nicht gefunden";  tellme; announce;
+  exit;
+ fi
+  $INSTALLDIR/getset.7
+else
+ if [ ! -e $INSTALLDIR/getset.8 ]; then
+  MESG=$INSTALLDIR"/getset.8 nicht gefunden";  tellme; announce;
+  exit;
+ fi
+ $INSTALLDIR/getset.8
+fi
+if [ $SAVE_CONFIG = "yes" ];then
+  mv /tmp/cfg.tmp $CONFIGDIR/settings.cfg
+  MESG="Settingsdatei wurde unter "$CONFIGDIR"/settings.cfg gespeichert"; tellme ;
+  MESG="Sie koennen jetzt 'getedit -cu' aufrufen, um die Settingsdatei zu benutzen"; tellme ; announce;
+  exit;
+fi
+
+. /tmp/cfg.tmp
+MESG=`cat /tmp/cfg.tmp`; tellme;
+
+if [ $QUIET = "yes" ]; then
+ QUIET='-q';
+else
+ QUIET='';
+fi
+if [ $PROXY = "yes" ]; then
+ PROXY='-Y on';
+else
+ PROXY='-Y off';
+fi
+MESG="Einstellungen aus Bouquet gelesen";  tellme;
+if [ $GUI = "e" ]; then
+ SETTINGSDIR='/var/tuxbox/config/enigma';
+ FORMAT='D_Box_2_Linux_Enigma';
+else
+ SETTINGSDIR='/var/tuxbox/config/zapit';
+ case $NVERSION in
+  1) FORMAT=D_Box_2_Linux_Neutrino;;
+  2) FORMAT=D_Box_2_Linux_Neutrino_UTF;;
+  3) FORMAT=D_Box_2_Linux_Neutrino_1_7;;
+  4) FORMAT=D_Box_2_Linux_Neutrino_1_7_1_AlexH;;
+  *) FORMAT=D_Box_2_Linux_Neutrino_1_7_1_AlexH;;
+ esac
+fi
+if [ $SETTING_FORMAT_Neutrino_1_7_1_AlexH = "yes" ];then
+ SETTINGSDIR='/var/tuxbox/config/zapit';
+ FORMAT='D_Box_2_Linux_Neutrino_1_7_1_AlexH';
+fi
+if [ $SETTING_FORMAT_Enigma = "yes" ];then
+ SETTINGSDIR='/var/tuxbox/config/enigma';
+ FORMAT='D_Box_2_Linux_Enigma';
+fi
+if [ ! -d $SETTINGSDIR ];then
+ mkdir $SETTINGSDIR
+fi
+if [ $DIALWAIT_60 = "yes" ]; then
+ WAIT=60
+elif [ $DIALWAIT_30 = "yes" ]; then
+ WAIT=30
+elif [ $DIALWAIT_10 = "yes" ]; then
+ WAIT=10
+else
+ WAIT=0
+fi
+MESG="Anstossen einer DIAL-Verbindung"; tellme;
+if ping -c 1 its.no-enigma.de ; then
+ WAIT=0
+ MESG="Verbindung besteht bereits, Wartezeit wird auf 0 gesetzt"; tellme;
+fi
+}
+################################################################################
+# Freien Speicherplatz ermitteln
+################################################################################
+check_free()
+{
+MESG="\nFreien Speicherplatz ermitteln:";  tellme;
+FREE=`df -k /dev/mtdblock/3`;
+n=0;
+for ITEM in $FREE; do
+ case $n in
+  0) :;;
+  1) n=2;;
+  2) n=3;;
+  3)FREESPACE=$ITEM; MESG=$FREESPACE" k free on disk"; tellme; break;;
+ esac
+ case $ITEM in
+  /dev/mtdblock/3) n=1;;
+ esac
+done
+NEEDSPACE=20
+if [ $ALLSATS = "yes" ]; then
+ NEEDSPACE=`expr $NEEDSPACE + 300`
+elif [ $SAT2 != "" ]; then
+ NEEDSPACE=`expr $NEEDSPACE + 50`
+elif [ $SAT3 != "" ]; then
+ NEEDSPACE=`expr $NEEDSPACE + 50`
+elif [ $SAT4 != "" ]; then
+ NEEDSPACE=`expr $NEEDSPACE + 50`
+fi
+SPACE=`expr $FREESPACE - $NEEDSPACE`
+SIGN=`expr substr $SPACE 1 1`
+if [ $SIGN = "-" ]; then
+ MESG="Sie haben nur "$FREESPACE" k frei, benoetigt werden ca. "$NEEDSPACE" k"; tellme; announce;
+ exit;
+else
+ MESG="Sie haben noch "$FREESPACE" k frei, benoetigt werden ca. "$NEEDSPACE" k";  tellme;
+fi
+}
+
+################################################################################
+# markierte Bouquets erhalten
+################################################################################
+keep_marked()
+{
+if [ $KEEP_MARKED = "yes" ];then
+ MESG="\nmarkierte Bouquets erhalten:";  tellme;
+ if [ $SETTINGSDIR = "/var/tuxbox/config/enigma" ];then
+  for I in 0 1 2 3 4 5 6 7 8 9 ;do
+   if [ -e $SETTINGSDIR/userbouquet.dbef$I.tv ]; then
+    mv $SETTINGSDIR/userbouquet.dbef$I.tv $SETTINGSDIR/userbouquet.dbee$I.tv
+    MESG="$SETTINGSDIR/userbouquet.dbef$I.tv als $SETTINGSDIR/userbouquet.dbee$I.tv gespeichert"; tellme;
+   fi
+  done
+  KEEPTV=`ls $SETTINGSDIR/userbouquet*tv`
+  BNR=0
+  if [ -e /tmp/userbouquets.tv.tmp ]; then
+   rm /tmp/userbouquets.tv.tmp
+  fi
+  for TV in $KEEPTV;do
+   if grep \+ $TV; then
+     if [ $BNR = "10" ]; then
+      MESG="Es koennen nur 10 Userbouquets gespeichert werden"; tellme; break;
+     else
+      MESG="Es wird Userbouquet "$BNR" gespeichert"; tellme;
+     fi
+     MESG=$TV" ist markiert"; tellme;
+     mv $TV $SETTINGSDIR/userbouquet.dbef$BNR.tv
+     MESG=$SETTINGSDIR"/userbouquet.dbef"$BNR".tv gespeichert"; tellme;
+     echo "#SERVICE: 4097:7:0:dbef$BNR:0:0:0:0:0:0:/var/tuxbox/config/enigma/userbouquet.dbef$BNR.tv\n#TYPE 16385\n/var/tuxbox/config/enigma/userbouquet.dbef$BNR.tv" >>/tmp/userbouquets.tv.tmp
+     BNR=`expr $BNR + 1`
+   else
+    rm $TV
+    MESG=$TV" geloescht"; tellme;
+   fi
+  done
+
+  for I in 0 1 2 3 4 5 6 7 8 9 ;do
+   if [ -e $SETTINGSDIR/userbouquet.dbef$I.radio ]; then
+    mv $SETTINGSDIR/userbouquet.dbef$I.radio $SETTINGSDIR/userbouquet.dbee$I.radio
+    #rm $SETTINGSDIR/userbouquet.dbef$I.radio
+    MESG="$SETTINGSDIR/userbouquet.dbef$I.radio als $SETTINGSDIR/userbouquet.dbee$I.radio gespeichert"; tellme;
+   fi
+  done
+  KEEPRADIO=`ls $SETTINGSDIR/userbouquet*radio`
+  RNR=0
+  if [ -e /tmp/userbouquets.radio.tmp ]; then
+   rm /tmp/userbouquets.radio.tmp
+  fi
+  for RADIO in $KEEPRADIO; do
+   if grep \+ $RADIO; then
+     if [ $RNR = "10" ]; then
+      MESG="Es koennen nur 10 Userbouquets gespeichert werden"; tellme; break;
+     else
+      MESG="Es wird Userbouquet "$RNR" gespeichert"; tellme;
+     fi
+     MESG=$RADIO" ist markiert"; tellme;
+     mv $RADIO $SETTINGSDIR/userbouquet.dbef$RNR.radio
+     MESG=$SETTINGSDIR"/userbouquet.dbef"$RNR".radio gespeichert"; tellme;
+     echo "#SERVICE: 4097:7:0:dbef$RNR:0:0:0:0:0:0:/var/tuxbox/config/enigma/userbouquet.dbef$RNR.radio\n#TYPE 16385\n/var/tuxbox/config/enigma/userbouquet.dbef$RNR.radio" >>/tmp/userbouquets.radio.tmp
+     RNR=`expr $RNR + 1`
+   else
+    rm $RADIO
+    MESG=$RADIO" geloescht"; tellme;
+   fi
+  done
+  MESG=`cat /tmp/userbouquets.tv.tmp`; tellme;
+  MESG=`cat /tmp/userbouquets.radio.tmp`; tellme;
+ fi
+fi
+}
+
+################################################################################
+# temporaeres Verzeichnis erzeugen
+################################################################################
+make_tmp_dir()
+{
+MESG="\ntemporaeres Verzeichnis erzeugen:";  tellme;
+if test -d $MYTEMP; then
+ MESG="Das temporaere Verzeichnis existiert schon.";  tellme;
+else
+ if mkdir $MYTEMP; then
+  MESG="Das temporaere Verzeichnis wurde erstellt.";  tellme;
+ else
+  MESG="Das temporaere Verzeichnis konnte nicht erstellt werden."; tellme; announce;
+  exit;
+ fi
+fi
+if cd $MYTEMP; then
+ MESG="Wechsele ins temporaere Verzeichnis.";  tellme;
+else
+ MESG="Konnte nicht ins temporaere Verzeichnis wechseln\nDas Programm wird beendet";  tellme; announce;
+ exit 1;
+fi
+}
+
+################################################################################
+# Testen der Internetverbindung
+################################################################################
+check_connect ()
+{
+MESG="\nTesten der Internetverbindung:";  tellme;
+ping -c 1 its.no-enigma.de;
+MESG="Warte "$WAIT" sec auf Dialin-Verbindung";  tellme;
+sleep $WAIT;
+if wget $QUIET $PROXY $TESTURI; then
+ MESG="Das System ist online\nDie Settings werdem jetzt angefordert";  tellme;
+else
+ MESG="Das System ist nicht online"; tellme; announce;
+ exit 1;
+fi
+}
+
+################################################################################
+# Aufbau der Settingsanfrage
+################################################################################
+ask_for_settings()
+{
+MESG="\nAufbau der Settingsanfrage:";  tellme;
+ # Aufbau des Request-Uri...
+ SATS="/sat_1__"$SAT1"/sat_2__"$SAT2"/sat_3__"$SAT3"/sat_4__"$SAT4;
+ SORTS="/sort_1__"$SORT1"/sort_2__"$SORT2"/sort_3__"$SORT3"/sort_4__"$SORT4"/sort_5__"$SORT5"/sort_6__"$SORT6;
+ OPTS="/paytv__"$PAYTV"/paysign__"$PAYSIGN"/presort__"$PRESORT"/allsats__"$ALLSATS"/frm__"$FORMAT;
+ COMMANDS="/design__box/iKg__build/box__settings.html";
+
+ # Nein, das ist nicht wirklich der "normale" HTTP-Standard, wir reden hier mit nem Script...
+ if wget $QUIET $PROXY $SETTINGSURI$SATS$SORTS$OPTS$COMMANDS; then
+  MESG="Die Settings wurden angefordert."; tellme;
+ else
+  MESG="Der Settings-Server ist nicht online"; tellme; announce;
+  exit 1;
+ fi
+}
+
+################################################################################
+# Settings laden
+################################################################################
+load_settings()
+{
+ MESG="\nSettings laden:"; tellme;
+ SPARAM="-P "$SETTINGSDIR;
+ URLS=`cat box__settings.html`;
+ for DATA in $URLS; do
+ if test $DATA = "Fehler"; then
+  MESG="Hoppla. Ein Fehler ist aufgetreten";  tellme;
+  MESG=`cat box__settings.html`; tellme; announce;
+  exit 1;
+ fi
+ CHAR=`expr substr $DATA 40 1`
+ if [ $NO_USERBOUQUETS = "yes" ]; then
+   if [ $CHAR = "u" ]; then
+    continue;
+   fi
+ fi
+ if [ $NEWSORT_ONLY = "yes" ]; then
+   if [ $CHAR = "s" ]; then
+    continue;
+   elif [ $CHAR = "b" ]; then
+    continue;
+   fi
+ fi
+ if wget $QUIET $PROXY $SPARAM $BASEURI$DATA;  then
+  MESG="Die Datei "$DATA" wurde geladen.";  tellme;
+ else
+  MESG="Die Datei "$DATA" konnte nicht geladen werden.";  tellme; announce;
+  exit 1;
+ fi
+ done
+}
+
+################################################################################
+# Reklame
+################################################################################
+advertise()
+{
+ MESG="\nUnd jetzt kommt Reklame:";  tellme;
+ MESG="\nDie Settings von http://www.dewi-sat.de/ wurden geladen\n"; tellme;
+}
+
+################################################################################
+# Config-Bouquets ergänzen (Neutrino)
+################################################################################
+rebuild_bouquets()
+{
+MESG="\nRebuild alte Bouquets /Config-Bouquets ergaenzen:";  tellme;
+MESG="Format: $FORMAT";  tellme;
+if [ $FORMAT != "D_Box_2_Linux_Enigma" ]; then
+ if [ -e $INSTALLDIR/getset.9 ]; then
+  grep -v /zapit $SETTINGSDIR/services.xml >/tmp/services.tmp
+  cat /tmp/services.tmp $INSTALLDIR/getset.9 >$SETTINGSDIR/services.xml
+  rm /tmp/services.tmp
+  MESG="CONFIG in $SETTINGSDIR/services.xml eingefuegt";  tellme;
+  if [ -e $INSTALLDIR/getset.10 ]; then
+   grep -v /zapit $SETTINGSDIR/bouquets.xml >/tmp/bouquets.tmp
+   cat /tmp/bouquets.tmp $INSTALLDIR/getset.10 >$SETTINGSDIR/bouquets.xml
+   rm /tmp/bouquets.tmp
+   MESG="CONFIG in $SETTINGSDIR/bouquets.xml eingefuegt";  tellme;
+  else
+   MESG=$INSTALLDIR"/getset.10 konnte nicht gefunden werden\nEinstellungen koennen deshalb erst im Bouquet erfolgen";  tellme;
+   MESG="wenn Sie diese neu angelegt haben\nEinfacher ist eine Neuinstallation von getset";  tellme;
+  fi
+ else
+  MESG=$INSTALLDIR"/getset.9 konnte nicht gefunden werden\nEinstellungen koennen deshalb nicht im Bouquet erfolgen";  tellme;
+  MESG="\nBitte installieren Sie getset neu\n";  tellme;
+ fi
+else
+ if [ $KEEP_MARKED = "yes" ];then
+  if [ -e /tmp/userbouquets.tv.tmp ];then
+   cat /tmp/userbouquets.tv.tmp >>$SETTINGSDIR/userbouquets.tv.epl
+   MESG="\nMarkierte TV-Bouquets eingefuegt\n"; tellme;
+  fi
+  if [ -e /tmp/userbouquets.radio.tmp ];then
+   cat /tmp/userbouquets.radio.tmp >>$SETTINGSDIR/userbouquets.radio.epl
+   MESG="\nMarkierte Radio-Bouquets eingefuegt\n"; tellme;
+  fi
+ fi
+fi
+}
+
+################################################################################
+# Settings reloaden
+################################################################################
+reload_now()
+{
+MESG="\nNeue Settings laden:"; tellme;
+if [ $RELOAD = "yes" ]; then
+ MESG="Die Settings werden jetzt in den Speicher geladen\nDieser Vorgang kann bis zu 2 Minuten dauern"; tellme;
+ MESG="Die Internetverbindung ist nicht mehr noetig";  tellme;
+ if [ -e /tmp/neutrino.sock ]; then
+  pzapit -c
+  MESG="Kanallisten wurden erfolgreich geladen";  tellme;
+ else
+  RELOADFUNCTION='reloadSettings'
+  if wget $QUIET $PROXY http://127.0.0.1/cgi-bin/$RELOADFUNCTION; then
+  RESULT=`cat $RELOADFUNCTION`;
+   for LINES in $RESULT; do
+   if test $LINES = "+ok"; then
+    MESG="Die Settings wurden erfolreich geladen.";  tellme;
+   fi
+   done
+  else
+   MESG="Der Reload der Settings in den Speicher hat nicht funktioniert.";  tellme;
+   if test ! $REBOOT = "yes" && test ! $HALTNOW = "yes"; then
+    MESG="Ziehen Sie den Netzstecker...";  tellme;
+   fi
+   announce;
+  fi
+ fi
+fi
+}
+
+################################################################################
+#temp Dateien loeschen
+################################################################################
+make_clean()
+{
+  MESG="\ntemporaere Dateien loeschen:";  tellme;
+  if [ -d $MYTEMP ]; then
+   rm $MYTEMP/*
+   rmdir $MYTEMP
+  fi
+  rm /tmp/*.tmp
+  MESG="\ntemporaere Dateien geloescht";  tellme;
+}
+
+################################################################################
+# Neustart
+################################################################################
+restart_now()
+{
+MESG="\Neustart:"
+ if [ $REBOOT = "yes" ]; then
+  MESG="Die Box wird jetzt neu gestartet";  tellme; announce;
+  reboot;
+ fi
+ if [ $HALTNOW = "yes" ]; then
+  MESG="Die Box wird jetzt abgschaltet und muss neu gestartet werden";  tellme; announce;
+ halt;
+ fi
+ MESG="Kein Neustart erforderlich";  tellme; announce;
+}
+
+################################################################################
+# Installation von getset
+################################################################################
+install_getset()
+{
+MESG="Installation von getset unter - "$INSTALLGUI"\nInstallationsverzeichnis: "$INSTALLDIR;  tellme;
+
+mv $INSTALLDIR/getset.1 $PLUGINSDIR/getset.so
+chmod 500 $PLUGINSDIR/getset.so
+MESG=$PLUGINSDIR"/getset.so kopiert";  tellme;
+
+mv /var/plugins/getset.2 $PLUGINSDIR/getset.cfg
+MESG=$PLUGINSDIR"/getset.cfg kopiert";  tellme;
+
+# Für Enigma und Doppel-GUI
+if [ $INSTALLGUI != "n" ]; then
+ mv $INSTALLDIR/getset.3 $SETTINGSDIR/userbouquets.file.epl
+ MESG=$SETTINGSDIR"/userbouquets.file.epl kopiert";  tellme;
+ mv $INSTALLDIR/getset.4 $SETTINGSDIR/userbouquet.ff001.file
+ MESG=$SETTINGSDIR"/userbouquet.ff001.file kopiert";  tellme;
+ mv $INSTALLDIR/getset.5 $SETTINGSDIR/userbouquet.ff002.file
+ MESG=$SETTINGSDIR"/userbouquet.ff002.file kopiert";  tellme;
+ mv $INSTALLDIR/getset.6 $SETTINGSDIR/userbouquet.ff003.file
+ MESG=$SETTINGSDIR"/userbouquet.ff003.file kopiert";  tellme;
+ mv $INSTALLDIR/getset.6a $SETTINGSDIR/userbouquet.ff004.file
+ MESG=$SETTINGSDIR"/userbouquet.ff004.file kopiert";  tellme;
+ chmod 500 $INSTALLDIR/getset.7
+ MESG="$INSTALLDIR/getset.7 Rechte veraendert";  tellme;
+fi
+# Für Enigma-only
+if [ $INSTALLGUI = "e" ]; then
+  rm $INSTALLDIR/getset.8
+  rm $INSTALLDIR/getset.9
+  rm $INSTALLDIR/getset.10
+# Für Neutrino-only
+elif [ $INSTALLGUI = "n" ]; then
+  rm $INSTALLDIR/getset.3
+  rm $INSTALLDIR/getset.4
+  rm $INSTALLDIR/getset.5
+  rm $INSTALLDIR/getset.6
+  rm $INSTALLDIR/getset.7
+fi
+# Für Neutrino und Doppel-GUI
+if [ $INSTALLGUI != "e" ]; then
+ chmod 500 $INSTALLDIR/getset.8
+ rebuild_bouquets
+ pzapit -c
+else
+ RELOADFUNCTION='reloadUserBouquets'
+ wget $QUIET $PROXY http://127.0.0.1/cgi-bin/$RELOADFUNCTION
+fi
+
+touch $CONFIGDIR/.getset
+echo $VERSION >"$CONFIGDIR/.getset"
+MESG="\ngetset"$VERSION" erfolgreich installiert\n";  tellme;
+reload_now
+make_clean
+restart_now
+announce;
+exit;
+}
+
+################################################################################
+# Nach update suchen
+################################################################################
+check_update()
+{
+if [ $INTERNET_UPDATE = "yes" ]; then
+ ping -c its.no-enigma.de
+ MESG="Warte "$WAIT" sec auf Dialin-Verbindung";  tellme;
+ sleep $WAIT;
+ MESG="Online nach update suchen";  tellme;
+ UFILE='-O /tmp/.actual_getset_version'
+ UPARAM="-P "$UFILE
+ if wget $QUIET $PROXY $UPARAM $UPDATEURI"/version" ; then
+  MESG="Versionsnr. wird ueberprueft"; tellme;
+ fi
+ if [ -e /tmp/..actual_getset_version ]; then
+ . /tmp/.actual_getset_version
+  if [ $UPDATEVERSION = $VERSION ]; then
+   MESG="Die aktuelle Version ist bereits installiert";  tellme;
+  elif [ -z $UPDATEVERSION ]; then
+   MESG="Die aktuelle Version ist $UPDATEVERSION";  tellme;
+  else
+   MESG="Die Update-Version konnte nicht ermittelt werden"; tellme;
+  fi
+ fi
+ if [ $AUTOUPDATE = "yes" ]; then
+  auto_update
+ fi
+fi
+}
+
+################################################################################
+# Nachrichten anzeigen
+################################################################################
+tellme()
+{
+if [ ! $REALYQUIET = "yes" ]; then
+   echo $MESG"\n"
+fi
+if [ $LOG = "yes" ]; then
+ LOGMESG=$LOGMESG"\n"$MESG
+ echo $MESG >>/tmp/getset.log
+fi
+}
+################################################################################
+# LOG-Datei erstellen
+################################################################################
+log_it()
+{
+if [ $SAVELOG = "yes" ]; then
+   MESG="Logdatei gespeichert in var getset.log"; tellme;
+   echo $LOGMESG >/var/getset.log
+fi
+}
+################################################################################
+# Meldungen anzeigen
+################################################################################
+announce()
+{
+if [ $ANNOUNCEMENT = "yes" ]; then
+ for WORD in $MESG; do
+  ANNOUNCE=$ANNOUNCE"%20"$WORD
+ done
+ if [ $GUI = "n" ];then
+  wget $QUIET $PROXY -O /tmp/message.tmp http://127.0.0.1/control/message\?nmsg="getset%20$VERSION:\n$ANNOUNCE"
+ else
+  wget $QUIET $PROXY -O /tmp/message.tmp http://127.0.0.1/cgi-bin/xmessage\?timeout=5\&caption="getset"\&body="$ANNOUNCE"
+ fi
+fi
+}
+
+################################################################################
+# Main
+################################################################################
+echo "\nLesen der Parameter:"$*
+
+while :; do
+echo "PARAMETER: "$1
+ case $1 in
+  -cs)SAVE_CONFIG='yes';;
+  -cu)USE_CONFIG='yes';;
+  *)echo "\nusage: getset -cs (save config-file) -cu (use congig-file \n";;
+  "")break;;
+ esac
+ if [ -z $2 ]; then
+  break;
+ else
+  shift;
+ fi
+done
+
+set_standards
+check_system
+if [ $USE_CONFIG = "yes" ]; then
+ init
+fi
+if [ $USE_CONFIG = "no" ]; then
+ auto_init
+fi
+check_free
+keep_marked
+make_tmp_dir
+check_update
+check_connect
+ask_for_settings
+load_settings
+advertise
+rebuild_bouquets
+reload_now
+make_clean
+log_it
+restart_now
+
+exit;

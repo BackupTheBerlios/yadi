@@ -1,0 +1,35 @@
+#NAME CONFIG - Expertenoptionen / getset v0.$Revision: 1.1 $
+#SERVICE: 1:64:11:0:0:0:0:0:0:0:
+#DESCRIPTION: RELOAD - Laden der Settings ohne Reboot(ab lucgas 15.02.2004)
+#SERVICE: 1:64:12:0:0:0:0:0:0:0:
+#DESCRIPTION: ANNOUNCEMENT - Meldungen am TV-Screen ausgeben
+#SERVICE: 1:64:0:0:0:0:0:0:0:0:
+#DESCRIPTION: no - folgende nicht
+#SERVICE: 1:64:13:0:0:0:0:0:0:0:
+#DESCRIPTION: LOG - Programmmeldungen in /tmp/getset.log loggen
+#SERVICE: 1:64:14:0:0:0:0:0:0:0:
+#DESCRIPTION: SAVELOG - Programmmeldungen in /var/getset.log speichern
+#SERVICE: 1:64:15:0:0:0:0:0:0:0:
+#DESCRIPTION: REBOOT - zum Laden der Settings rebooten (bis lucgas 15.02.2004)
+#SERVICE: 1:64:16:0:0:0:0:0:0:0:
+#DESCRIPTION: REALYQUIET - Terminal-Ausgabe unterdruecken
+#SERVICE: 1:64:17:0:0:0:0:0:0:0:
+#DESCRIPTION: QUIET - wget -q Option
+#SERVICE: 1:64:18:0:0:0:0:0:0:0:
+#DESCRIPTION: PROXY - wget mit PROXY benutzen
+#SERVICE: 1:64:19:0:0:0:0:0:0:0:
+#DESCRIPTION: HALTNOW - Nach dem Laden der Settings anhalten
+#SERVICE: 1:64:1a:0:0:0:0:0:0:0:
+#DESCRIPTION: DIALWAIT_10 - 10 Sec auf Dial-in warten
+#SERVICE: 1:64:1b:0:0:0:0:0:0:0:
+#DESCRIPTION: DIALWAIT_30 - 30 Sec auf Dial-in warten
+#SERVICE: 1:64:1c:0:0:0:0:0:0:0:
+#DESCRIPTION: DIALWAIT_60 - 60 Sec auf Dial-in warten
+#SERVICE: 1:64:ff:0:0:0:0:0:0:0:
+#DESCRIPTION: > ______________
+#SERVICE: 1:64:ff:0:0:0:0:0:0:0:
+#DESCRIPTION: Im Verschiebe-Modus sortieren
+#SERVICE: 1:64:ff:0:0:0:0:0:0:0:
+#DESCRIPTION: Optionen bis no - folgende nicht
+#SERVICE: 1:64:ff:0:0:0:0:0:0:0:
+#DESCRIPTION: sind 'on', die unterhalb 'off

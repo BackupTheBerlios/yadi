@@ -1,0 +1,75 @@
+#!/bin/sh
+#
+# getset v0.$Revision: 1.1 $
+# Copyright (c) 2004 essu@no-enigma.de, Germany. All rights reserved.
+#
+# $Id: getset.7,v 1.1 2004/03/06 12:57:39 essu Exp $
+# aktuelle Versionen gibtes hier
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/patches/getset/Attic/getset.7,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Dieses Programm ist Teil von getset, mit dem Senderlisten direkt aus dem Internet auf die
+# Box geladen werden koennen.
+#
+# ENIGMA CONFIG-Bouquets parsen
+#
+RELOADFUNCTION='saveUserBouquets'
+if wget $QUIET $PROXY http://127.0.0.1/cgi-bin/$RELOADFUNCTION; then
+ RESULT=`cat $RELOADFUNCTION`;
+ for LINES in $RESULT; do
+  if [ $LINES = "+ok" ]; then
+ # MESG='Die ConfigBouquets wurden gespeichert.'; tellme;
+  echo "Die ConfigBouquets wurden gespeichert."
+  fi
+ done
+else
+ echo "Die ConfigBouquets konnten nicht gespeichert werden."
+fi
+BREAK='>'; CATEGORIES='SAT SORT CONFIG EXPERT';YES='yes';
+for TYPE in $CATEGORIES; do
+echo $TYPE"-CONFIG wird gelesen"
+ case $TYPE in
+  SAT) FILE=userbouquet.ff001.file;;
+  SORT) FILE=userbouquet.ff002.file;;
+  CONFIG) FILE=userbouquet.ff003.file;;
+  EXPERT) FILE=userbouquet.ff004.file; YES='yes';;
+ esac
+ echo "# "$TYPE"-CONFIGURATION\n#" >>/tmp/cfg.tmp;
+ READ=`cat /var/tuxbox/config/enigma/$FILE`;
+ NOW='no'
+ N=0
+ for DATA in $READ; do
+  if [ $DATA = "#DESCRIPTION:" ]; then
+   NOW='yes';
+  else
+   if [ $NOW = "yes" ]; then
+    NOW='no'
+   else
+    continue;
+   fi
+   case $DATA in
+    $BREAK) break;;
+    no) YES='no'; continue;;
+   esac
+   N=`expr $N + 1`
+   case $TYPE in
+     SAT, SORT) echo $TYPE$N"="$DATA >>/tmp/cfg.tmp;;
+     CONFIG, EXPERT) echo $DATA"="$YES >>/tmp/cfg.tmp;;
+   esac
+  fi
+ done
+done
+exit;
