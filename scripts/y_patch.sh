@@ -1,4 +1,4 @@
-# $Id: y_patch.sh,v 1.2 2004/10/08 23:58:08 essu Exp $
+# $Id: y_patch.sh,v 1.3 2004/10/10 16:00:21 essu Exp $
 # is part of yadi-script-pack
 #
 #
@@ -81,7 +81,7 @@ former_patch()
 {
 echo $PATCH applied to $ORIGINAL >>$ROOT/patch.log
 NR=`grep -c "$ORIGINAL >>" $ROOT/repatch.list`
-if [ $NR -gt 0 ]; then
+if [ $? = 0 -a $NR -gt 0 ]; then #THX to Marsellus
  echo "$ORIGINAL wurde schon vorher gepatched" >>$ROOT/patch.log
 else
  if [ -e $ROOT/patches/$STAMP.patch ]; then
