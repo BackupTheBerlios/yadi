@@ -1,11 +1,35 @@
-#! /bin/bash
-
-
+# $Id: check,v 1.3 2004/04/01 23:18:37 essu Exp $
+#
+#
+# Copyright (c) 2004 dietmarw Germany. All rights reserved.
+#
+#
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/check,v $
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 675 Mass Ave, Cambridge MA 02139, USA.
+#
+# Mit diesem Programm koennen Images fuer DBox2 erstellt werden
+#
+# -------------------------------------------------------
+#
 echo "tool checker fuer cvs - Version 0.7 dw - by horsti666 - modified by dietmarw"
 CUT=`which cut`
 GREP=`which grep`
 
-# automake 
+# automake
 AUTOMAKE=`which automake`
 if ( test -e  $AUTOMAKE )
 	then
