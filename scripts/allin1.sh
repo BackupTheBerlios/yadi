@@ -1,13 +1,14 @@
 #!/bin/bash
 #
-# allin1 $REVISION$
+# allin1 $Id: allin1.sh,v 1.10 2004/03/05 14:45:05 essu Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
 # Mail: essu@berlios.de
 # Mail: @berlios.de
-# aktuelle Versionen gibt es hier:
 #
+# aktuelle Versionen gibt es hier:
+# $Source: /home/xubuntu/berlios_backup/github/tmp-cvs/yadi/Repository/scripts/allin1.sh,v $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -35,7 +36,7 @@ RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig REVISION enthalten
+VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen sollte kuenftig $Revision: 1.10 $ enthalten
 # Pfad zu den geaenderten und sonstigen Dateien
 CHANGE_DIR=$RT/head_changed
 CHANGE_ARC_DIR=$RT/change_arcs
