@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.5 2004/04/01 23:36:30 essu Exp $
+# $Id: yadi,v 1.6 2004/04/01 23:56:15 essu Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -32,7 +32,7 @@
 #MAIN
 
 
-VERSION="yadi v. $Revision: 1.5 $"
+VERSION="yadi v. $Revision: 1.6 $"
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
 for FILE in prepare get_cvs configure patch_cvs make_it flfs cat_image neutrino enigma neutrino_enigma squashfs_flfs squashfs_kernel squashfs_move_files squashfs_create_image
@@ -45,7 +45,7 @@ do
  fi
 done
 . $SCRIPTS/prepare
-. $SCRIPTS/check
+#. $SCRIPTS/check #doppelte Variablen in check
 
 # Nur konfigurieren, falls kein Fehler aufgetreten ist
 if [ -e $ROOT/.mkheadall_error ];then
