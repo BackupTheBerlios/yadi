@@ -87,11 +87,10 @@ config()
 {
 # Nur konfigurieren, falls kein Fehler aufgetreten ist
 if [ -e $RT/.mkheadall_error ];then
- rm $RT/.mkheadall_error
  echo
  echo "Beim letzten Durchgang ist ein Fehler aufgetreten"
+ echo "Make-Vorgang wird an der letzten Position fortgesetzt"
  echo
- exit;
 else
   #  DBOX loeschen, falls es existiert, DBOX-Verzeichnis erzeugen
   if [ -d $DBOX ]; then
