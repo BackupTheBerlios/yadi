@@ -1,4 +1,4 @@
-# $Id: squashfs_update,v 1.2 2004/04/20 08:39:48 essu Exp $
+# $Id: squashfs_update,v 1.3 2004/04/28 23:29:37 alexh Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -24,8 +24,8 @@
 # Mit diesem Programm koennen Images fuer DBox2 erstellt werden
 #
 # -------------------------------------------------------
-# Update-Klassen von Neutrino und Enigma ändern
 #
+# Update-Klassen von Neutrino und Enigma ändern
 cp $CHANGE_DIR/neutrino/update.cpp $CVS/apps/tuxbox/neutrino/src/gui/update.cpp
 cp $CHANGE_DIR/enigma/upgrade.cpp.squashfs $CVS/apps/tuxbox/enigma/src/upgrade.cpp
 

@@ -1,4 +1,4 @@
-# $Id: check,v 1.6 2004/04/16 13:53:47 alexh Exp $
+# $Id: check,v 1.7 2004/04/28 23:29:37 alexh Exp $
 #
 #
 # Copyright (c) 2004 dietmarw Germany. All rights reserved.
@@ -28,7 +28,7 @@
 echo "tool checker fuer cvs - Version 0.7 dw - by horsti666 - modified by dietmarw"
 CUT=`which cut`
 GREP=`which grep`
-
+ 
 # automake
 AUTOMAKE=`which automake`
 if ( test -e  $AUTOMAKE )

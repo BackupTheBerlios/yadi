@@ -1,4 +1,4 @@
-# $Id: patch_cvs,v 1.4 2004/04/15 12:45:35 essu Exp $
+# $Id: patch_cvs,v 1.5 2004/04/28 23:29:37 alexh Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -29,7 +29,6 @@
 # -------------------------------------------------------
 #
 #patch_cvs()
-
  # Flash-Patch
  patch -N -p0 $CVS/cdk/linux-2.4.25/drivers/mtd/maps/dbox2-flash.c $CHANGE_DIR/Patches/dbox2-flash.c.diff
  # Patch fuer u-boot 1.0.2
@@ -37,15 +36,27 @@
  if [ ! -d $ROOT/patches ]; then
   mkdir $ROOT/patches
  fi
- cd $ROOT/patches
+ #cd $ROOT/patches
  PATCH=uboot102
- if [ ! -e $ROOT/patches/.$PATCH ]; then
-  cp $CHANGE_DIR/uboot/$PATCH.tar.gz $ROOT/patches
-  gunzip -d $ROOT/patches/$PATCH.tar.gz
-  tar -xvf $ROOT/patches/$PATCH.tar
-  touch $ROOT/patches/.$PATCH
+ if [ ! -e $CVS/boot/.$PATCH ]; then
+   #cp $CHANGE_DIR/uboot/$PATCH.tar.gz $ROOT/patches
+   #gunzip -d $ROOT/patches/$PATCH.tar.gz
+   #tar -xvf $ROOT/patches/$PATCH.tar
+   #touch $ROOT/patches/.$PATCH
+   if [ ! -e $ARCHIVE/uboot102.tar.gz ]; then
+     cd $ARCHIVE
+     wget 'ftp://ftp.berlios.de/pub/yadi/uboot/uboot102.tar.gz'
+     if [ ! -e $ARCHIVE/uboot102.tar.gz ]; then
+       echo "Fehler: Kann uboot102.tar.gz von Berlios nicht laden, Make-Vorgang wird abgebrochen!"
+       exit 1
+     fi
+   fi
+   cd $CVS/boot
+   tar -xzvf $ARCHIVE/uboot102.tar.gz
+   mv u-boot-1.0.2/ u-boot
+   touch $CVS/boot/.$PATCH
  fi
- ln -s $ROOT/patches/u-boot-1.0.2 $CVS/boot/u-boot
+ #ln -s $ROOT/patches/u-boot-1.0.2 $CVS/boot/u-boot
 
  # Patch fuer 1xI (im CVS)
  cp $CVS/cdk/Patches/u-boot.1x-flash.dbox2.h $CVS/boot/u-boot/include/configs/dbox2.h

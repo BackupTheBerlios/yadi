@@ -1,4 +1,4 @@
-# $Id: prepare,v 1.6 2004/04/19 17:18:09 essu Exp $
+# $Id: prepare,v 1.7 2004/04/28 23:29:37 alexh Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -49,6 +49,7 @@ if [ $USE_CHANGE_ARC = "yes" ]; then
  fi
 fi
 echo "Die Aenderungs-Daten wie Patches etc. befinden sich in "$CHANGE_DIR
+
 # Namensprefix mit Datum
 IMG_PRE=`date +%Y%m%d%H%M`
 IMG_PRE=$IMG_PRE"_yadi_"

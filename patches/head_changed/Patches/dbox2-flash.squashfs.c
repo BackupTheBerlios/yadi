@@ -1,5 +1,5 @@
 /*
- * $Id: dbox2-flash.squashfs.c,v 1.2 2004/04/19 17:26:50 essu Exp $
+ * $Id: dbox2-flash.squashfs.c,v 1.3 2004/04/28 23:29:36 alexh Exp $
  *
  * D-Box 2 flash driver
  */

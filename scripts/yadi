@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: yadi,v 1.13 2004/04/19 17:22:05 essu Exp $
+# $Id: yadi,v 1.14 2004/04/28 23:29:37 alexh Exp $
 #
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -30,9 +30,9 @@
 # -------------------------------------------------------
 #
 #MAIN
+ 
 
-
-VERSION="yadi v. $Revision: 1.13 $"
+VERSION="yadi v. $Revision: 1.14 $"
 . check_arguments
 . yadi.conf
 SCRIPTS=$ROOT/yadi-cvs/scripts
@@ -68,10 +68,9 @@ if [ ! -e $ROOT/.compileImage ];then
     . $SCRIPTS/patch_cvs
   fi
   . $SCRIPTS/make_it
-
+  . $SCRIPTS/flfs
 fi
 
-. $SCRIPTS/flfs
 GUI="neutrino"
 . $SCRIPTS/build_gui
 . $SCRIPTS/neutrino_changes

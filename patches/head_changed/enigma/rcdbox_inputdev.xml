@@ -80,6 +80,9 @@
    <action name="prev" key="left" flags="mr" />
    <action name="next" key="right" flags="mr" />
   </actionmap>
+  <actionmap name="mainmenu" style="_new">
+   <action name="close" key="d-box" flags="mr" />
+  </actionmap>
 
   <actionmap name="enigmaMain">
    <action name="showMainMenu" key="d-box" flags="m" />

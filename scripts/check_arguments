@@ -1,4 +1,4 @@
-# $Id: check_arguments,v 1.1 2004/04/19 17:23:39 essu Exp $
+# $Id: check_arguments,v 1.2 2004/04/28 23:29:37 alexh Exp $
 # is part of yadi-script-pack
 #
 #
@@ -39,7 +39,7 @@ echo "-me: ME=[next argument]";
 echo "-h: this help";
 exit 1;
 }
-
+ 
 check_option()
 {
 case $OPTION in
@@ -62,7 +62,8 @@ case $ARG in
   *)check_option;;
 esac
 }
-
+COMPILE_IMAGE=no;
+RM_CVS=no;
 PROGGIE=$0
 for ARG; do
  echo

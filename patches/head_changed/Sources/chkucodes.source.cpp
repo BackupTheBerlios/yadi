@@ -123,58 +123,8 @@ int main(){
 
     }// else (!ucodes_found)
   }//while(!ucodes_found)
-  //RCOpen();
-  //int code;
-  //code=RCGet();
-  //if (code == KEY_0) {
-  //  display.draw_string(0, 2,  "               ");
-  //  display.draw_string(0, 16, " MAINTAINANCE- ");
-  //  display.draw_string(0, 28, "     MODE      ");
-  //  display.draw_string(0, 40, "               ");
-  //  display.draw_string(0, 54, "               ");
-  //  display.update();
-  //  return 1;
-  //} // if (code == KEY_0)
-  //else {
-    // "/.image_version" auf Display ausgeben
-    FILE* fl=fopen("/.image_version","r");
-    char buf[16];        
- 
-    if(!fl) {
-      display.draw_string(0, 2,  " IMAGE-INFOS:  ");
-      display.draw_string(0, 16, "Datum: unknown ");
-      display.draw_string(0, 28, " Ver.: head-cvs");
-      display.draw_string(0, 40, "  Von: unknown ");
-      display.draw_string(0, 54, " Starte GUI... ");
-      display.update();
-    } else {
-      if(fgets(buf,sizeof(buf),fl)) {
-        display.draw_string(0, 2,  buf);
-      }
-      if(fgets(buf,sizeof(buf),fl)) {
-        if(fgets(buf,sizeof(buf),fl)) {
-          display.draw_string(0, 16,  buf);
-        }
-      }
-      if(fgets(buf,sizeof(buf),fl)) {
-        if(fgets(buf,sizeof(buf),fl)) {
-          display.draw_string(0, 28,  buf);
-        }
-      }
-      if(fgets(buf,sizeof(buf),fl)) {
-        if(fgets(buf,sizeof(buf),fl)) {
-          display.draw_string(0, 40,  buf);
-        }
-      }
-      if(fgets(buf,sizeof(buf),fl)) {
-        if(fgets(buf,sizeof(buf),fl)) {
-          display.draw_string(0, 54,  buf);
-        }
-      }
-      display.update();
-    }
-    //} // Else (maintainance-mode)
 
+  
         
   return 0;
 }

@@ -125,7 +125,7 @@ fi
   fi;
 
   # Telnet-Begruessung schreiben
-  echo "$VENDOR $MODEL - Kernel %r (%t)." > /etc/issue.net
+  echo "...have fun with yadi on your $VENDOR $MODEL - Kernel %r (%t)." > /etc/issue.net
 
 
 # compatibility links
@@ -145,6 +145,7 @@ if [ ! -e /etc/network/interfaces ]; then
   ifup -a &
   test -x /sbin/inetd && inetd
   test -x /sbin/sshd &&/etc/init.d/start_sshd &
-  #Ucodes checken
-  /sbin/chkucodes
 fi
+
+#Ucodes checken
+/sbin/chkucodes

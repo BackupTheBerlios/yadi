@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# allin1 $Id: allin1.sh,v 1.19 2004/03/31 18:54:45 dietmarw Exp $
+# allin1 $Id: allin1.sh,v 1.20 2004/04/28 23:29:37 alexh Exp $
 #
 # Copyright (c) 2004 essu, dmitri, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
@@ -36,7 +36,7 @@ RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs		# Pfad zum CVS
 DBOX=$RT/dbox 			# Pfad zu dbox2
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
-VERSION=" version$Revision: 1.19 $" 	# Zeilenlaenge: genau 15 Zeichen
+VERSION=" version$Revision: 1.20 $" 	# Zeilenlaenge: genau 15 Zeichen
 # Pfad zu den geaenderten und sonstigen Dateien
 CHANGE_DIR=$RT/patches/head_changed
 CHANGE_ARC_DIR=$RT/change_arcs

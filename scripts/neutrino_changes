@@ -1,4 +1,4 @@
-# $Id: neutrino_changes,v 1.1 2004/04/05 08:54:32 essu Exp $
+# $Id: neutrino_changes,v 1.2 2004/04/28 23:29:37 alexh Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -27,12 +27,12 @@
 #
 
 cd $CVS/cdk
-
+ 
 # Image-Infos kopieren, falls existent
-if test -e $VER.neutrino
-then
-  cp $VER.neutrino $DBOX/cdkflash/root/.image_version
-fi
+#if test -e $VER.neutrino
+#then
+#  cp $VER.neutrino $DBOX/cdkflash/root/.image_version
+#fi
 if  [ -e $VE ]; then
   cp $VE $DBOX/cdkflash/root/.version
 fi

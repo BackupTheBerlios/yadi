@@ -1,4 +1,4 @@
-# $Id: get_cvs,v 1.4 2004/04/19 17:22:05 essu Exp $
+# $Id: get_cvs,v 1.5 2004/04/28 23:29:37 alexh Exp $
 # is part of yadi-script-pack
 # based on allin1.sh,v 1.17 2004/03/26 10:40:22
 #
@@ -50,9 +50,10 @@
   else
    # den Patch auf u-boot-1.0.2 entfernen
    PATCH=uboot102
-   if [ -e $ROOT/patches/.$PATCH ]; then
-    rm $CVS/boot/u-boot
+   if [ -e $CVS/boot/.$PATCH ]; then
+    rm -rf $CVS/boot/u-boot
     mv $CVS/boot/u-boot.old $CVS/boot/u-boot
+    rm $CVS/boot/.$PATCH
    fi
    cd $CVS/cdk
    make distclean
@@ -67,4 +68,8 @@
   cd $CVS/cdk
   if [ ! -L Archive ];then
    ln -s $ARCHIVE Archive
+   if [ ! -e $ARCHIVE ]; then
+     mkdir $ARCHIVE
+   fi
   fi
+ 

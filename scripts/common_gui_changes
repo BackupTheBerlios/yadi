@@ -1,4 +1,4 @@
-# $Id: common_gui_changes,v 1.2 2004/04/15 12:45:35 essu Exp $
+# $Id: common_gui_changes,v 1.3 2004/04/28 23:29:37 alexh Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -25,7 +25,7 @@
 #
 # -------------------------------------------------------
 #
-
+ 
 cd $CVS/cdk
 
 # Udpstreampes ins Flash aufnehmen
@@ -44,7 +44,8 @@ cp $CHANGE_DIR/Configs/rcS $DBOX/cdkflash/root/etc/init.d/
 
 # Logos kopieren
 mkdir $DBOX/cdkflash/root/var/tuxbox/boot
-cp $CHANGE_DIR/Logos/yadi_logo-fb $DBOX/cdkflash/root/var/tuxbox/boot/logo-fb
+cp $CHANGE_DIR/Logos/yadi2_logo-fb $DBOX/cdkflash/root/var/tuxbox/boot/logo-fb
+
 cp $CHANGE_DIR/Logos/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
 
 # ppcboot kopiern
@@ -63,9 +64,17 @@ rm $DBOX/cdkflash/root/etc/network/interfaces
 
 # Start-Dateien kopieren
 cp $CHANGE_DIR/Configs/start $DBOX/cdkflash/root/etc/init.d
-patch -N -p0 $DBOX/cdkflash/root/etc/init.d/start_neutrino $CHANGE_DIR/neutrino/start_neutrino.diff
-chmod a+x $DBOX/cdkflash/root/etc/init.d/start_neutrino
-chmod a+x $DBOX/cdkflash/root/etc/init.d/start_enigma
+
+if [ -e $DBOX/cdkflash/root/etc/init.d/start_neutrino ]; then
+  chmod a+x $DBOX/cdkflash/root/etc/init.d/start_neutrino
+fi
+
+if [ -e $DBOX/cdkflash/root/etc/init.d/start_enigma ]; then
+  chmod a+x $DBOX/cdkflash/root/etc/init.d/start_enigma
+fi
+
+# profile kopieren
+cp CHANGE_DIR/Configs/profile $DBOX/cdkflash/etc/
 
 # Root-Home erstellen
 # mkdir $DBOX/cdkflash/root/root
@@ -85,12 +94,37 @@ fi
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.cfg $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.cfg
 mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.so $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.so
 
-# Ein paar Dateien linken loeschen
+# Ein paar Dateien linken
 cd $DBOX/cdkflash/root/sbin/
 
-#rm telnetd
-#ln -s ../bin/busybox telnetd
+rm telnetd
+ln -sf /bin/busybox telnetd
 
-#rm inetd
-#ln -s ../bin/busybox inetd
-ln -s ../bin/busybox ../bin/ps
+rm inetd
+ln -s /bin/busybox inetd
+
+rm depmod
+ln -s /bin/busybox depmod
+
+rm insmod
+ln -s /bin/busybox insmod
+
+cd $DBOX/cdkflash/root/bin/
+ln -sf /bin/busybox ps
+
+#Disclaimer kopieren
+cp $CHANGE_DIR/Configs/disclaimer.txt $DBOX/cdkflash/root/
+
+# saa kopieren
+cp $DBOX/cdkroot/bin/saa $DBOX/cdkflash/root/bin/
+
+# lircd kopieren
+cp $DBOX/cdkroot/sbin/lircd $DBOX/cdkflash/root/sbin/
+
+#getset-Files anlegen
+if [ ! -d $DBOX/cdkflash/root/var/plugins ]; then
+ mkdir $DBOX/cdkflash/root/var/plugins
+fi
+cp $ROOT/yadi-cvs/patches/getset/getset* $DBOX/cdkflash/root/var/plugins/
+chmod 500 $DBOX/cdkflash/root/var/plugins/getset
+

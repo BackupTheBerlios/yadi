@@ -1,4 +1,4 @@
-# $Id: enigma_changes,v 1.4 2004/04/15 12:45:35 essu Exp $
+# $Id: enigma_changes,v 1.5 2004/04/28 23:29:37 alexh Exp $
 # is part of yadi-script-pack
 #
 # Copyright (c) 2004 AlexH, essu Germany. All rights reserved.
@@ -58,15 +58,20 @@ mkdir $DBOX/cdkflash/root/hdd/movie
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/pictures/scan.mvi
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/help.xml
 rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox_inputdev.xml
-rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox2.xml
+#rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdreambox2.xml
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdm5xxx.xml
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rcdm7000.xml
+rm $DBOX/cdkflash/root/share/tuxbox/enigma/resources/rctrdvb272.xml
 
 # Tastaturbelegung aendern
 mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma/resources
 cp $CHANGE_DIR/enigma/rcdbox_inputdev.xml $DBOX/cdkflash/root/var/tuxbox/config/enigma/resources/
 
 # Image-Infos kopieren, falls existent
-if test -e $VER.enigma
-then
-  cp $VER.enigma $DBOX/cdkflash/root/.image_version
-fi
+#if test -e $VER.enigma
+#then
+#  cp $VER.enigma $DBOX/cdkflash/root/.image_version
+#fi
 
+#Disclaimer
+cp $CHANGE_DIR/Configs/disclaimer_help.xml $DBOX/cdkflash/root/share/tuxbox/enigma/resources/help.xml
