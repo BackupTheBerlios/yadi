@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # allin1
-# Copyright (c) 2004 Acoo, Steff Ulbrich, Dmitri Barski Germany. All rights reserved.
+# Copyright (c) 2004 Steff Ulbrich, Dmitri Barski, Acoo Germany. All rights reserved.
 # Mail: acoo@berlios.de
 # Mail: essu@berlios.de
 # Mail: @berlios.de
@@ -32,7 +32,7 @@ RM_CVS='yes' 			# yes | no  : altes CVS löschen oder updaten
 RT=$HOME/yadi
 CVS=$RT/tuxbox-cvs	# Pfad zum CVS
 DBOX=$RT/dbox 		# Pfad zu dbox2
-CHFILES=$RT/changefiles # Pfad zur Datei mit den Aenderungen (ohne .tar.gz)
+CHFILES=$RT # Pfad zur Datei mit den Aenderungen (ohne .tar.gz)
 HEADCH=head_changed_001 	# Datei mit den Aenderungen (ohne .tar.gz)
 IMAGES=$RT/images 		# Pfad wohin die fertigen Images (mit Datum) kopiert werden
 VERSION=" Ver.: 0.1     " 	# Zeilenlaenge: genau 15 Zeichen
@@ -101,10 +101,10 @@ else
   cd $DBOX
 
   # Geaenderte Dateien kopieren
-  cp $CHFILES/$HEADCH.tar.gz .
-  gzip -d $HEADCH.tar.gz
-  tar -xpf $HEADCH.tar
-  rm $DBOX/$HEADCH.tar
+  #cp $CHFILES/$HEADCH.tar.gz .
+  #gzip -d $HEADCH.tar.gz
+  #tar -xpf $HEADCH.tar
+  #rm $DBOX/$HEADCH.tar
 
    if [ $RM_CVS = "yes" ]; then
     # Archive verschieben
