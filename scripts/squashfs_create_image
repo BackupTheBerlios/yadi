@@ -1,0 +1,7 @@
+cd $DBOX/cdkflash
+fakeroot mkfs.jffs2 -b -e 131072 -p -o kernel.img -r kernel
+fakeroot mksquashfs root root.img -be
+fakeroot mkfs.jffs2 -b -e 131072 -p -o var.img -r var
+cp $CHANGE_DIR/Patches/flashmanage.squashfs.pl $CVS/hostapps/flash/flashmanage.pl
+fakeroot $CVS/hostapps/flash/flashmanage.pl -i $IMAGES/$IMG_PRE"squashfs_head_1x.img" -o build --part ppcboot=$DBOX/flfs/squashfs1x.img --part kernel=kernel.img --part root=root.img --part var=var.img
+fakeroot $CVS/hostapps/flash/flashmanage.pl -i $IMAGES/$IMG_PRE"squashfs_head_2x.img" -o build --part ppcboot=$DBOX/flfs/squashfs2x.img --part kernel=kernel.img --part root=root.img --part var=var.img

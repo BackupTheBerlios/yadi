@@ -1,0 +1,45 @@
+###########################
+#
+#    Squashfs FLFS bauen
+#
+###########################
+if [ ! -d $DBOX/flfs ]; then
+  mkdir $DBOX/flfs
+fi
+
+
+# uboot für 1XI erzeugen
+cp $CHANGE_DIR/Patches/dbox2.squashfs1x.h $CVS/boot/u-boot/include/configs/dbox2.h
+rm $CVS/boot/u-boot/u-boot.stripped
+cd $CVS/boot/u-boot
+make clean
+make distclean
+
+cd $CVS/cdk
+rm .deps/u-boot
+make u-boot
+
+# FLFS 1XI mit u-boot erzeugen
+cd $CVS/hostapps/mkflfs/
+cp $CVS/boot/u-boot/u-boot.stripped test
+./mkflfs 1x
+mv flfs.img $DBOX/flfs/squashfs1x.img
+
+
+# uboot für 2XI erzeugen
+cp $CHANGE_DIR/Patches/dbox2.squashfs2x.h $CVS/boot/u-boot/include/configs/dbox2.h
+rm $CVS/boot/u-boot/u-boot.stripped
+cd $CVS/boot/u-boot
+make clean
+make distclean
+
+cd $CVS/cdk
+rm .deps/u-boot
+make u-boot
+
+# FLFS 2XI mit u-boot erzeugen
+cd $CVS/hostapps/mkflfs/
+cp $CVS/boot/u-boot/u-boot.stripped test
+./mkflfs 2x
+mv flfs.img $DBOX/flfs/squashfs2x.img
+

@@ -1,0 +1,147 @@
+cd $CVS/cdk
+
+# Dateien in cdkflash loeschen
+rm -rf $DBOX/cdkflash/
+
+# Neutrino ins Flash aufnehmen
+make flash-neutrino
+if ! test -e $DBOX/cdkflash/.part_neutrino
+then
+  echo FEHLER: make flash-neutrino abgebrochen!!
+  exit 1
+fi
+
+# Enigma ins Flash aufnehmen
+cd $CVS/cdk
+make flash-enigma
+if ! test -e $DBOX/cdkflash/.part_enigma
+then
+  echo FEHLER: make flash-enigma abgebrochen!!
+  exit 1
+fi
+
+# LCDMenu erstellen
+make flash-lcdmenu
+cp $CHANGE_DIR/Configs/lcdmenu.conf $DBOX/cdkflash/root/var/tuxbox/config/
+
+# ftpd ins Flash aufnehmen
+make flash-ftpd
+if ! test -e $DBOX/cdkflash/.part_ftpd
+then
+  echo FEHLER: make flash-ftpd abgebrochen!!
+  exit 1
+fi
+
+# telnetd ins Flash aufnehmen
+make flash-telnetd
+if ! test -e $DBOX/cdkflash/.part_telnetd
+then
+  echo FEHLER: make flash-telnetd abgebrochen!!
+  exit 1
+fi
+
+# MKLibs ausfuehren
+make flash-lib
+if ! test -e $DBOX/cdkflash/.lib
+then
+  echo FEHLER: make flash-lib abgebrochen!!
+  exit 1
+fi
+
+# Sprachen fuer Enigma installieren
+cp -r $CHANGE_DIR/enigma/lib/ $DBOX/cdkflash/root
+cd $CVS/apps/tuxbox/enigma/po/
+make install
+mkdir $DBOX/cdkflash/root/share/locale
+cp -r $DBOX/cdkroot/share/locale/de/ $DBOX/cdkflash/root/share/locale/
+cp -r $DBOX/cdkroot/share/locale/fr/ $DBOX/cdkflash/root/share/locale/
+cp $CHANGE_DIR/Configs/locales $DBOX/cdkflash/root/share/locale/
+
+# Strace fuer Enigma kopieren
+cp $DBOX/cdkroot/bin/strace $DBOX/cdkflash/root/bin
+
+# Fonts fuer Enigma kopieren
+cp $DBOX/cdkroot/share/fonts/* $DBOX/cdkflash/root/share/fonts/
+
+# Scart.conf fuer Enigma kopieren
+cp $DBOX/cdkroot/var/tuxbox/config/scart.conf $DBOX/cdkflash/root/var/tuxbox/config/
+
+# Udpstreampes ins Flash aufnehmen
+cp $DBOX/cdkroot/sbin/udpstreampes $DBOX/cdkflash/root/sbin
+
+# Top kopieren
+cp $DBOX/cdkroot/bin/top $DBOX/cdkflash/root/bin
+
+# eraseall ins Flash aufnehmen
+cp $DBOX/cdkroot/sbin/eraseall $DBOX/cdkflash/root/sbin
+
+# rcs kopieren
+# patch -N -p0 $DBOX/cdkflash/root/etc/init.d/rcS $CHANGE_DIR/Patches/rcS.diff
+cp $CHANGE_DIR/Configs/rcS.local $DBOX/cdkflash/root/etc/init.d/
+cp $CHANGE_DIR/Configs/rcS $DBOX/cdkflash/root/etc/init.d/
+
+# Logos kopieren
+mkdir $DBOX/cdkflash/root/var/tuxbox/boot
+cp $CHANGE_DIR/Logos/logo-fb $DBOX/cdkflash/root/var/tuxbox/boot
+cp $CHANGE_DIR/neutrino/logo-lcd $DBOX/cdkflash/root/var/tuxbox/boot
+
+# ppcboot kopiern
+cp $DBOX/cdkflash/root/boot/ppcboot.conf $DBOX/cdkflash/root/var/tuxbox/boot/boot.conf
+
+# Iso kopieren
+#mkdir $DBOX/cdkflash/root/share/iso-codes
+# cp $DBOX/cdkroot/share/iso-codes/iso-639.tab $DBOX/cdkflash/root/share/iso-codes/
+
+# XMLs kopieren
+cp $DBOX/cdkroot/share/tuxbox/*.xml $DBOX/cdkflash/root/share/tuxbox/
+patch -N -p0 $DBOX/cdkflash/root/share/tuxbox/cables.xml $CHANGE_DIR/Patches/cables.xml.diff
+
+# Interfaces loeschen
+rm $DBOX/cdkflash/root/etc/network/interfaces
+
+# Start-Dateien kopieren
+cp $CHANGE_DIR/Configs/start $DBOX/cdkflash/root/etc/init.d
+patch -N -p0 $DBOX/cdkflash/root/etc/init.d/start_neutrino $CHANGE_DIR/neutrino/start_neutrino.diff
+chmod a+x $DBOX/cdkflash/root/etc/init.d/start_neutrino
+chmod a+x $DBOX/cdkflash/root/etc/init.d/start_enigma
+
+
+# Root-Home erstellen
+# mkdir $DBOX/cdkflash/root/root
+
+# lcdip kopieren
+#cp $CHANGE_DIR/bin/lcdip $DBOX/cdkflash/root/bin/
+cp $CHANGE_DIR/bin/lcdip $DBOX/cdkflash/root/bin/
+
+# Ucode-Checker kopieren
+cp $CHANGE_DIR/bin/chkucodes $DBOX/cdkflash/root/sbin/
+
+# Image-Infos kopieren, falls existent
+if test -e $VER.neutrino
+then
+  cp $VER.neutrino $DBOX/cdkflash/root/.image_version
+fi
+
+# Teletext auf blaue Taste legen
+mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.cfg $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.cfg
+mv $DBOX/cdkflash/root/lib/tuxbox/plugins/tuxtxt.so $DBOX/cdkflash/root/lib/tuxbox/plugins/_tuxtxt.so
+
+# Ein paar Dateien linken loeschen
+cd $DBOX/cdkflash/root/sbin/
+
+#rm telnetd
+#ln -s ../bin/busybox telnetd
+
+#rm inetd
+#ln -s ../bin/busybox inetd
+ln -s ../bin/busybox ../bin/ps
+
+# fehlende Verzeichnisse fuer Enigma erstellen
+mkdir $DBOX/cdkflash/root/var/tuxbox/config/enigma
+mkdir $DBOX/cdkflash/root/hdd
+mkdir $DBOX/cdkflash/root/hdd/movie
+mkdir $DBOX/cdkflash/root/var/plugins
+mkdir $DBOX/cdkflash/root/var/tuxbox/plugins
+
+
+GUI="all" # Der Zusammenbau der Images ist jetzt in cat_images

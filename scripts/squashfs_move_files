@@ -1,0 +1,38 @@
+# Root und Var trennen
+mv $DBOX/cdkflash/root/var/ $DBOX/cdkflash/
+mkdir $DBOX/cdkflash/root/var/
+
+mkdir $DBOX/cdkflash/var/etc  
+cd $DBOX/cdkflash/root/etc/
+
+mv resolv.conf ../../var/etc/
+ln -sf /var/etc/resolv.conf resolv.conf
+
+mv network/ ../../var/etc/
+ln -sf /var/etc/network/ network
+
+touch ../../var/etc/issue.net
+ln -sf /var/etc/issue.net issue.net
+
+mv group ../../var/etc
+ln -sf /var/etc/group group
+ 
+mv hosts ../../var/etc
+ln -sf /var/etc/hosts hosts
+
+mv passwd ../../var/etc
+ln -sf /var/etc/passwd passwd
+
+mkdir $DBOX/cdkflash/var/bin
+mv $DBOX/cdkflash/root/bin/camd2 $DBOX/cdkflash/var/bin/
+cd $DBOX/cdkflash/root/bin
+ln -sf /var/bin/camd2 camd2
+
+cd $DBOX/cdkflash/var/
+ln -sf /tmp tmp
+ln -sf log tmp
+ln -sf pid tmp
+ln -sf run tmp
+
+cp $CHANGE_DIR/Patches/fstab.squashfs $DBOX/cdkflash/root/etc/fstab
+cp $CHANGE_DIR/Patches/rcS $DBOX/cdkflash/root/etc/init.d/rcS
